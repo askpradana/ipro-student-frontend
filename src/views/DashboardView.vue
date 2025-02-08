@@ -5,7 +5,7 @@
       <h1
         class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
       >
-        EduMind
+        iPro student
       </h1>
     </div>
 
@@ -92,7 +92,8 @@ const router = useRouter()
 
 const handleTakeQuiz = () => {
   // Will be implemented later
-  console.log('Navigate to quiz')
+  // console.log('Navigate to quiz')
+  router.push('/quiz')
 }
 
 const handleSeeResults = () => {

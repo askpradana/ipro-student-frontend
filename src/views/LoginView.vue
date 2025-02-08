@@ -6,7 +6,7 @@
       <h2
         class="text-2xl font-bold mb-6 bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
       >
-        Login to EduMind
+        Login to iPro student
       </h2>
       <form @submit.prevent="handleLogin" class="space-y-6">
         <div>

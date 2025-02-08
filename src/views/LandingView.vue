@@ -6,7 +6,7 @@
         <div
           class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent animate-fade-in"
         >
-          EduMind Test
+          iPro student
         </div>
         <RouterLink
           to="/login"
@@ -157,7 +157,7 @@
     <footer class="max-w-6xl mx-auto pt-8 sm:pt-12 pb-6 px-4 md:px-6 border-t border-slate-200">
       <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div class="text-slate-500 text-sm sm:text-base">
-          © 2024 EduMind Test. All rights reserved.
+          © 2024 iPro Test. All rights reserved.
         </div>
         <div class="flex gap-6 sm:gap-8 text-slate-600 text-sm sm:text-base">
           <a href="#" class="hover:text-teal-600 transition-colors">Terms</a>
