@@ -37,18 +37,41 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
+const loading = ref(false)
+const errorMessage = ref('')
 
-const handleLogin = () => {
-  // Handle login logic here
-  // console.log('Login attempted:', { email: email.value })
-  router.push('/dashboard')
+const handleLogin = async () => {
+  try {
+    loading.value = true
+    errorMessage.value = ''
+
+    // Basic validation
+    if (!email.value || !password.value) {
+      errorMessage.value = 'Please fill in all fields'
+      return
+    }
+
+    const success = await authStore.login(email.value, password.value)
+
+    if (success) {
+      router.push('/dashboard')
+    } else {
+      errorMessage.value = 'Invalid credentials'
+    }
+  } catch (error) {
+    console.error('Login error:', error)
+    errorMessage.value = 'An error occurred during login'
+  } finally {
+    loading.value = false
+  }
 }
 </script>

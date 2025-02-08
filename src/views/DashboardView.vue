@@ -87,8 +87,10 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const handleTakeQuiz = () => {
   // Will be implemented later
@@ -106,7 +108,7 @@ const handleHelp = () => {
 }
 
 const handleLogout = () => {
-  // Will be implemented later
+  authStore.logout()
   router.push('/')
 }
 </script>
