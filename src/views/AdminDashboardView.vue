@@ -26,6 +26,24 @@
         </select>
       </div>
 
+      <!-- Add after search controls, before the table -->
+      <div class="mb-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <label class="text-sm text-gray-600">Show</label>
+          <select
+            v-model="itemsPerPage"
+            class="rounded-lg border border-gray-300 px-3 py-1 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+          >
+            <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
+          </select>
+          <span class="text-sm text-gray-600">entries</span>
+        </div>
+        <div class="text-sm text-gray-600">
+          Showing {{ startIndex + 1 }} to {{ Math.min(endIndex, filteredUsers.length) }} of
+          {{ filteredUsers.length }} entries
+        </div>
+      </div>
+
       <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
@@ -40,22 +58,15 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="user in filteredUsers" :key="user.id">
+            <tr v-for="user in paginatedUsers" :key="user.id">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.name }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 Grade {{ user.grade }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.school }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <span
-                  :class="[
-                    'px-3 py-1 rounded-full text-sm',
-                    user.isTestEnabled ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600',
-                  ]"
-                >
-                  {{ user.isTestEnabled ? 'Enabled' : 'Disabled' }}
-                </span>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {{ user.testCompletedAt ? formatDate(user.testCompletedAt) : 'Not taken yet' }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {{ formatDate(user.testPeriod) }}
@@ -104,6 +115,61 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Add after the table -->
+      <div class="mt-4 flex justify-between items-center">
+        <div class="text-sm text-gray-600">Page {{ currentPage }} of {{ totalPages }}</div>
+        <div class="flex space-x-2">
+          <button
+            @click="currentPage = 1"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 rounded border"
+            :class="
+              currentPage === 1
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white hover:bg-gray-50'
+            "
+          >
+            First
+          </button>
+          <button
+            @click="currentPage--"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 rounded border"
+            :class="
+              currentPage === 1
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white hover:bg-gray-50'
+            "
+          >
+            Previous
+          </button>
+          <button
+            @click="currentPage++"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1 rounded border"
+            :class="
+              currentPage === totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white hover:bg-gray-50'
+            "
+          >
+            Next
+          </button>
+          <button
+            @click="currentPage = totalPages"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1 rounded border"
+            :class="
+              currentPage === totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white hover:bg-gray-50'
+            "
+          >
+            Last
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Edit Modal -->
@@ -151,14 +217,12 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Test Status</label>
-            <select
-              v-model="editingUser.isTestEnabled"
+            <label class="block text-sm font-medium text-gray-700 mb-1">Test Completion</label>
+            <input
+              v-model="editingUser.testCompletedAt"
+              type="datetime-local"
               class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-            >
-              <option :value="true">Enabled</option>
-              <option :value="false">Disabled</option>
-            </select>
+            />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
@@ -194,7 +258,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
 
 const adminStore = useAdminStore()
@@ -209,7 +273,7 @@ const editingUser = ref<EditingUser>({
   email: '',
   grade: '',
   school: '',
-  isTestEnabled: false,
+  testCompletedAt: null,
   testPeriod: '',
   lastLogin: null,
   attemptLogin: 0,
@@ -222,7 +286,7 @@ const tableHeaders = [
   'Email',
   'Grade',
   'School',
-  'Test Status',
+  'Test Completion',
   'Test Period',
   'Last Login',
   'Login Attempts',
@@ -233,6 +297,10 @@ const tableHeaders = [
 
 const GRADES = ['9', '10', '11', '12'] as const
 const SCHOOLS = ['Springfield High School', 'Riverside Academy', 'Central Valley School'] as const
+
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const pageSizes = [5, 10, 20, 50, 100]
 
 const formatDate = (date: Date | null): string => {
   if (!date) return '-'
@@ -256,13 +324,19 @@ const validateDate = () => {
   const selectedDate = new Date(editingUser.value.testPeriod)
   isValidDate.value = selectedDate > new Date()
 }
-
 const openEditModal = (user: User): void => {
   editingUser.value = {
-    ...user,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    grade: user.grade,
+    school: user.school,
+    testCompletedAt: user.testCompletedAt ? formatDate(user.testCompletedAt) : null,
     testPeriod: formatDate(user.testPeriod),
     lastLogin: formatDate(user.lastLogin),
+    attemptLogin: user.attemptLogin,
     createdAt: formatDate(user.createdAt),
+    createdBy: user.createdBy,
   }
   showEditModal.value = true
 }
@@ -275,7 +349,7 @@ const closeEditModal = (): void => {
     email: '',
     grade: '',
     school: '',
-    isTestEnabled: false,
+    testCompletedAt: null,
     testPeriod: '',
     lastLogin: null,
     attemptLogin: 0,
@@ -291,6 +365,9 @@ const saveChanges = async (): Promise<void> => {
       testPeriod: editingUser.value.testPeriod ? new Date(editingUser.value.testPeriod) : null,
       lastLogin: editingUser.value.lastLogin ? new Date(editingUser.value.lastLogin) : null,
       createdAt: new Date(editingUser.value.createdAt),
+      testCompletedAt: editingUser.value.testCompletedAt
+        ? new Date(editingUser.value.testCompletedAt)
+        : null,
     }
     await adminStore.updateUser(updatedUser)
     closeEditModal()
@@ -335,5 +412,20 @@ const filteredUsers = computed(() => {
     const searchValue = user[field]?.toString().toLowerCase() || ''
     return searchValue.includes(searchQuery.value.toLowerCase())
   })
+})
+
+// Add these computed properties
+const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage.value))
+const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value)
+const endIndex = computed(() => startIndex.value + itemsPerPage.value)
+
+// Modify the existing filteredUsers computed to include pagination
+const paginatedUsers = computed(() => {
+  return filteredUsers.value.slice(startIndex.value, endIndex.value)
+})
+
+// Watch for changes that should reset pagination
+watch([itemsPerPage, searchQuery], () => {
+  currentPage.value = 1
 })
 </script>
