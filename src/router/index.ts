@@ -50,6 +50,12 @@ const router = createRouter({
       component: () => import('../views/QuizView.vue'),
       beforeEnter: requireAuth,
     },
+    {
+      path: '/admin/dashboard',
+      name: 'AdminDashboard',
+      component: () => import('@/views/AdminDashboardView.vue'),
+      meta: { requiresAdmin: true },
+    },
   ],
 })
 
