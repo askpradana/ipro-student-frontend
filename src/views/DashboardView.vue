@@ -27,7 +27,7 @@
       </button>
 
       <!-- Results Button -->
-      <button
+      <!-- <button
         @click="handleSeeResults"
         class="w-full p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-100 hover:bg-white hover:scale-[1.02] hover:border-emerald-100 active:scale-[0.98] transition-all duration-300 ease-out text-left group"
       >
@@ -39,7 +39,7 @@
         <p class="text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
           View your past quiz results and progress
         </p>
-      </button>
+      </button> -->
     </div>
 
     <!-- Utility buttons -->

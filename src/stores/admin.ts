@@ -89,6 +89,38 @@ export const useAdminStore = defineStore('admin', () => {
     return true
   }
 
+  const addMultipleUsers = async (newUsers: Partial<User>[]): Promise<void> => {
+    // Mock implementation
+    const createdUsers = newUsers.map((user, index) => ({
+      id: `USR${String(users.value.length + index + 1).padStart(3, '0')}`,
+      name: user.name || '',
+      email: user.email || '',
+      grade: user.grade || '',
+      school: user.school || '',
+      lastLogin: null,
+      attemptLogin: 0,
+      testPeriod: user.testPeriod || null,
+      testCompletedAt: null,
+      createdAt: new Date(),
+      createdBy: 'Admin001',
+    }))
+
+    users.value = [...users.value, ...createdUsers]
+
+    // API implementation (commented out for future use)
+    /*
+    try {
+      // Assuming you have an API endpoint for adding multiple users
+      const response = await axios.post('/api/users/bulk', { users: newUsers })
+      // Update the local store with the new users
+      users.value = [...users.value, ...response.data]
+    } catch (error) {
+      console.error('Error adding multiple users:', error)
+      throw error
+    }
+    */
+  }
+
   return {
     users,
     deleteUser,
@@ -96,5 +128,6 @@ export const useAdminStore = defineStore('admin', () => {
     // toggleTest,
     updateUser,
     resetPassword,
+    addMultipleUsers,
   }
 })

@@ -26,6 +26,16 @@
         </select>
       </div>
 
+      <!-- Add this button after the search controls and before the table -->
+      <div class="mb-6 flex justify-end">
+        <router-link
+          to="/admin/add-users"
+          class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
+        >
+          Add Users
+        </router-link>
+      </div>
+
       <!-- Add after search controls, before the table -->
       <div class="mb-4 flex justify-between items-center">
         <div class="flex items-center space-x-2">

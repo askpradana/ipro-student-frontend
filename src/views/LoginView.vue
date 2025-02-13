@@ -104,7 +104,8 @@ const showPassword = ref(false)
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 // Password regex: Minimum 8 characters, at least one uppercase, one lowercase, one number
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
+// const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
+const PASSWORD_REGEX = /^password123$/
 
 const validateEmail = (email: string): boolean => {
   return EMAIL_REGEX.test(email)

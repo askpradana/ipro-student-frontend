@@ -13,20 +13,43 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(email: string, password: string) {
-      // Mock authentication
-      // In real app, this would make an API call
-      if (email && password) {
-        const userData = { email }
-        this.user = userData
-        this.isAuthenticated = true
+      try {
+        // Input validation
+        if (!email || !password) {
+          throw new Error('Email and password are required');
+        }
+
+        // Make API call to login endpoint
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Authentication failed');
+        }
+
+        const userData = await response.json();
+
+        // Update authentication state
+        this.user = userData;
+        this.isAuthenticated = true;
 
         // Store auth state in localStorage
-        localStorage.setItem('user', JSON.stringify(userData))
-        localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('isAuthenticated', 'true');
 
-        return true
+        return true;
+      } catch (error) {
+        console.error('Login error:', error);
+        this.isAuthenticated = false;
+        localStorage.removeItem('user');
+        localStorage.removeItem('isAuthenticated');
+        throw error;
       }
-      return false
     },
 
     logout() {

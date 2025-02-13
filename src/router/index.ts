@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { requireAuth, redirectIfAuthenticated } from './auth-guard'
 import SampleChartView from '@/views/SampleChartView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import AddNewUsersView from '@/views/AddNewUsersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,12 @@ const router = createRouter({
       name: 'AdminDashboard',
       component: () => import('@/views/AdminDashboardView.vue'),
       meta: { requiresAdmin: true },
+    },
+    {
+      path: '/admin/add-users',
+      name: 'add-users',
+      component: AddNewUsersView,
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
   ],
 })

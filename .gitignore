@@ -7,19 +7,19 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
-.DS_Store
+.pnpm-store/
+
+# Build output
 dist
 dist-ssr
-coverage
 *.local
-
-/cypress/videos/
-/cypress/screenshots/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 *.suo
 *.ntvs*
@@ -27,4 +27,33 @@ coverage
 *.sln
 *.sw?
 
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Vue.js & Vite specific
+.DS_Store
+.vite
+.vue
+coverage
+*.local
+.eslintcache
+
+# TypeScript
 *.tsbuildinfo
+
+# Testing
+/cypress/videos/
+/cypress/screenshots/
+/test-results/
+/playwright-report/
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+# Bun
+bun.lockb
+.bun
