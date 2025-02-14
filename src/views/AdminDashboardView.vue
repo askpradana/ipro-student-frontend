@@ -1,11 +1,19 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
     <div class="max-w-7xl mx-auto">
-      <h1
-        class="text-2xl font-bold mb-6 bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
-      >
-        Admin Dashboard
-      </h1>
+      <div class="flex justify-between items-center mb-6">
+        <h1
+          class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
+        >
+          Admin Dashboard
+        </h1>
+        <button
+          @click="handleLogout"
+          class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Logout
+        </button>
+      </div>
 
       <!-- Add search controls -->
       <div class="mb-6 flex space-x-4">
@@ -264,14 +272,37 @@
         </div>
       </div>
     </div>
+
+    <!-- Add this modal dialog near the end of the template, before closing </div> -->
+    <div
+      v-if="showLogoutErrorModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    >
+      <div class="bg-white rounded-xl p-6 max-w-lg w-full">
+        <h2 class="text-xl font-bold mb-4">Logout Error</h2>
+        <p class="text-gray-600 mb-6">{{ logoutErrorMessage }}</p>
+        <div class="flex justify-end space-x-3">
+          <button
+            @click="forceLogout"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Proceed to Logout
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
 const adminStore = useAdminStore()
+const authStore = useAuthStore()
+const router = useRouter()
 const showEditModal = ref(false)
 const isValidDate = ref(true)
 const searchQuery = ref('')
@@ -438,4 +469,31 @@ const paginatedUsers = computed(() => {
 watch([itemsPerPage, searchQuery], () => {
   currentPage.value = 1
 })
+
+// Add these refs
+const showLogoutErrorModal = ref(false)
+const logoutErrorMessage = ref('')
+
+// Replace the existing handleLogout function
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error: any) {
+    console.error('Logout failed:', error)
+    // Show the error modal with the message from the API
+    logoutErrorMessage.value =
+      error.response?.data?.message || 'Failed to logout. Please try again.'
+    showLogoutErrorModal.value = true
+  }
+}
+
+// Add this new function to handle forced logout
+const forceLogout = () => {
+  showLogoutErrorModal.value = false
+  // Clear any necessary auth state
+  authStore.$reset()
+  // Redirect to login page
+  router.push('/login')
+}
 </script>

@@ -105,7 +105,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 // Password regex: Minimum 8 characters, at least one uppercase, one lowercase, one number
 // const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
-const PASSWORD_REGEX = /^password123$/
+const PASSWORD_REGEX = /^.{8,}$/
 
 const validateEmail = (email: string): boolean => {
   return EMAIL_REGEX.test(email)
@@ -141,16 +141,23 @@ const handleLogin = async () => {
       return
     }
 
-    const success = await authStore.login(email.value, password.value)
-    if (success) {
+    const role = await authStore.login(email.value, password.value)
+
+    // Add console.log to debug the role
+    console.log('User role:', role)
+
+    if (role === 'ADMIN') {
+      router.push('/admin/dashboard')
+    } else if (role === 'USER') {
       router.push('/dashboard')
     } else {
-      errorMessage.value = 'Invalid credentials'
+      console.error('Unknown role:', role)
     }
   } catch (error) {
-    console.error('Login error:', error)
-    errorMessage.value = 'An error occurred during login'
+    // console.error('Login error:', error)
+    errorMessage.value = error instanceof Error ? error.message : 'An error occurred during login'
   } finally {
+    password.value = ''
     loading.value = false
   }
 }

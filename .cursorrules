@@ -1,0 +1,84 @@
+# Cursor Rules
+
+## Vue Component Structure
+- Always use script setup pattern
+- All components must be TypeScript
+- Import order: Vue imports, followed by composables, then components
+- Props and emits should be defined with type interfaces
+
+## Composition API Patterns
+- Use ref() for primitives
+- Use reactive() only for complex objects
+- Extract reusable logic into composables
+- Keep setup logic minimal and clean
+- Use computed() for derived state
+- Prefer composition functions over mixins
+
+## Tailwind Usage
+- Always use Tailwind utility classes
+- No custom CSS unless absolutely necessary
+- Group related utilities together
+- Keep class lists clean and readable
+- Use @apply in components that reuse styles frequently
+
+## Code Organization
+- One component per file
+- Composables in separate files
+- Group related state and methods together
+- Extract complex logic into composables
+- Keep template logic minimal
+
+## Component Example
+```vue
+<template>
+  <div class="flex items-center justify-between p-4">
+    <h1 class="text-xl font-bold">{{ title }}</h1>
+    <button 
+      class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+      @click="handleClick"
+    >
+      {{ buttonText }}
+    </button>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useFeature } from '@/composables/useFeature'
+
+interface Props {
+  title: string
+  buttonText: string
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<{
+  (e: 'click'): void
+}>()
+
+const { featureState } = useFeature()
+
+const handleClick = () => {
+  emit('click')
+}
+</script>
+```
+
+## Composable Example
+```typescript
+import { ref, computed, onMounted } from 'vue'
+
+export function useFeature() {
+  const state = ref(0)
+  const doubled = computed(() => state.value * 2)
+  
+  onMounted(() => {
+    // setup code
+  })
+
+  return {
+    state,
+    doubled
+  }
+}
+```

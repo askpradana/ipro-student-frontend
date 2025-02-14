@@ -1,6 +1,8 @@
 // admin.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { handleApiResponse } from '@/utils/apiInterceptor'
+import { useAuthStore } from '@/stores/auth'
 
 export interface EditingUser
   extends Omit<User, 'testPeriod' | 'lastLogin' | 'createdAt' | 'testCompletedAt'> {
@@ -54,6 +56,7 @@ const generateMockUsers = (count: number = 51): User[] => {
 
 export const useAdminStore = defineStore('admin', () => {
   const users = ref<User[]>(generateMockUsers())
+  const authStore = useAuthStore()
 
   const deleteUser = (userId: string): void => {
     const index = users.value.findIndex((user) => user.id === userId)
@@ -121,6 +124,37 @@ export const useAdminStore = defineStore('admin', () => {
     */
   }
 
+  const fetchUsers = async () => {
+    try {
+      // const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users`, {
+      //   headers: {
+      //     Authorization: `Bearer ${authStore.user?.token}`,
+      //   },
+      // })
+      // const data = await handleApiResponse(response)
+      // ... rest of fetch logic ...
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const updateUserApi = async (user: User) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${authStore.user?.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      })
+
+      return await handleApiResponse(response)
+    } catch (error) {
+      throw error
+    }
+  }
+
   return {
     users,
     deleteUser,
@@ -129,5 +163,7 @@ export const useAdminStore = defineStore('admin', () => {
     updateUser,
     resetPassword,
     addMultipleUsers,
+    fetchUsers,
+    updateUserApi,
   }
 })

@@ -82,15 +82,38 @@
         </svg>
       </button>
     </div>
+
+    <!-- Add modal dialog before closing template div -->
+    <div
+      v-if="showLogoutErrorModal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+        <h2 class="text-xl font-bold text-slate-800 mb-3">Session Expired</h2>
+        <p class="text-slate-600 mb-6">{{ logoutErrorMessage }}</p>
+        <div class="flex justify-end">
+          <button
+            @click="handleModalConfirm"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-300"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { ref } from 'vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+
+const showLogoutErrorModal = ref(false)
+const logoutErrorMessage = ref('')
 
 const handleTakeQuiz = () => {
   // Will be implemented later
@@ -107,9 +130,35 @@ const handleHelp = () => {
   console.log('Show help')
 }
 
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/')
+const handleModalConfirm = () => {
+  showLogoutErrorModal.value = false
+  authStore.$reset()
+  router.push('/login')
+}
+
+interface LogoutErrorResponse {
+  message: string
+  code: number
+  status: string
+}
+
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/')
+  } catch (error: any) {
+    console.error('Logout error:', error.response?.data)
+    const errorData: LogoutErrorResponse = error.response?.data
+
+    if (errorData?.code === 401 && errorData?.message === 'token not found or invalidated') {
+      logoutErrorMessage.value = 'Your session has expired. Please log in again.'
+      showLogoutErrorModal.value = true
+      return
+    }
+
+    logoutErrorMessage.value = errorData?.message || 'Failed to logout. Please try again.'
+    showLogoutErrorModal.value = true
+  }
 }
 </script>
 

@@ -3,6 +3,7 @@ import { requireAuth, redirectIfAuthenticated } from './auth-guard'
 import SampleChartView from '@/views/SampleChartView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import AddNewUsersView from '@/views/AddNewUsersView.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,7 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardView,
       beforeEnter: requireAuth,
+      meta: { requiresAuth: true },
     },
     {
       path: '/results',
@@ -55,15 +57,30 @@ const router = createRouter({
       path: '/admin/dashboard',
       name: 'AdminDashboard',
       component: () => import('@/views/AdminDashboardView.vue'),
-      meta: { requiresAdmin: true },
+      beforeEnter: requireAuth,
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
     {
       path: '/admin/add-users',
       name: 'add-users',
       component: AddNewUsersView,
+      beforeEnter: requireAuth,
       meta: { requiresAuth: true, requiresAdmin: true },
     },
   ],
+})
+
+// Global navigation guard
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  // If route requires auth and user is not authenticated
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next({ name: 'login' })
+    return
+  }
+
+  next()
 })
 
 export default router
