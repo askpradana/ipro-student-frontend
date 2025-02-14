@@ -19,6 +19,7 @@ interface User {
 interface AuthState {
   user: User | null
   isAuthenticated: boolean
+  isLoading: boolean
 }
 
 interface ApiResponse {
@@ -36,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     user: null,
     isAuthenticated: false,
+    isLoading: false,
   }),
 
   getters: {
@@ -49,11 +51,15 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(email: string, password: string) {
+      this.isLoading = true
       try {
         // Input validation
         if (!email || !password) {
           throw new AuthError('Email and password are required')
         }
+
+        // Add artificial delay
+        await new Promise((resolve) => setTimeout(resolve, 1000))
 
         // Make API call to login endpoint
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/login`, {
@@ -95,6 +101,8 @@ export const useAuthStore = defineStore('auth', {
         console.error('Login error:', error)
         this.clearAuthState()
         throw error instanceof Error ? new AuthError(error.message) : error
+      } finally {
+        this.isLoading = false
       }
     },
 

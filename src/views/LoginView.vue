@@ -77,9 +77,14 @@
         <button
           type="submit"
           :disabled="loading"
-          class="w-full px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all duration-300 shadow-lg hover:shadow-teal-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all duration-300 shadow-lg hover:shadow-teal-500/25 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
         >
-          {{ loading ? 'Logging in...' : 'Login' }}
+          <span :class="{ 'opacity-0': loading }"> Login </span>
+          <div v-if="loading" class="absolute inset-0 flex items-center justify-center">
+            <div
+              class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+            ></div>
+          </div>
         </button>
         <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
       </form>
@@ -88,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -96,8 +101,6 @@ const router = useRouter()
 const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
-const loading = ref(false)
-const errorMessage = ref('')
 const showPassword = ref(false)
 
 // Email regex: Allows standard email format while preventing XSS
@@ -119,9 +122,12 @@ const togglePassword = () => {
   showPassword.value = !showPassword.value
 }
 
+const loading = computed(() => authStore.isLoading)
+
+const errorMessage = ref('')
+
 const handleLogin = async () => {
   try {
-    loading.value = true
     errorMessage.value = ''
 
     // Enhanced validation
@@ -158,7 +164,6 @@ const handleLogin = async () => {
     errorMessage.value = error instanceof Error ? error.message : 'An error occurred during login'
   } finally {
     password.value = ''
-    loading.value = false
   }
 }
 </script>
