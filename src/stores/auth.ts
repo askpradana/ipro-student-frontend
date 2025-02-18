@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { handleApiResponse } from '@/utils/apiInterceptor'
+import { handleApiResponse, type ApiResponse, type AuthModel } from '@/utils/apiInterceptor'
 
 // Add custom error class and improved interfaces
 class AuthError extends Error {
@@ -9,28 +9,10 @@ class AuthError extends Error {
   }
 }
 
-interface User {
-  email: string
-  role: string
-  token: string
-  refreshToken?: string
-}
-
 interface AuthState {
-  user: User | null
+  user: AuthModel | null
   isAuthenticated: boolean
   isLoading: boolean
-}
-
-interface ApiResponse {
-  message: string
-  code: number
-  status: string
-  data?: {
-    role: string
-    token: string
-    refreshToken?: string
-  }
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -62,7 +44,7 @@ export const useAuthStore = defineStore('auth', {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         // Make API call to login endpoint
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/login`, {
+        const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -70,18 +52,16 @@ export const useAuthStore = defineStore('auth', {
           body: JSON.stringify({ email, password }),
         })
 
-        const data: ApiResponse = await handleApiResponse(response)
+        const data: ApiResponse<AuthModel> = await handleApiResponse(response)
 
         if (data.status === 'error') {
           throw new AuthError(data.message)
         }
 
         if (data.data) {
-          const userData: User = {
-            email,
+          const userData: AuthModel = {
             role: data.data.role,
             token: data.data.token,
-            refreshToken: data.data.refreshToken,
           }
 
           // Update authentication state
@@ -153,38 +133,38 @@ export const useAuthStore = defineStore('auth', {
     },
 
     // New method to refresh token
-    async refreshToken() {
-      try {
-        if (!this.user?.refreshToken) {
-          throw new AuthError('No refresh token available')
-        }
+    // async refreshToken() {
+    //   try {
+    //     if (!this.user?.refreshToken) {
+    //       throw new AuthError('No refresh token available')
+    //     }
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/refresh`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ refreshToken: this.user.refreshToken }),
-        })
+    //     const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/refresh`, {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({ refreshToken: this.user.refreshToken }),
+    //     })
 
-        const data: ApiResponse = await handleApiResponse(response)
+    //     const data: ApiResponse = await handleApiResponse(response)
 
-        if (data.status === 'success' && data.data?.token) {
-          this.user = {
-            ...this.user,
-            token: data.data.token,
-          }
-          localStorage.setItem('user', JSON.stringify(this.user))
-          return true
-        }
+    //     if (data.status === 'success' && data.data?.token) {
+    //       this.user = {
+    //         ...this.user,
+    //         token: data.data.token,
+    //       }
+    //       localStorage.setItem('user', JSON.stringify(this.user))
+    //       return true
+    //     }
 
-        throw new AuthError('Token refresh failed')
-      } catch (error) {
-        console.error('Token refresh error:', error)
-        this.clearAuthState()
-        throw error instanceof Error ? new AuthError(error.message) : error
-      }
-    },
+    //     throw new AuthError('Token refresh failed')
+    //   } catch (error) {
+    //     console.error('Token refresh error:', error)
+    //     this.clearAuthState()
+    //     throw error instanceof Error ? new AuthError(error.message) : error
+    //   }
+    // },
 
     // Initialize auth state from localStorage
     initializeAuth() {

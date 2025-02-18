@@ -15,179 +15,195 @@
         </button>
       </div>
 
-      <!-- Add search controls -->
-      <div class="mb-6 flex space-x-4">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search..."
-          class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-        />
-        <select
-          v-model="searchField"
-          class="rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-        >
-          <option value="name">Name</option>
-          <option value="email">Email</option>
-          <option value="school">School</option>
-          <option value="createdBy">Created By</option>
-        </select>
+      <!-- Add loading and error states -->
+      <div v-if="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
       </div>
 
-      <!-- Add this button after the search controls and before the table -->
-      <div class="mb-6 flex justify-end">
-        <router-link
-          to="/admin/add-users"
-          class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
-        >
-          Add Users
-        </router-link>
+      <div
+        v-else-if="error"
+        class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6"
+      >
+        {{ error }}
+        <button @click="fetchData" class="ml-2 underline hover:text-red-700">Try again</button>
       </div>
 
-      <!-- Add after search controls, before the table -->
-      <div class="mb-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-          <label class="text-sm text-gray-600">Show</label>
+      <!-- Only show the rest of the content when not loading and no error -->
+      <template v-else>
+        <!-- Add search controls -->
+        <div class="mb-6 flex space-x-4">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search..."
+            class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+          />
           <select
-            v-model="itemsPerPage"
-            class="rounded-lg border border-gray-300 px-3 py-1 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+            v-model="searchField"
+            class="rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
           >
-            <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
+            <option value="name">Name</option>
+            <option value="email">Email</option>
+            <option value="school">School</option>
+            <option value="createdBy">Created By</option>
           </select>
-          <span class="text-sm text-gray-600">entries</span>
         </div>
-        <div class="text-sm text-gray-600">
-          Showing {{ startIndex + 1 }} to {{ Math.min(endIndex, filteredUsers.length) }} of
-          {{ filteredUsers.length }} entries
-        </div>
-      </div>
 
-      <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                v-for="header in tableHeaders"
-                :key="header"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                {{ header }}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="user in paginatedUsers" :key="user.id">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.name }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                Grade {{ user.grade }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.school }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ user.testCompletedAt ? formatDate(user.testCompletedAt) : 'Not taken yet' }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ formatDate(user.testPeriod) }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ formatDate(user.lastLogin) }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ user.attemptLogin }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ formatDate(user.createdAt) }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ user.createdBy }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <div class="flex items-center space-x-2">
-                  <button
-                    @click="openEditModal(user)"
-                    class="bg-blue-100 text-blue-600 px-3 py-1 rounded hover:bg-blue-200"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    @click="adminStore.resetAttempts(user.id)"
-                    class="bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200"
-                  >
-                    Reset Login
-                  </button>
-                  <button
-                    @click="handleResetPassword(user.id)"
-                    class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
-                  >
-                    Reset Password
-                  </button>
-                  <button
-                    @click="handleDeleteUser(user.id)"
-                    class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Add after the table -->
-      <div class="mt-4 flex justify-between items-center">
-        <div class="text-sm text-gray-600">Page {{ currentPage }} of {{ totalPages }}</div>
-        <div class="flex space-x-2">
-          <button
-            @click="currentPage = 1"
-            :disabled="currentPage === 1"
-            class="px-3 py-1 rounded border"
-            :class="
-              currentPage === 1
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white hover:bg-gray-50'
-            "
+        <!-- Add this button after the search controls and before the table -->
+        <div class="mb-6 flex justify-end">
+          <router-link
+            to="/admin/add-users"
+            class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
           >
-            First
-          </button>
-          <button
-            @click="currentPage--"
-            :disabled="currentPage === 1"
-            class="px-3 py-1 rounded border"
-            :class="
-              currentPage === 1
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white hover:bg-gray-50'
-            "
-          >
-            Previous
-          </button>
-          <button
-            @click="currentPage++"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1 rounded border"
-            :class="
-              currentPage === totalPages
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white hover:bg-gray-50'
-            "
-          >
-            Next
-          </button>
-          <button
-            @click="currentPage = totalPages"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1 rounded border"
-            :class="
-              currentPage === totalPages
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white hover:bg-gray-50'
-            "
-          >
-            Last
-          </button>
+            Add Users
+          </router-link>
         </div>
-      </div>
+
+        <!-- Add after search controls, before the table -->
+        <div class="mb-4 flex justify-between items-center">
+          <div class="flex items-center space-x-2">
+            <label class="text-sm text-gray-600">Show</label>
+            <select
+              v-model="itemsPerPage"
+              class="rounded-lg border border-gray-300 px-3 py-1 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+            >
+              <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
+            </select>
+            <span class="text-sm text-gray-600">entries</span>
+          </div>
+          <div class="text-sm text-gray-600">
+            Showing {{ startIndex + 1 }} to {{ Math.min(endIndex, filteredUsers.length) }} of
+            {{ filteredUsers.length }} entries
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  v-for="header in tableHeaders"
+                  :key="header"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  {{ header }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="user in paginatedUsers" :key="user.id">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ user.grade }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.school }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ user.testCompletedAt ? formatDate(user.testCompletedAt) : 'Not taken yet' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatDate(user.testPeriod) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatDate(user.lastLogin) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ user.attemptLogin }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatDate(user.createdAt) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ user.createdBy }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                  <div class="flex items-center space-x-2">
+                    <button
+                      @click="openEditModal(user)"
+                      class="bg-blue-100 text-blue-600 px-3 py-1 rounded hover:bg-blue-200"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="adminStore.resetAttempts(user.id)"
+                      class="bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200"
+                    >
+                      Reset Login
+                    </button>
+                    <button
+                      @click="handleResetPassword(user.id)"
+                      class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
+                    >
+                      Reset Password
+                    </button>
+                    <button
+                      @click="handleDeleteUser(user.id)"
+                      class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add after the table -->
+        <div class="mt-4 flex justify-between items-center">
+          <div class="text-sm text-gray-600">Page {{ currentPage }} of {{ totalPages }}</div>
+          <div class="flex space-x-2">
+            <button
+              @click="currentPage = 1"
+              :disabled="currentPage === 1"
+              class="px-3 py-1 rounded border"
+              :class="
+                currentPage === 1
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white hover:bg-gray-50'
+              "
+            >
+              First
+            </button>
+            <button
+              @click="currentPage--"
+              :disabled="currentPage === 1"
+              class="px-3 py-1 rounded border"
+              :class="
+                currentPage === 1
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white hover:bg-gray-50'
+              "
+            >
+              Previous
+            </button>
+            <button
+              @click="currentPage++"
+              :disabled="currentPage === totalPages"
+              class="px-3 py-1 rounded border"
+              :class="
+                currentPage === totalPages
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white hover:bg-gray-50'
+              "
+            >
+              Next
+            </button>
+            <button
+              @click="currentPage = totalPages"
+              :disabled="currentPage === totalPages"
+              class="px-3 py-1 rounded border"
+              :class="
+                currentPage === totalPages
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white hover:bg-gray-50'
+              "
+            >
+              Last
+            </button>
+          </div>
+        </div>
+      </template>
     </div>
 
     <!-- Edit Modal -->
@@ -295,7 +311,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
@@ -342,6 +358,9 @@ const SCHOOLS = ['Springfield High School', 'Riverside Academy', 'Central Valley
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const pageSizes = [5, 10, 20, 50, 100]
+
+const isLoading = ref(true)
+const error = ref<string | null>(null)
 
 const formatDate = (date: Date | null): string => {
   if (!date) return '-'
@@ -496,4 +515,21 @@ const forceLogout = () => {
   // Redirect to login page
   router.push('/login')
 }
+
+const fetchData = async () => {
+  try {
+    isLoading.value = true
+    error.value = null
+    await adminStore.fetchUsers()
+  } catch (err) {
+    error.value = 'Failed to load users. Please try again.'
+    console.error('Error fetching users:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchData()
+})
 </script>

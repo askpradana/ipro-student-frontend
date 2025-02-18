@@ -1,7 +1,7 @@
 // admin.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { handleApiResponse } from '@/utils/apiInterceptor'
+import { handleApiResponse, type ApiResponse, type UserData } from '@/utils/apiInterceptor'
 import { useAuthStore } from '@/stores/auth'
 
 export interface EditingUser
@@ -27,35 +27,35 @@ export interface User {
   createdBy: string
 }
 
-const generateMockUsers = (count: number = 51): User[] => {
-  const schools = ['Springfield', 'Bukalapak', 'Tokopedia', 'Gojek', 'Shopee']
-  const grades = ['9', '10', '11', '12']
+// const generateMockUsers = (count: number = 51): User[] => {
+//   const schools = ['Springfield', 'Bukalapak', 'Tokopedia', 'Gojek', 'Shopee']
+//   const grades = ['9', '10', '11', '12']
 
-  return Array.from({ length: count }, (_, index) => {
-    const testPeriod = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
-    const hasCompleted = Math.random() > 0.5
+//   return Array.from({ length: count }, (_, index) => {
+//     const testPeriod = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+//     const hasCompleted = Math.random() > 0.5
 
-    return {
-      id: `USR${String(index + 1).padStart(3, '0')}`,
-      name: `Student ${index + 1}`,
-      email: `student${index + 1}@example.com`,
-      grade: grades[Math.floor(Math.random() * grades.length)],
-      school: schools[Math.floor(Math.random() * schools.length)],
-      lastLogin:
-        Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) : null,
-      attemptLogin: Math.floor(Math.random() * 3),
-      testPeriod,
-      testCompletedAt: hasCompleted
-        ? new Date(testPeriod.getTime() + Math.random() * 2 * 60 * 60 * 1000)
-        : null,
-      createdAt: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-      createdBy: 'Admin001',
-    }
-  })
-}
+//     return {
+//       id: `USR${String(index + 1).padStart(3, '0')}`,
+//       name: `Student ${index + 1}`,
+//       email: `student${index + 1}@example.com`,
+//       grade: grades[Math.floor(Math.random() * grades.length)],
+//       school: schools[Math.floor(Math.random() * schools.length)],
+//       lastLogin:
+//         Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) : null,
+//       attemptLogin: Math.floor(Math.random() * 3),
+//       testPeriod,
+//       testCompletedAt: hasCompleted
+//         ? new Date(testPeriod.getTime() + Math.random() * 2 * 60 * 60 * 1000)
+//         : null,
+//       createdAt: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
+//       createdBy: 'Admin001',
+//     }
+//   })
+// }
 
 export const useAdminStore = defineStore('admin', () => {
-  const users = ref<User[]>(generateMockUsers())
+  const users = ref<User[]>([])
   const authStore = useAuthStore()
 
   const deleteUser = (userId: string): void => {
@@ -126,14 +126,40 @@ export const useAdminStore = defineStore('admin', () => {
 
   const fetchUsers = async () => {
     try {
-      // const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users`, {
-      //   headers: {
-      //     Authorization: `Bearer ${authStore.user?.token}`,
-      //   },
-      // })
-      // const data = await handleApiResponse(response)
-      // ... rest of fetch logic ...
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/admin/users`, {
+        headers: {
+          Authorization: `Bearer ${authStore.user?.token}`,
+        },
+      })
+      const apiResponse: ApiResponse<{ data: UserData[] }> = await handleApiResponse(response)
+
+      if (!apiResponse.data?.data || !Array.isArray(apiResponse.data.data)) {
+        throw new Error('Invalid response format: expected array of users')
+      }
+
+      users.value = apiResponse.data.data.map(
+        // TODO bikin logout kalau token invalid
+        (apiUser: UserData): User => ({
+          id: apiUser.user_id,
+          name: apiUser.name || ' - ',
+          email: apiUser.email || ' - ',
+          grade: apiUser.grade || ' - ',
+          school: apiUser.school || ' - ',
+          lastLogin:
+            apiUser.last_login !== '0001-01-01T00:00:00Z' ? new Date(apiUser.last_login) : null,
+          attemptLogin: apiUser.attempt_login,
+          testPeriod:
+            apiUser.quiz_period !== '0001-01-01T00:00:00Z' ? new Date(apiUser.quiz_period) : null,
+          testCompletedAt:
+            apiUser.quiz_completed_at !== '0001-01-01T00:00:00Z'
+              ? new Date(apiUser.quiz_completed_at)
+              : null,
+          createdAt: new Date(apiUser.created_at),
+          createdBy: apiUser.created_by,
+        }),
+      )
     } catch (error) {
+      console.error('Error fetching users:', error)
       throw error
     }
   }
