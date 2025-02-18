@@ -1,39 +1,105 @@
-# ipro-fe
+# ipro-student
 
-This template should help get you started developing with Vue 3 in Vite.
+A modern Vue 3 frontend application built with TypeScript, Vite, and Bun.
 
-## Recommended IDE Setup
+## 🚀 Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Vue 3 with Composition API and `<script setup>`
+- TypeScript for enhanced type safety
+- Vite for lightning-fast development
+- Bun as the JavaScript runtime and package manager
+- Tailwind CSS for utility-first styling
+- ESLint for code quality
 
-## Type Support for `.vue` Imports in TS
+## 🛠️ Prerequisites
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- [Bun](https://bun.sh/) (latest version)
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [VSCode](https://code.visualstudio.com/) (recommended)
 
-## Customize configuration
+## 📦 IDE Setup
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. Install [VSCode](https://code.visualstudio.com/)
+2. Install recommended extensions:
+   - [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur)
+   - [TypeScript Vue Plugin](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
+   - [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
-## Project Setup
+## 🚀 Getting Started
 
-```sh
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd ipro-fe
+```
+
+2. Install dependencies:
+
+```bash
 bun install
 ```
 
-### Compile and Hot-Reload for Development
+3. Start the development server:
 
-```sh
+```bash
 bun dev
 ```
 
-### Type-Check, Compile and Minify for Production
+4. Open [http://localhost:5173](http://localhost:5173) in your browser
 
-```sh
+## 📝 Available Scripts
+
+```bash
+# Start development server
+bun dev
+
+# Build for production
 bun run build
-```
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
+# Lint files
 bun lint
+
+# Type check
+bun run type-check
 ```
+
+## 🏗️ Project Structure
+
+```
+ipro-fe/
+├── public/          # Static assets
+│   ├── assets/      # Dynamic assets
+│   ├── components/  # Vue components
+│   ├── composables/ # Composition API utilities
+│   ├── views/       # Page components
+│   ├── App.vue      # Root component
+│   └── main.ts      # Application entry point
+├── index.html
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
+
+## 🔧 Configuration
+
+- TypeScript configuration: `tsconfig.json`
+- Vite configuration: `vite.config.ts`
+- ESLint configuration: `.eslintrc.js`
+- Environment variables: `.env`
+
+## 📚 Type Support
+
+TypeScript cannot handle type information for `.vue` imports by default. The project uses `vue-tsc` for type checking. [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) is required for proper TypeScript support in `.vue` files.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+[MIT License](LICENSE)
