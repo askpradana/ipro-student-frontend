@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Quiz 1",
+    "description": "Tes ini terdiri dari kata - kata. Setiap soal terdiri dari 4 pilihan kata, a , b, c dan d. Carilah 2 buah kata yang memiliki kesamaan arti yang paling dekat atau yang mempunyai arti berlawanan.",
+    "typeQuiz": 1
+  },
+  {
+    "id": 2,
+    "title": "Quiz 2",
+    "description": "Tes ini adalah tes yang menguji kemampuan anda dalam berhitung. Di dalam tes ini terdapat 22 soal matematika. Jawabalah pertanyaan - pertanyaan yang ada dengan tepat.",
+    "typeQuiz": 2
+  },
+  {
+    "id": 3,
+    "title": "Quiz 3",
+    "description": "  Tes ini terdiri dari rangakaian angka atau huruf. Pertama - tama akan dijumpai bahwa setiap soal terdiri dari 2 rangkaian angka yang dipisahkan satu sama lain oleh tanda ( - ). Selanjutnya soal - soal akan terdiri dari rangkaian huruf. Tugas anda adalah harus meneliti dan menentukan apakah 2 rangkaian tersebut sama atau berbeda.",
+    "typeQuiz": 3
+  },
+  {
+    "id": 4,
+    "title": "Quiz 4",
+    "description": " Tes ini adalah tes untuk menentukan sebuah benda dari gambar yang disediakan. Jadi disetiap soal akan terdapat sebuah gambar, gambar ini dibagi menjadi 2 bagian. Bagian kiri gambar memperlihatkan selembar karton dalam bentuk tertentu. Gambar disebelah kanan teriri dari 4 buah benda yang berbeda satu sama lain. Salah satu dari 4 benda tersebut terbentuk dari gambar karton yang telah dilipat.",
+    "typeQuiz": 4
+  }
+]

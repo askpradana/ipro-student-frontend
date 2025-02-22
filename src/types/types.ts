@@ -1,0 +1,30 @@
+export interface QuizQuestion {
+  soalID: number
+  question?: string
+  pilihan: string[]
+  kunci: string[] | string | number
+}
+
+export interface APIResponse {
+  message: string
+  code: number
+  status: string
+  data: QuizQuestion[]
+}
+
+export interface QuizState {
+  questions: QuizQuestion[]
+  answers: (string[] | number | string | null)[]
+  currentQuestionIndex: number
+  quizStarted: boolean
+  isComplete: boolean
+  loading: boolean
+  error: string | null
+  choice: string[]
+  typeQuiz: number
+}
+
+export interface AnswerStructur {
+  soalID: number
+  answer: string | number | string[]
+}

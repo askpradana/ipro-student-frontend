@@ -1,0 +1,115 @@
+<template>
+  <div>
+    <h2 class="text-xl font-bold text-slate-800 mb-2">
+      Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
+      {{ store.questions.length }}
+    </h2>
+
+    <img
+      :src="DataImage[store.questions[store.currentQuestionIndex]?.soalID - 1]?.iamgeSrc"
+      @click="
+        zoomImage(DataImage[store.questions[store.currentQuestionIndex]?.soalID - 1]?.iamgeSrc)
+      "
+      alt="gambar-soal"
+      class="mb-8"
+    />
+
+    <!-- Answer Options -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <label
+        v-for="(option, index) in store.questions[store.currentQuestionIndex]?.pilihan"
+        :key="index"
+        class="flex items-center p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+        :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === index }"
+      >
+        <input
+          type="radio"
+          :name="'question'"
+          :value="index"
+          v-model="selectedIndex"
+          @change="handleOptionSelect(option)"
+          class="hidden"
+        />
+        <span
+          class="w-5 h-5 border rounded-full flex items-center justify-center mr-3"
+          :class="{ 'border-teal-600': selectedIndex === index }"
+        >
+          <span
+            v-if="selectedIndex === index"
+            class="w-3 h-3 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full"
+          ></span>
+        </span>
+        <span class="text-slate-700">{{ option }}</span>
+      </label>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between mt-8">
+      <button
+        @click="handlePrevious"
+        :disabled="store.currentQuestionIndex === 0"
+        class="px-6 py-2 rounded-lg font-semibold text-teal-600 hover:bg-teal-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+      >
+        Previous
+      </button>
+      <button
+        @click="handleNext"
+        :disabled="selectedAnswer === null"
+        class="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+      >
+        {{ store.currentQuestionIndex === store.questions.length - 1 ? 'Complete' : 'Next' }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useQuizStore } from '@/stores/quizStore'
+import { useModalStore } from '@/stores/modalStore'
+import DataImage from '@/data/gambar-soal.json'
+
+const store = useQuizStore()
+const modalStore = useModalStore()
+const selectedAnswer = ref<string[] | number | string | null>(null)
+const selectedIndex = ref<number | null>(null)
+
+watch(
+  () => store.currentQuestionIndex,
+  () => {
+    const currentAnswer = store.answers[store.currentQuestionIndex]
+    selectedAnswer.value = currentAnswer ?? null
+
+    // Find index of the current answer in pilihan array
+    if (currentAnswer) {
+      const currentOptions = store.questions[store.currentQuestionIndex]?.pilihan
+      selectedIndex.value = currentOptions?.findIndex((option) => option === currentAnswer) ?? null
+    } else {
+      selectedIndex.value = null
+    }
+  },
+)
+
+const zoomImage = (imageSrc: string) => {
+  modalStore.typeOfModal('zoom-image')
+  modalStore.setSourceImage(imageSrc)
+  modalStore.openModal()
+}
+
+const handleOptionSelect = (option: string) => {
+  selectedAnswer.value = option
+}
+
+const handleNext = () => {
+  if (selectedAnswer.value !== null) {
+    store.submitAnswer(selectedAnswer.value)
+    store.nextQuestion()
+  }
+}
+
+const handlePrevious = () => {
+  store.previousQuestion()
+}
+</script>
+
+<style scoped></style>

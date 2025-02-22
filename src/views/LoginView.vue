@@ -149,9 +149,6 @@ const handleLogin = async () => {
 
     const role = await authStore.login(email.value, password.value)
 
-    // Add console.log to debug the role
-    console.log('User role:', role)
-
     if (role === 'ADMIN') {
       router.push('/admin/dashboard')
     } else if (role === 'USER') {
