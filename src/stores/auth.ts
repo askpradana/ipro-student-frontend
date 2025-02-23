@@ -44,7 +44,7 @@ export const useAuthStore = defineStore('auth', {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         // Make API call to login endpoint
-        const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/login`, {
+        const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

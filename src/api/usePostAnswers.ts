@@ -1,25 +1,14 @@
 import { ref } from 'vue'
-// import type { APIResponse } from '@/types/types'
 import { changeStructur } from '@/lib/changeAnswerStructur'
+import type { SubmitAPIResponse } from '@/types/quizTypes'
+import { getTypeQuiz } from '@/lib/getTypeQuiz'
 
 export const usePostAnswerApi = (answers: (string | number | string[] | null)[]) => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const type = localStorage.getItem('type-quiz')
-  const dataAnswer = changeStructur(answers)
-  const getTypeQuiz = () => {
-    switch (+type!) {
-      case 1:
-        return 'soal-tiga'
-      case 2:
-        return 'soal-lima'
-      case 3:
-        return 'soal-enam'
-      case 4:
-        return 'soal-tujuh'
-      default:
-        break
-    }
+  const dataAnswer = {
+    data: changeStructur(answers),
   }
 
   const postAnswer = async () => {
@@ -34,9 +23,9 @@ export const usePostAnswerApi = (answers: (string | number | string[] | null)[])
 
       const user = JSON.parse(userStore)
       const token = user.token
-      const quizType = getTypeQuiz()
+      const quizType = getTypeQuiz(type!)
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/quiz/${quizType}/answer`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/quizzes/${quizType}/answers`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,8 +38,8 @@ export const usePostAnswerApi = (answers: (string | number | string[] | null)[])
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data = await response.json()
-      return data.data
+      const data: SubmitAPIResponse = await response.json()
+      return data
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'An error occurred'
       throw error.value

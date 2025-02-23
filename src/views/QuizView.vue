@@ -2,17 +2,19 @@
 import { ref, watch } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useModalStore } from '@/stores/modalStore'
+import { useUserStores } from '@/stores/userStores'
 import { useRouter } from 'vue-router'
 import QuizFormContainer from '@/components/QuizForms/QuizFormContainer.vue'
-import CompletedQuiz from '@/components/QuizForms/CompletedQuiz.vue'
 import ModalContainer from '@/components/modals/ModalContainer.vue'
 import ModalExitQuiz from '@/components/modals/ModalExitQuiz.vue'
 import TypeQuizData from '@/data/type-quiz.json'
 import SubmitForm from '@/components/QuizForms/SubmitForm.vue'
+import { getTypeQuizWithUnderscore } from '@/lib/getTypeQuiz'
 
 const store = useQuizStore()
 const router = useRouter()
 const modalStore = useModalStore()
+const userStore = useUserStores()
 const selectedAnswer = ref<string[] | number | string | null>(null)
 const selectedQuiz = localStorage.getItem('type-quiz')
 
@@ -34,7 +36,14 @@ const handleBack = () => {
 }
 
 const startQuizHandler = (selectedTypeQuiz: number) => {
-  store.startQuiz(selectedTypeQuiz)
+  const getTypeOfQuiz = getTypeQuizWithUnderscore(selectedTypeQuiz.toString())
+  console.log(getTypeOfQuiz)
+
+  if (userStore[getTypeOfQuiz!]) {
+    router.push('/completed')
+  } else {
+    store.startQuiz(selectedTypeQuiz)
+  }
 }
 </script>
 
@@ -90,9 +99,7 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
           <QuizFormContainer />
         </div>
 
-        <!-- Quiz Complete -->
         <div v-else class="text-center py-8">
-          <!-- <CompletedQuiz :handle-back="handleBack" /> -->
           <SubmitForm />
         </div>
       </div>

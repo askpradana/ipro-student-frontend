@@ -12,6 +12,12 @@ export interface APIResponse {
   data: QuizQuestion[]
 }
 
+export interface SubmitAPIResponse {
+  message: string
+  code: number
+  status: string
+}
+
 export interface QuizState {
   questions: QuizQuestion[]
   answers: (string[] | number | string | null)[]
@@ -20,6 +26,7 @@ export interface QuizState {
   isComplete: boolean
   loading: boolean
   error: string | null
+  message: string
   choice: string[]
   typeQuiz: number
 }

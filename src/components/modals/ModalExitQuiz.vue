@@ -29,7 +29,6 @@ const quizStore = useQuizStore()
 const router = useRouter()
 
 const quitHandler = () => {
-  localStorage.removeItem('type-quiz')
   router.push('/dashboard')
   quizStore.resetQuiz()
   modalStore.closeModal()

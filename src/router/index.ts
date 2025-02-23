@@ -54,6 +54,12 @@ const router = createRouter({
       beforeEnter: requireAuth,
     },
     {
+      path: '/completed',
+      name: 'quiz-completed',
+      component: () => import('../views/CompletedQuizView.vue'),
+      beforeEnter: requireAuth,
+    },
+    {
       path: '/admin/dashboard',
       name: 'AdminDashboard',
       component: () => import('@/views/AdminDashboardView.vue'),

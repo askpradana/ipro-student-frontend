@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useGetQuizApi } from '@/api/useGetQuiz'
-import type { QuizQuestion, QuizState } from '@/types/types'
-import { changeStructur } from '@/lib/changeAnswerStructur'
+import { usePostAnswerApi } from '@/api/usePostAnswers'
+import type { QuizQuestion, QuizState } from '@/types/quizTypes'
 
 export const useQuizStore = defineStore('quiz', {
   state: (): QuizState => ({
@@ -12,6 +12,7 @@ export const useQuizStore = defineStore('quiz', {
     isComplete: false,
     loading: false,
     error: null,
+    message: '',
     choice: [],
     typeQuiz: 0,
   }),
@@ -28,6 +29,21 @@ export const useQuizStore = defineStore('quiz', {
         this.answers = new Array(questions.length).fill(null)
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to load questions'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async submitFinalAnswer() {
+      const { postAnswer } = await usePostAnswerApi(this.answers)
+      this.loading = true
+      this.error = null
+
+      try {
+        const data = await postAnswer()
+        this.message = data.message
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : 'Failed to Submit Answer'
       } finally {
         this.loading = false
       }
@@ -51,7 +67,6 @@ export const useQuizStore = defineStore('quiz', {
         this.currentQuestionIndex++
       } else if (this.answers.every((answer) => answer !== null)) {
         this.isComplete = true
-        console.log(changeStructur(this.answers))
         // this.typeQuiz = 0
         // localStorage.removeItem('type-quiz')
       }
@@ -69,6 +84,7 @@ export const useQuizStore = defineStore('quiz', {
       this.currentQuestionIndex = 0
       this.answers = []
       this.typeQuiz = 0
+      localStorage.removeItem('type-quiz')
     },
   },
 

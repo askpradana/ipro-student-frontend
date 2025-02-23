@@ -11,7 +11,7 @@
 
     <!-- Main content area -->
     <h1 class="my-10 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600">
-      Selamat Datang di IPro Student
+      Selamat Datang {{ userStore.dataUser?.name }}
     </h1>
     <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-4">
       <!-- Quiz Button -->
@@ -77,17 +77,23 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TypeListData from '@/data/type-quiz.json'
 import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 import HelpUserButton from '@/components/buttons/helpUserButton.vue'
 import { notify } from '@/lib/notify'
+import { useUserStores } from '@/stores/userStores'
 
+const userStore = useUserStores()
 const router = useRouter()
 const authStore = useAuthStore()
 
 const showLogoutErrorModal = ref(false)
 const logoutErrorMessage = ref('')
+
+onMounted(() => {
+  userStore.initializeQuiz()
+})
 
 const handleTakeQuiz = (selectedTypeQuiz: number) => {
   // Will be implemented later

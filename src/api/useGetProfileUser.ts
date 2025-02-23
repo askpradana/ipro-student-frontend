@@ -1,13 +1,11 @@
 import { ref } from 'vue'
-import type { APIResponse } from '@/types/quizTypes'
-import { getTypeQuiz } from '@/lib/getTypeQuiz'
+import type { ResponseGetAPIUser } from '@/types/userTypes'
 
-export const useGetQuizApi = () => {
+export const useGetUserProfileApi = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const type = localStorage.getItem('type-quiz')
 
-  const fetchQuestions = async () => {
+  const fetchUserProfile = async () => {
     loading.value = true
     error.value = null
 
@@ -19,9 +17,8 @@ export const useGetQuizApi = () => {
 
       const user = JSON.parse(userStore)
       const token = user.token
-      const quizType = getTypeQuiz(type!)
 
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/quizzes/${quizType}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -33,7 +30,7 @@ export const useGetQuizApi = () => {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data: APIResponse = await response.json()
+      const data: ResponseGetAPIUser = await response.json()
       return data.data
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'An error occurred'
@@ -46,6 +43,6 @@ export const useGetQuizApi = () => {
   return {
     loading,
     error,
-    fetchQuestions,
+    fetchUserProfile,
   }
 }
