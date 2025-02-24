@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+  <UserDashboardSkeleton v-if="userStore.loading" />
+  <div v-else class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
     <!-- Logo area -->
     <div class="mb-12 animate-fade-in">
       <h1
@@ -83,6 +84,7 @@ import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 import HelpUserButton from '@/components/buttons/helpUserButton.vue'
 import { notify } from '@/lib/notify'
 import { useUserStores } from '@/stores/userStores'
+import UserDashboardSkeleton from '@/components/skeletons/UserDashboardSkeleton.vue'
 
 const userStore = useUserStores()
 const router = useRouter()

@@ -10,6 +10,7 @@ import ModalExitQuiz from '@/components/modals/ModalExitQuiz.vue'
 import TypeQuizData from '@/data/type-quiz.json'
 import SubmitForm from '@/components/QuizForms/SubmitForm.vue'
 import { getTypeQuizWithUnderscore } from '@/lib/getTypeQuiz'
+import ModalAlert from '@/components/modals/ModalAlert.vue'
 
 const store = useQuizStore()
 const router = useRouter()
@@ -35,9 +36,14 @@ const handleBack = () => {
   }
 }
 
+const showIntructionTest = (imageSrc: string) => {
+  modalStore.openModal()
+  modalStore.typeOfModal('show-instruction')
+  modalStore.imageSource = imageSrc
+}
+
 const startQuizHandler = (selectedTypeQuiz: number) => {
   const getTypeOfQuiz = getTypeQuizWithUnderscore(selectedTypeQuiz.toString())
-  console.log(getTypeOfQuiz)
 
   if (userStore[getTypeOfQuiz!]) {
     router.push('/completed')
@@ -85,6 +91,12 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
               {{ type.description }}
             </p>
             <button
+              @click="showIntructionTest(type.instructionImage)"
+              class="w-full mb-4 p-2 border border-teal-600 text-teal-600 rounded-xl font-semibold hover:bg-teal-100 active:scale-[0.98] transition-all duration-300"
+            >
+              Test Instructions
+            </button>
+            <button
               @click="startQuizHandler(type.typeQuiz)"
               class="w-full p-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300"
             >
@@ -110,6 +122,14 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
 
       <ModalContainer v-if="modalStore.typeModal == 'zoom-image'">
         <img :src="modalStore.imageSource" class="w-full" alt="zoom-image-quiz" />
+      </ModalContainer>
+
+      <ModalContainer v-if="modalStore.typeModal == 'show-instruction'">
+        <img :src="modalStore.imageSource" class="w-full md:h-[700px]" alt="zoom-image-quiz" />
+      </ModalContainer>
+
+      <ModalContainer v-if="modalStore.typeModal == 'show-alert'">
+        <ModalAlert title-modal="Alert" message="Please fill in all answers!" />
       </ModalContainer>
     </div>
   </div>

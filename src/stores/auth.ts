@@ -93,7 +93,7 @@ export const useAuthStore = defineStore('auth', {
           return true
         }
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`, {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${this.user?.token}`,

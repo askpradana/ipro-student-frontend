@@ -5,6 +5,29 @@
       {{ store.questions.length }}
     </h2>
 
+    <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
+      <span
+        v-for="(question, index) of store.questions"
+        :key="question.soalID"
+        :class="
+          store.currentQuestionIndex === index
+            ? 'bg-teal-600 text-white'
+            : '' || store.answers[index] !== null
+              ? 'bg-teal-400 text-white'
+              : ''
+        "
+        class="text-xs text-center w-6 py-1 rounded-sm border border-teal-600 hover:bg-teal-200"
+        @click="store.currentQuestionIndex = index"
+      >
+        {{ question.soalID }}
+      </span>
+    </div>
+
+    <p class="text-slate-800 mb-8 mt-4 text-justify text-xs md:text-base">
+      Dari 4 gambar di samping kanan, pilihlah mana yang merupakan hasil lipatan dari gambar sebelah
+      kiri!
+    </p>
+
     <img
       :src="DataImage[store.questions[store.currentQuestionIndex]?.soalID - 1]?.iamgeSrc"
       @click="
@@ -19,7 +42,7 @@
       <label
         v-for="(option, index) in store.questions[store.currentQuestionIndex]?.pilihan"
         :key="index"
-        class="flex items-center p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+        class="flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
         :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === index }"
       >
         <input
@@ -98,11 +121,20 @@ const zoomImage = (imageSrc: string) => {
 
 const handleOptionSelect = (option: string) => {
   selectedAnswer.value = option
+  store.submitAnswer(selectedAnswer.value)
 }
 
 const handleNext = () => {
   if (selectedAnswer.value !== null) {
-    store.submitAnswer(selectedAnswer.value)
+    if (
+      store.currentQuestionIndex === store.questions.length - 1 &&
+      !store.answers.every((answer) => answer !== null)
+    ) {
+      modalStore.openModal()
+      modalStore.typeModal = 'show-alert'
+      return
+    }
+
     store.nextQuestion()
   }
 }

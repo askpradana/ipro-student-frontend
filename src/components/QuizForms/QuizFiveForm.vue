@@ -4,14 +4,31 @@
       Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
       {{ store.questions.length }}
     </h2>
-    <p class="text-slate-600 mb-8 text-justify">{{ store.currentQuestion?.question }}</p>
+    <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
+      <span
+        v-for="(question, index) of store.questions"
+        :key="question.soalID"
+        :class="
+          store.currentQuestionIndex === index
+            ? 'bg-teal-600 text-white'
+            : '' || store.answers[index] !== null
+              ? 'bg-teal-400 text-white'
+              : ''
+        "
+        class="text-xs text-center rounded-sm w-6 py-1 border border-teal-600 hover:bg-teal-200"
+        @click="store.currentQuestionIndex = index"
+      >
+        {{ question.soalID }}
+      </span>
+    </div>
+    <p class="text-slate-700 mb-8 mt-8 text-justify">{{ store.currentQuestion?.question }}</p>
 
     <!-- Answer Options -->
     <div class="grid md:grid-cols-2 gap-4">
       <label
         v-for="(option, index) in store.questions[store.currentQuestionIndex]?.pilihan"
         :key="index"
-        class="flex items-center p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+        class="flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
         :class="{ 'border-teal-600 bg-teal-50/50': selectedIndex === index }"
       >
         <input
@@ -58,10 +75,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
+import { useModalStore } from '@/stores/modalStore'
 
 const store = useQuizStore()
 const selectedAnswer = ref<string[] | number | string | null>(null)
 const selectedIndex = ref<number | null>(null)
+const modalStore = useModalStore()
 
 // Watch for question changes
 watch(
@@ -82,12 +101,23 @@ watch(
 
 const handleOptionSelect = (option: string) => {
   selectedAnswer.value = option
+  store.submitAnswer(selectedAnswer.value)
 }
 
 const handleNext = () => {
   if (selectedAnswer.value !== null) {
-    store.submitAnswer(selectedAnswer.value)
-    store.nextQuestion()
+    if (selectedAnswer.value !== null) {
+      if (
+        store.currentQuestionIndex === store.questions.length - 1 &&
+        !store.answers.every((answer) => answer !== null)
+      ) {
+        modalStore.openModal()
+        modalStore.typeModal = 'show-alert'
+        return
+      }
+
+      store.nextQuestion()
+    }
   }
 }
 

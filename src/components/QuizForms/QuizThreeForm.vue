@@ -4,6 +4,25 @@
       Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
       {{ store.questions.length }}
     </h2>
+
+    <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
+      <span
+        v-for="(question, index) of store.questions"
+        :key="question.soalID"
+        :class="
+          store.currentQuestionIndex === index
+            ? 'bg-teal-600 text-white'
+            : '' || store.answers[index] !== null
+              ? 'bg-teal-400 text-white'
+              : ''
+        "
+        class="text-xs text-center rounded-sm w-6 py-1 border border-teal-600 hover:bg-teal-200"
+        @click="store.currentQuestionIndex = index"
+      >
+        {{ question.soalID }}
+      </span>
+    </div>
+
     <p class="text-slate-600 my-8 text-justify">
       Dari 4 pilihan kata yang ada, carilah kata - kata yang memiliki kemiripan makna atau yang
       bertentangan.
@@ -14,14 +33,16 @@
       <label
         v-for="(option, index) in store.questions[store.currentQuestionIndex]?.pilihan"
         :key="index"
-        class="flex items-center p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
-        :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswers.includes(option) }"
+        class="flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+        :class="{ 'border-teal-600 bg-teal-50/50 ': selectedAnswers.includes(option) }"
       >
         <div class="relative">
           <input
             type="checkbox"
             :value="option"
+            :disabled="isDisabled(option)"
             v-model="selectedAnswers"
+            @change="handleAnswerChange"
             class="custom-checkbox opacity-0 absolute h-5 w-5 cursor-pointer"
           />
           <div
@@ -67,8 +88,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
+import { useModalStore } from '@/stores/modalStore'
 
 const store = useQuizStore()
+const modalStore = useModalStore()
 const selectedAnswers = ref<string[]>([])
 
 watch(
@@ -80,9 +103,25 @@ watch(
   },
 )
 
+const isDisabled = (option: string): boolean => {
+  return !selectedAnswers.value.includes(option) && selectedAnswers.value.length >= 2
+}
+
+const handleAnswerChange = () => {
+  store.submitAnswer(selectedAnswers.value)
+}
+
 const handleNext = () => {
-  if (selectedAnswers.value.length > 0) {
-    store.submitAnswer(selectedAnswers.value)
+  if (selectedAnswers.value !== null) {
+    if (
+      store.currentQuestionIndex === store.questions.length - 1 &&
+      !store.answers.every((answer) => answer !== null)
+    ) {
+      modalStore.openModal()
+      modalStore.typeModal = 'show-alert'
+      return
+    }
+
     store.nextQuestion()
   }
 }

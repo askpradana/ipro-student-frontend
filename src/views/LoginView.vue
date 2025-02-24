@@ -16,6 +16,7 @@
             v-model="email"
             class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
             required
+            placeholder="Email"
           />
         </div>
         <div>
@@ -25,6 +26,7 @@
               :type="showPassword ? 'text' : 'password'"
               v-model="password"
               class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all duration-300"
+              placeholder="Password"
               required
             />
             <button

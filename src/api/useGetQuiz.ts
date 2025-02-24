@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import type { APIResponse } from '@/types/quizTypes'
 import { getTypeQuiz } from '@/lib/getTypeQuiz'
+import { useAuthStore } from '@/stores/auth'
 
 export const useGetQuizApi = () => {
   const loading = ref(false)
@@ -12,13 +13,13 @@ export const useGetQuizApi = () => {
     error.value = null
 
     try {
-      const userStore = localStorage.getItem('user')
+      const userStore = useAuthStore()
+
       if (!userStore) {
         throw new Error('No user token found')
       }
 
-      const user = JSON.parse(userStore)
-      const token = user.token
+      const token = userStore.user?.token
       const quizType = getTypeQuiz(type!)
 
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/quizzes/${quizType}`, {

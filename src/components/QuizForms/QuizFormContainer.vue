@@ -4,7 +4,7 @@
 
   <template v-else>
     <h1 class="font-bold mb-8 text-xl md:text-2xl">{{ getTitle() }}</h1>
-    <ProgressBar />
+    <!-- <ProgressBar /> -->
     <template v-if="typeQuiz == '1'">
       <QuizThreeForm />
     </template>
@@ -25,7 +25,7 @@ import QuizThreeForm from './QuizThreeForm.vue'
 import QuizFiveForm from './QuizFiveForm.vue'
 import QuizSixForm from './QuizSixForm.vue'
 import QuizSevenForm from './QuizSevenForm.vue'
-import ProgressBar from '@/components/QuizForms/ProgressBar.vue'
+// import ProgressBar from '@/components/QuizForms/ProgressBar.vue'
 import GetQuizSkeleton from '../skeletons/GetQuizSkeleton.vue'
 import { useQuizStore } from '@/stores/quizStore'
 
