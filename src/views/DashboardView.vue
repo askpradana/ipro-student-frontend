@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeMount } from 'vue'
 import TypeListData from '@/data/type-quiz.json'
 import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 import HelpUserButton from '@/components/buttons/helpUserButton.vue'
@@ -95,6 +95,12 @@ const logoutErrorMessage = ref('')
 
 onMounted(() => {
   userStore.initializeQuiz()
+})
+
+onBeforeMount(() => {
+  if (authStore.user?.role !== 'USER') {
+    router.push('/viewer/dashboard')
+  }
 })
 
 const handleTakeQuiz = (selectedTypeQuiz: number) => {

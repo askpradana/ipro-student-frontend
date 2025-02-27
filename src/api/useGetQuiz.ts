@@ -14,12 +14,11 @@ export const useGetQuizApi = () => {
 
     try {
       const userStore = useAuthStore()
+      const token = userStore.user?.token
 
-      if (!userStore) {
+      if (!token) {
         throw new Error('No user token found')
       }
-
-      const token = userStore.user?.token
       const quizType = getTypeQuiz(type!)
 
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/quizzes/${quizType}`, {

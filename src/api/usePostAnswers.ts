@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { changeStructur } from '@/lib/changeAnswerStructur'
 import type { SubmitAPIResponse } from '@/types/quizTypes'
 import { getTypeQuiz } from '@/lib/getTypeQuiz'
+import { useAuthStore } from '@/stores/auth'
 
 export const usePostAnswerApi = (answers: (string | number | string[] | null)[]) => {
   const loading = ref(false)
@@ -10,19 +11,18 @@ export const usePostAnswerApi = (answers: (string | number | string[] | null)[])
   const dataAnswer = {
     data: changeStructur(answers),
   }
+  const authStore = useAuthStore()
 
   const postAnswer = async () => {
     loading.value = true
     error.value = null
 
     try {
-      const userStore = localStorage.getItem('user')
-      if (!userStore) {
+      const token = authStore.user?.token
+      if (!token) {
         throw new Error('No user token found')
       }
 
-      const user = JSON.parse(userStore)
-      const token = user.token
       const quizType = getTypeQuiz(type!)
 
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/quizzes/${quizType}/answers`, {

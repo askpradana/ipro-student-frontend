@@ -12,7 +12,7 @@
         :class="
           store.currentQuestionIndex === index
             ? 'bg-teal-600 text-white'
-            : '' || store.answers[index] !== null
+            : store.answers[index] !== null
               ? 'bg-teal-400 text-white'
               : ''
         "
@@ -23,7 +23,7 @@
       </span>
     </div>
 
-    <p class="text-slate-600 my-8 text-justify">
+    <p class="text-slate-800 my-8 text-justify">
       Dari 4 pilihan kata yang ada, carilah kata - kata yang memiliki kemiripan makna atau yang
       bertentangan.
     </p>
@@ -76,7 +76,7 @@
       </button>
       <button
         @click="handleNext"
-        :disabled="selectedAnswers.length === 0"
+        :disabled="selectedAnswers.length === 0 || selectedAnswers.length < 2"
         class="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
       >
         {{ store.currentQuestionIndex === store.questions.length - 1 ? 'Complete' : 'Next' }}

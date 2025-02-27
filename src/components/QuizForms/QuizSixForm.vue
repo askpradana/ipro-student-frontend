@@ -11,7 +11,7 @@
         :class="
           store.currentQuestionIndex === index
             ? 'bg-teal-600 text-white'
-            : '' || store.answers[index] !== null
+            : store.answers[index] !== null
               ? 'bg-teal-400 text-white'
               : ''
         "
@@ -22,7 +22,7 @@
       </span>
     </div>
 
-    <p class="text-black my-8">
+    <p class="text-slate-800 my-8">
       Telitilah apakah rangkaian angka atau huruf yang berada di depan dan di belakang garis pemisah
       itu sama ataukah berbeda.
     </p>

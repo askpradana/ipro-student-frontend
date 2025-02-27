@@ -12,7 +12,7 @@
         :class="
           store.currentQuestionIndex === index
             ? 'bg-teal-600 text-white'
-            : '' || store.answers[index] !== null
+            : store.answers[index] !== null
               ? 'bg-teal-400 text-white'
               : ''
         "

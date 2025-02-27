@@ -155,6 +155,8 @@ const handleLogin = async () => {
       router.push('/admin/dashboard')
     } else if (role === 'USER') {
       router.push('/dashboard')
+    } else if (role === 'VIEWER') {
+      router.push('/viewer/dashboard')
     } else {
       console.error('Unknown role:', role)
     }

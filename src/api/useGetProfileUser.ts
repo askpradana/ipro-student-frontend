@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { ResponseGetAPIUser } from '@/types/userTypes'
+import { useAuthStore } from '@/stores/auth'
 
 export const useGetUserProfileApi = () => {
   const loading = ref(false)
@@ -10,13 +11,12 @@ export const useGetUserProfileApi = () => {
     error.value = null
 
     try {
-      const userStore = localStorage.getItem('user')
-      if (!userStore) {
+      const authStore = useAuthStore()
+      const token = authStore.user?.token
+
+      if (!token) {
         throw new Error('No user token found')
       }
-
-      const user = JSON.parse(userStore)
-      const token = user.token
 
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
         method: 'GET',

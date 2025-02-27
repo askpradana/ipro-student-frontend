@@ -11,7 +11,7 @@
         :class="
           store.currentQuestionIndex === index
             ? 'bg-teal-600 text-white'
-            : '' || store.answers[index] !== null
+            : store.answers[index] !== null
               ? 'bg-teal-400 text-white'
               : ''
         "
@@ -21,7 +21,7 @@
         {{ question.soalID }}
       </span>
     </div>
-    <p class="text-slate-700 mb-8 mt-8 text-justify">{{ store.currentQuestion?.question }}</p>
+    <p class="text-slate-800 mb-8 mt-8 text-justify">{{ store.currentQuestion?.question }}</p>
 
     <!-- Answer Options -->
     <div class="grid md:grid-cols-2 gap-4">
