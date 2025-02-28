@@ -126,7 +126,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/admin/users`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users`, {
         headers: {
           Authorization: `Bearer ${authStore.user?.token}`,
         },
@@ -166,7 +166,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const updateUserApi = async (user: User) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${user.id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${authStore.user?.token}`,

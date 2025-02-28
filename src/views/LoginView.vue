@@ -16,6 +16,7 @@
             v-model="email"
             class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
             required
+            placeholder="Email"
           />
         </div>
         <div>
@@ -25,6 +26,7 @@
               :type="showPassword ? 'text' : 'password'"
               v-model="password"
               class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all duration-300"
+              placeholder="Password"
               required
             />
             <button
@@ -149,13 +151,12 @@ const handleLogin = async () => {
 
     const role = await authStore.login(email.value, password.value)
 
-    // Add console.log to debug the role
-    console.log('User role:', role)
-
     if (role === 'ADMIN') {
       router.push('/admin/dashboard')
     } else if (role === 'USER') {
       router.push('/dashboard')
+    } else if (role === 'VIEWER') {
+      router.push('/viewer/dashboard')
     } else {
       console.error('Unknown role:', role)
     }

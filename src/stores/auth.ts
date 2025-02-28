@@ -26,6 +26,9 @@ export const useAuthStore = defineStore('auth', {
     isAdmin(): boolean {
       return this.user?.role === 'admin'
     },
+    isViewer(): boolean {
+      return this.user?.role === 'VIEWER'
+    },
     getToken(): string | null {
       return this.user?.token || null
     },
@@ -44,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         // Make API call to login endpoint
-        const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/login`, {
+        const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -93,7 +96,7 @@ export const useAuthStore = defineStore('auth', {
           return true
         }
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`, {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${this.user?.token}`,
