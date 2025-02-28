@@ -4,6 +4,7 @@ interface ModalState {
   isOpenModal: boolean
   typeModal: string
   imageSource: string
+  message: string
 }
 
 export const useModalStore = defineStore('modal', {
@@ -11,6 +12,7 @@ export const useModalStore = defineStore('modal', {
     isOpenModal: false,
     typeModal: '',
     imageSource: '',
+    message: '',
   }),
 
   actions: {

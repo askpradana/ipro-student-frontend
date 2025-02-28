@@ -87,15 +87,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useModalStore } from '@/stores/modalStore'
+import { useUserStores } from '@/stores/userStores'
+import { useQuizSecurity } from '@/lib/useQuizSecurity'
 import DataImage from '@/data/gambar-soal.json'
 
 const store = useQuizStore()
 const modalStore = useModalStore()
 const selectedAnswer = ref<string[] | number | string | null>(null)
 const selectedIndex = ref<number | null>(null)
+const userStore = useUserStores()
+
+const { addWatermark } = useQuizSecurity({
+  preventRightClick: true,
+  preventKeyboardShortcuts: true,
+  enforceFullscreen: false, // Set true untuk paksa fullscreen
+  detectTabChange: true,
+  detectMouseLeave: true,
+  addWatermark: true,
+  // Callback untuk menampilkan peringatan modal
+  warningCallback: (violationType) => {
+    modalStore.message = violationType
+    modalStore.openModal()
+    modalStore.typeModal = 'violation-warning'
+  },
+})
+
+// Initialize security features when component mounts
+onMounted(() => {
+  // Tambahkan watermark dengan ID peserta (bisa dari auth store)
+  const userEmail = userStore.dataUser?.email
+  addWatermark(userEmail as string)
+})
 
 watch(
   () => store.currentQuestionIndex,

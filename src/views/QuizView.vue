@@ -11,6 +11,7 @@ import TypeQuizData from '@/data/type-quiz.json'
 import SubmitForm from '@/components/QuizForms/SubmitForm.vue'
 import { getTypeQuizWithUnderscore } from '@/lib/getTypeQuiz'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
+import ModalWarningViolation from '@/components/modals/ModalWarningViolation.vue'
 
 const store = useQuizStore()
 const router = useRouter()
@@ -78,7 +79,7 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
       </button>
     </div>
 
-    <div class="max-w-4xl mx-auto md:mt-20">
+    <div class="max-w-4xl mx-auto md:mt-24">
       <!-- Guide Section -->
       <div v-if="!store.quizStarted" class="grid gap-4 md:mt-48">
         <template v-for="type in TypeQuizData" :key="type.id">
@@ -130,6 +131,9 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
 
       <ModalContainer v-if="modalStore.typeModal == 'show-alert'">
         <ModalAlert title-modal="Alert" message="Please fill in all answers!" />
+      </ModalContainer>
+      <ModalContainer v-if="modalStore.typeModal == 'violation-warning'">
+        <ModalWarningViolation />
       </ModalContainer>
     </div>
   </div>

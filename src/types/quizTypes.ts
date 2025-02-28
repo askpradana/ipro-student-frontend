@@ -18,6 +18,12 @@ export interface SubmitAPIResponse {
   status: string
 }
 
+export interface Violation {
+  type: string
+  timestamp: string
+  questionIndex: number
+}
+
 export interface QuizState {
   questions: QuizQuestion[]
   answers: (string[] | number | string | null)[]
@@ -29,6 +35,10 @@ export interface QuizState {
   message: string
   choice: string[]
   typeQuiz: number
+  violations: Violation[]
+  securityEnabled: boolean
+  quizStartTime: null | Date
+  quizEndTime: null | Date
 }
 
 export interface AnswerStructur {
