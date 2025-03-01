@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 export interface UserData {
   user_id: string
   email: string
+  phone_number: string
   attempt_login: number
   created_by: string
   created_at: string

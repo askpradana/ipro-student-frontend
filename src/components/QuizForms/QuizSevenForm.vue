@@ -103,7 +103,7 @@ const userStore = useUserStores()
 const { addWatermark } = useQuizSecurity({
   preventRightClick: true,
   preventKeyboardShortcuts: true,
-  enforceFullscreen: false, // Set true untuk paksa fullscreen
+  enforceFullscreen: true, // Set true untuk paksa fullscreen
   detectTabChange: true,
   detectMouseLeave: true,
   addWatermark: true,
