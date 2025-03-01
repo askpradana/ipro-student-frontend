@@ -119,6 +119,13 @@ const editingUser = ref<EditingUser>({
   attemptLogin: 0,
   createdAt: '',
   createdBy: '',
+  quizStatus: {
+    tiga: false,
+    lima: false,
+    enam: false,
+    tujuh: false,
+    ppi: false,
+  },
 })
 
 const tableHeaders = [
@@ -160,6 +167,7 @@ const openEditModal = (user: User): void => {
     attemptLogin: user.attemptLogin,
     createdAt: formatDate(user.createdAt),
     createdBy: user.createdBy,
+    quizStatus: user.quizStatus,
   }
   showEditModal.value = true
 }
@@ -178,6 +186,13 @@ const closeEditModal = (): void => {
     attemptLogin: 0,
     createdAt: '',
     createdBy: '',
+    quizStatus: {
+      tiga: false,
+      lima: false,
+      enam: false,
+      tujuh: false,
+      ppi: false,
+    },
   }
 }
 

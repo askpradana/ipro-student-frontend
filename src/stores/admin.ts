@@ -26,6 +26,13 @@ export interface User {
   createdAt: Date
   createdBy: string
   phoneNumber?: string
+  quizStatus: {
+    tiga: boolean
+    lima: boolean
+    enam: boolean
+    tujuh: boolean
+    ppi: boolean
+  }
 }
 
 // const generateMockUsers = (count: number = 51): User[] => {
@@ -160,7 +167,6 @@ export const useAdminStore = defineStore('admin', () => {
       }
 
       users.value = apiResponse.data.data.map(
-        // TODO bikin logout kalau token invalid
         (apiUser: UserData): User => ({
           id: apiUser.user_id,
           name: apiUser.name || ' - ',
@@ -172,13 +178,11 @@ export const useAdminStore = defineStore('admin', () => {
           attemptLogin: apiUser.attempt_login,
           testPeriod:
             apiUser.quiz_period !== '0001-01-01T00:00:00Z' ? new Date(apiUser.quiz_period) : null,
-          testCompletedAt:
-            apiUser.quiz_completed_at !== '0001-01-01T00:00:00Z'
-              ? new Date(apiUser.quiz_completed_at)
-              : null,
+          testCompletedAt: null,
           createdAt: new Date(apiUser.created_at),
           createdBy: apiUser.created_by,
           phoneNumber: apiUser.phone_number,
+          quizStatus: apiUser.quiz_status,
         }),
       )
     } catch (error) {
