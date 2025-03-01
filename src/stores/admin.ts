@@ -25,6 +25,7 @@ export interface User {
   testCompletedAt: Date | null
   createdAt: Date
   createdBy: string
+  phoneNumber?: string
 }
 
 // const generateMockUsers = (count: number = 51): User[] => {
@@ -92,36 +93,57 @@ export const useAdminStore = defineStore('admin', () => {
     return true
   }
 
-  const addMultipleUsers = async (newUsers: Partial<User>[]): Promise<void> => {
-    // Mock implementation
-    const createdUsers = newUsers.map((user, index) => ({
-      id: `USR${String(users.value.length + index + 1).padStart(3, '0')}`,
-      name: user.name || '',
-      email: user.email || '',
-      grade: user.grade || '',
-      school: user.school || '',
-      lastLogin: null,
-      attemptLogin: 0,
-      testPeriod: user.testPeriod || null,
-      testCompletedAt: null,
-      createdAt: new Date(),
-      createdBy: 'Admin001',
-    }))
+  interface NewViewer {
+    email: string
+    name: string
+    phoneNumber: string
+  }
 
-    users.value = [...users.value, ...createdUsers]
-
-    // API implementation (commented out for future use)
-    /*
+  const addMultipleUsers = async (
+    newUsers: Partial<User>[],
+    viewers: NewViewer[],
+  ): Promise<void> => {
     try {
-      // Assuming you have an API endpoint for adding multiple users
-      const response = await axios.post('/api/users/bulk', { users: newUsers })
-      // Update the local store with the new users
-      users.value = [...users.value, ...response.data]
+      const requestBody = {
+        school: newUsers[0].school,
+        users: newUsers.map((user) => ({
+          email: user.email,
+          name: user.name,
+          grade: user.grade,
+          phoneNumber: user.phoneNumber || '',
+        })),
+        viewer: viewers.map((viewer) => ({
+          email: viewer.email,
+          name: viewer.name,
+          phoneNumber: viewer.phoneNumber || '',
+        })),
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/batch`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${authStore.user?.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      const data = await response.json()
+
+      if (response.status === 409) {
+        throw new Error(data.message)
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to add users. Please try again.')
+      }
+
+      // Refresh users list after successful addition
+      await fetchUsers()
     } catch (error) {
-      console.error('Error adding multiple users:', error)
+      console.error('Error adding users:', error)
       throw error
     }
-    */
   }
 
   const fetchUsers = async () => {
@@ -156,6 +178,7 @@ export const useAdminStore = defineStore('admin', () => {
               : null,
           createdAt: new Date(apiUser.created_at),
           createdBy: apiUser.created_by,
+          phoneNumber: apiUser.phone_number,
         }),
       )
     } catch (error) {
