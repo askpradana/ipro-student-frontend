@@ -259,7 +259,6 @@ const removeViewer = (index: number) => {
 }
 
 const isFormValid = computed(() => {
-
   const hasSchool = !!newUsersData.value.school.trim()
   const hasPeriod = !!newUsersData.value.testPeriod
   const hasValidUsers =
@@ -337,7 +336,6 @@ const saveNewUsers = async () => {
     const errorMessage =
       error instanceof Error ? error.message : 'Failed to add users. Please try again.'
     notify(errorMessage, 'error')
-
   }
 }
 </script>

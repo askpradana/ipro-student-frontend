@@ -9,7 +9,6 @@ export interface EditingUser extends Omit<User, 'testPeriod' | 'lastLogin' | 'cr
   lastLogin: string | null
   createdAt: string
   name: string
-  // testCompletedAt: string | null
 }
 
 export interface User {
@@ -21,7 +20,6 @@ export interface User {
   lastLogin: Date | null
   attemptLogin: number
   testPeriod: Date | null
-  testCompletedAt: Date | null
   createdAt: Date
   createdBy: string
   phoneNumber?: string
@@ -45,13 +43,6 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const updateUser = async (updatedUser: User): Promise<void> => {
-    const index = users.value.findIndex((user) => user.id === updatedUser.id)
-    if (index !== -1) {
-      users.value[index] = updatedUser
-    }
-  }
-
   interface NewViewer {
     email: string
     name: string
@@ -66,7 +57,6 @@ export const useAdminStore = defineStore('admin', () => {
       const requestBody = {
         school: newUsers[0].school,
         period: newUsers[0].testPeriod,
-
         users: newUsers.map((user) => ({
           email: user.email,
           name: user.name,
@@ -132,12 +122,10 @@ export const useAdminStore = defineStore('admin', () => {
           attemptLogin: apiUser.attempt_login,
           testPeriod:
             apiUser.quiz_period !== '0001-01-01T00:00:00Z' ? new Date(apiUser.quiz_period) : null,
-          testCompletedAt: null,
           createdAt: new Date(apiUser.created_at),
           createdBy: apiUser.created_by,
           phoneNumber: apiUser.phone_number,
           quizStatus: apiUser.quiz_status,
-
         }),
       )
     } catch (error) {
@@ -146,15 +134,21 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const updateUserApi = async (user: User) => {
+  const updateUserApi = async (user: EditingUser) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${user.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/edit`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${authStore.user?.token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify({
+          user_id: user.id,
+          name: user.name,
+          email: user.email,
+          grade: user.grade,
+          quiz_period: user.testPeriod,
+        }),
       })
 
       return await handleApiResponse(response)
@@ -166,7 +160,6 @@ export const useAdminStore = defineStore('admin', () => {
   return {
     users,
     deleteUser,
-    updateUser,
     addMultipleUsers,
     fetchUsers,
     updateUserApi,
