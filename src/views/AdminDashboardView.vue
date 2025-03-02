@@ -98,9 +98,9 @@
                   {{ user.grade }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.school }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {{ user.testCompletedAt ? formatDate(user.testCompletedAt) : 'Not taken yet' }}
-                </td>
+                </td> -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {{ formatDate(user.testPeriod) }}
                 </td>
@@ -123,18 +123,6 @@
                       class="bg-blue-100 text-blue-600 px-3 py-1 rounded hover:bg-blue-200"
                     >
                       Edit
-                    </button>
-                    <button
-                      @click="adminStore.resetAttempts(user.id)"
-                      class="bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200"
-                    >
-                      Reset Login
-                    </button>
-                    <button
-                      @click="handleResetPassword(user.id)"
-                      class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
-                    >
-                      Reset Password
                     </button>
                     <button
                       @click="handleDeleteUser(user.id)"
@@ -239,7 +227,7 @@
               <option v-for="grade in GRADES" :key="grade" :value="grade">Grade {{ grade }}</option>
             </select>
           </div>
-          <div>
+          <!-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">School</label>
             <select
               v-model="editingUser.school"
@@ -249,15 +237,15 @@
                 {{ school }}
               </option>
             </select>
-          </div>
-          <div>
+          </div> -->
+          <!-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Test Completion</label>
             <input
               v-model="editingUser.testCompletedAt"
               type="datetime-local"
               class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
             />
-          </div>
+          </div> -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
             <input
@@ -280,7 +268,7 @@
             Cancel
           </button>
           <button
-            @click="saveChanges"
+            @click="saveChanges(editingUser)"
             class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
           >
             Save Changes
@@ -307,6 +295,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Add Modal Components -->
+    <ModalContainer>
+      <ModalAlert
+        v-if="modalStore.typeModal === 'success' || modalStore.typeModal === 'error'"
+        :title-modal="modalStore.typeModal === 'success' ? 'Success' : 'Error'"
+        :message="modalStore.message"
+      />
+    </ModalContainer>
   </div>
 </template>
 
@@ -315,6 +312,9 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { useModalStore } from '@/stores/modalStore'
+import ModalContainer from '@/components/modals/ModalContainer.vue'
+import ModalAlert from '@/components/modals/ModalAlert.vue'
 
 const adminStore = useAdminStore()
 const authStore = useAuthStore()
@@ -330,12 +330,18 @@ const editingUser = ref<EditingUser>({
   email: '',
   grade: '',
   school: '',
-  testCompletedAt: null,
   testPeriod: '',
   lastLogin: null,
   attemptLogin: 0,
   createdAt: '',
   createdBy: '',
+  quizStatus: {
+    tiga: false,
+    lima: false,
+    enam: false,
+    tujuh: false,
+    ppi: false,
+  },
 })
 
 const tableHeaders = [
@@ -343,7 +349,7 @@ const tableHeaders = [
   'Email',
   'Grade',
   'School',
-  'Test Completion',
+  // 'Test Completion',
   'Test Period',
   'Last Login',
   'Login Attempts',
@@ -353,7 +359,7 @@ const tableHeaders = [
 ] as const
 
 const GRADES = ['9', '10', '11', '12'] as const
-const SCHOOLS = ['Springfield High School', 'Riverside Academy', 'Central Valley School'] as const
+// const SCHOOLS = ['Springfield High School', 'Riverside Academy', 'Central Valley School'] as const
 
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
@@ -391,12 +397,12 @@ const openEditModal = (user: User): void => {
     email: user.email,
     grade: user.grade,
     school: user.school,
-    testCompletedAt: user.testCompletedAt ? formatDate(user.testCompletedAt) : null,
     testPeriod: formatDate(user.testPeriod),
     lastLogin: formatDate(user.lastLogin),
     attemptLogin: user.attemptLogin,
     createdAt: formatDate(user.createdAt),
     createdBy: user.createdBy,
+    quizStatus: user.quizStatus,
   }
   showEditModal.value = true
 }
@@ -409,58 +415,50 @@ const closeEditModal = (): void => {
     email: '',
     grade: '',
     school: '',
-    testCompletedAt: null,
     testPeriod: '',
     lastLogin: null,
     attemptLogin: 0,
     createdAt: '',
     createdBy: '',
+    quizStatus: {
+      tiga: false,
+      lima: false,
+      enam: false,
+      tujuh: false,
+      ppi: false,
+    },
   }
 }
 
-const saveChanges = async (): Promise<void> => {
+const modalStore = useModalStore()
+
+const saveChanges = async (updatedUser: EditingUser) => {
   try {
-    const updatedUser: User = {
-      ...editingUser.value,
-      testPeriod: editingUser.value.testPeriod ? new Date(editingUser.value.testPeriod) : null,
-      lastLogin: editingUser.value.lastLogin ? new Date(editingUser.value.lastLogin) : null,
-      createdAt: new Date(editingUser.value.createdAt),
-      testCompletedAt: editingUser.value.testCompletedAt
-        ? new Date(editingUser.value.testCompletedAt)
-        : null,
-    }
-    await adminStore.updateUser(updatedUser)
-    closeEditModal()
-  } catch (error) {
+    await adminStore.updateUserApi({
+      ...updatedUser,
+      testPeriod: updatedUser.testPeriod || '',
+      lastLogin: updatedUser.lastLogin || null,
+      createdAt: updatedUser.createdAt || '',
+    })
+    showEditModal.value = false
+    fetchData()
+  } catch (error: unknown) {
     console.error('Error saving changes:', error)
-    alert('Failed to save changes. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to save changes. Please try again.'
+    modalStore.openModal()
   }
 }
 
-const handleDeleteUser = async (userId: string): Promise<void> => {
+const handleDeleteUser = async (userId: string) => {
   try {
-    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      await adminStore.deleteUser(userId)
-    }
-  } catch (error) {
+    await adminStore.deleteUser(userId)
+    fetchData()
+  } catch (error: unknown) {
     console.error('Error deleting user:', error)
-    alert('Failed to delete user. Please try again.')
-  }
-}
-
-const handleResetPassword = async (userId: string): Promise<void> => {
-  try {
-    if (confirm("Are you sure you want to reset this user's password?")) {
-      const success = await adminStore.resetPassword(userId)
-      if (success) {
-        alert('Password has been reset successfully')
-      } else {
-        alert('Failed to reset password')
-      }
-    }
-  } catch (error) {
-    console.error('Error resetting password:', error)
-    alert('Failed to reset password. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to delete user. Please try again.'
+    modalStore.openModal()
   }
 }
 

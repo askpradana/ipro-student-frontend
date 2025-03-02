@@ -31,10 +31,20 @@
       </div>
     </div>
 
+    <!-- Add validation messages -->
+    <div v-if="hasSubmitAttempt && validationMessages.length > 0" class="mb-6">
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <h3 class="text-red-700 font-medium mb-2">Please fix the following errors:</h3>
+        <ul class="list-disc list-inside text-red-600">
+          <li v-for="message in validationMessages" :key="message">{{ message }}</li>
+        </ul>
+      </div>
+    </div>
+
     <!-- Students Section -->
     <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">Students</h2>
+        <h2 class="text-lg font-semibold">Students <span class="text-red-500">*</span></h2>
         <button
           @click="addStudent"
           class="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700"
@@ -101,7 +111,8 @@
     <!-- Viewers Section -->
     <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">Viewers</h2>
+        <h2 class="text-lg font-semibold">Viewers <span class="text-red-500">*</span></h2>
+
         <button
           @click="addViewer"
           class="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700"
@@ -166,11 +177,19 @@
       <button
         @click="saveNewUsers"
         class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
-        :disabled="!isFormValid"
       >
         Save
       </button>
     </div>
+
+    <!-- Add Modal Components -->
+    <ModalContainer>
+      <ModalAlert
+        v-if="modalStore.typeModal === 'success' || modalStore.typeModal === 'error'"
+        :title-modal="modalStore.typeModal === 'success' ? 'Success' : 'Error'"
+        :message="modalStore.message"
+      />
+    </ModalContainer>
   </div>
 </template>
 
@@ -178,12 +197,18 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAdminStore } from '@/stores/admin'
+import { useModalStore } from '@/stores/modalStore'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import ModalContainer from '@/components/modals/ModalContainer.vue'
+import ModalAlert from '@/components/modals/ModalAlert.vue'
+import { notify } from '@/lib/notify'
 
 const router = useRouter()
 const adminStore = useAdminStore()
+const modalStore = useModalStore()
 const GRADES = ['9', '10', '11', '12']
+const hasSubmitAttempt = ref(false)
 
 interface NewUser {
   name: string
@@ -230,18 +255,69 @@ const removeViewer = (index: number) => {
 }
 
 const isFormValid = computed(() => {
-  return (
-    newUsersData.value.school &&
-    newUsersData.value.testPeriod &&
+  const hasSchool = !!newUsersData.value.school.trim()
+  const hasPeriod = !!newUsersData.value.testPeriod
+  const hasValidUsers =
     newUsersData.value.users.length > 0 &&
     newUsersData.value.users.every(
-      (user) => user.name && user.email && user.grade && user.phoneNumber,
+      (user) => user.name.trim() && user.email.trim() && user.grade && user.phoneNumber.trim(),
     )
-  )
+  const hasValidViewers =
+    newUsersData.value.viewers.length > 0 &&
+    newUsersData.value.viewers.every(
+      (viewer) => viewer.name.trim() && viewer.email.trim() && viewer.phoneNumber.trim(),
+    )
+
+  return hasSchool && hasPeriod && hasValidUsers && hasValidViewers
+})
+
+// Add validation messages
+const validationMessages = computed(() => {
+  const messages = []
+
+  if (!newUsersData.value.school.trim()) {
+    messages.push('School name is required')
+  }
+
+  if (!newUsersData.value.testPeriod) {
+    messages.push('Test period is required')
+  }
+
+  if (newUsersData.value.users.length === 0) {
+    messages.push('At least one student is required')
+  } else {
+    const invalidUsers = newUsersData.value.users.filter(
+      (user) => !user.name.trim() || !user.email.trim() || !user.grade || !user.phoneNumber.trim(),
+    )
+    if (invalidUsers.length > 0) {
+      messages.push('All student fields (name, email, grade, phone number) are required')
+    }
+  }
+
+  if (newUsersData.value.viewers.length === 0) {
+    messages.push('At least one viewer is required')
+  } else {
+    const invalidViewers = newUsersData.value.viewers.filter(
+      (viewer) => !viewer.name.trim() || !viewer.email.trim() || !viewer.phoneNumber.trim(),
+    )
+    if (invalidViewers.length > 0) {
+      messages.push('All viewer fields (name, email, phone number) are required')
+    }
+  }
+
+  return messages
 })
 
 const saveNewUsers = async () => {
   try {
+    hasSubmitAttempt.value = true
+
+    if (!isFormValid.value) {
+      // Scroll to the top where validation messages are shown
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     const users = newUsersData.value.users.map((user) => ({
       ...user,
       school: newUsersData.value.school,
@@ -249,11 +325,13 @@ const saveNewUsers = async () => {
     }))
 
     await adminStore.addMultipleUsers(users, newUsersData.value.viewers)
-    alert('Users added successfully!')
+
+    notify('Users added successfully!', 'success')
     router.push('/admin/dashboard')
   } catch (error) {
-    console.error('Error adding users:', error)
-    alert(error instanceof Error ? error.message : 'Failed to add users. Please try again.')
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to add users. Please try again.'
+    notify(errorMessage, 'error')
   }
 }
 </script>

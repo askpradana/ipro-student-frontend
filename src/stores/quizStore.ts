@@ -75,8 +75,7 @@ export const useQuizStore = defineStore('quiz', {
       } else if (this.answers.every((answer) => answer !== null)) {
         this.isComplete = true
         this.quizEndTime = new Date() // Catat waktu selesai
-        console.log(this.violations)
-
+        // console.info(this.violations)
         // this.typeQuiz = 0
         // localStorage.removeItem('type-quiz')
       }
@@ -113,8 +112,7 @@ export const useQuizStore = defineStore('quiz', {
 
     // Metode untuk mengirim log pelanggaran ke server (implementasi bergantung pada API Anda)
     async logViolationToServer(violation: Violation) {
-      console.log(violation)
-
+      console.info(violation.type)
       // Implementasi ini bergantung pada API yang Anda miliki
       // Contoh implementasi:
       /*
@@ -168,5 +166,23 @@ export const useQuizStore = defineStore('quiz', {
       })
       return types
     },
+
+    getQuizCompletionStatus:
+      () =>
+      (status: {
+        tiga: boolean
+        lima: boolean
+        enam: boolean
+        tujuh: boolean
+        ppi: boolean
+      }): string => {
+        const completedQuizzes = Object.entries(status)
+          .filter(([, completed]) => completed)
+          .map(([quiz]) => quiz.toUpperCase())
+
+        if (completedQuizzes.length === 0) return 'Not started yet'
+        if (completedQuizzes.length === 5) return 'All quizzes completed'
+        return `Completed: ${completedQuizzes.join(', ')}`
+      },
   },
 })

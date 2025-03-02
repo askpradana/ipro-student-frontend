@@ -55,7 +55,6 @@
           :users="paginatedUsers"
           :tableHeaders="tableHeaders"
           @edit="openEditModal"
-          @reset-attempts="adminStore.resetAttempts"
           @reset-password="handleResetPassword"
           @delete="handleDeleteUser"
           @calculate="HandleCalculateUser"
@@ -71,9 +70,8 @@
       :show="showEditModal"
       :user="editingUser"
       :grades="GRADES"
-      :schools="SCHOOLS"
       @close="closeEditModal"
-      @save="saveChanges"
+      @save="handleSaveChanges"
     />
 
     <!-- Logout Error Modal -->
@@ -81,6 +79,23 @@
       :show="showLogoutErrorModal"
       :message="logoutErrorMessage"
       @force-logout="forceLogout"
+    />
+
+    <!-- Add Modal Components -->
+    <ModalContainer>
+      <ModalAlert
+        v-if="modalStore.typeModal === 'success' || modalStore.typeModal === 'error'"
+        :title-modal="modalStore.typeModal === 'success' ? 'Success' : 'Error'"
+        :message="modalStore.message"
+      />
+    </ModalContainer>
+
+    <!-- Reset Password Modal -->
+    <ResetPasswordModal
+      :show="showResetPasswordModal"
+      :email="resetPasswordEmail"
+      @close="closeResetPasswordModal"
+      @submit="submitResetPassword"
     />
   </div>
 </template>
@@ -90,6 +105,10 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { useModalStore } from '@/stores/modalStore'
+import ModalContainer from '@/components/modals/ModalContainer.vue'
+import ModalAlert from '@/components/modals/ModalAlert.vue'
+import { notify } from '@/lib/notify'
 
 // Import Components
 import LoadingSpinner from '@/components/skeletons/LoadingSpinner.vue'
@@ -106,6 +125,7 @@ const router = useRouter()
 const showEditModal = ref(false)
 const searchQuery = ref('')
 const searchField = ref('name')
+const modalStore = useModalStore()
 
 const editingUser = ref<EditingUser>({
   id: '',
@@ -113,12 +133,18 @@ const editingUser = ref<EditingUser>({
   email: '',
   grade: '',
   school: '',
-  testCompletedAt: null,
   testPeriod: '',
   lastLogin: null,
   attemptLogin: 0,
   createdAt: '',
   createdBy: '',
+  quizStatus: {
+    tiga: false,
+    lima: false,
+    enam: false,
+    tujuh: false,
+    ppi: false,
+  },
 })
 
 const tableHeaders = [
@@ -126,7 +152,7 @@ const tableHeaders = [
   'Email',
   'Grade',
   'School',
-  'Test Completion',
+  'Test Status',
   'Test Period',
   'Last Login',
   'Login Attempts',
@@ -136,7 +162,6 @@ const tableHeaders = [
 ] as const
 
 const GRADES = ['9', '10', '11', '12'] as const
-const SCHOOLS = ['Springfield High School', 'Riverside Academy', 'Central Valley School'] as const
 
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
@@ -147,6 +172,9 @@ const error = ref<string | null>(null)
 const showLogoutErrorModal = ref(false)
 const logoutErrorMessage = ref('')
 
+const showResetPasswordModal = ref(false)
+const resetPasswordEmail = ref('')
+
 const openEditModal = (user: User): void => {
   editingUser.value = {
     id: user.id,
@@ -154,12 +182,13 @@ const openEditModal = (user: User): void => {
     email: user.email,
     grade: user.grade,
     school: user.school,
-    testCompletedAt: user.testCompletedAt ? formatDate(user.testCompletedAt) : null,
+    // testCompletedAt: user.testCompletedAt ? formatDate(user.testCompletedAt) : null,
     testPeriod: formatDate(user.testPeriod),
     lastLogin: formatDate(user.lastLogin),
     attemptLogin: user.attemptLogin,
     createdAt: formatDate(user.createdAt),
     createdBy: user.createdBy,
+    quizStatus: user.quizStatus,
   }
   showEditModal.value = true
 }
@@ -172,56 +201,89 @@ const closeEditModal = (): void => {
     email: '',
     grade: '',
     school: '',
-    testCompletedAt: null,
+    // testCompletedAt: null,
     testPeriod: '',
     lastLogin: null,
     attemptLogin: 0,
     createdAt: '',
     createdBy: '',
+    quizStatus: {
+      tiga: false,
+      lima: false,
+      enam: false,
+      tujuh: false,
+      ppi: false,
+    },
   }
 }
 
-const saveChanges = async (updatedUser: EditingUser): Promise<void> => {
+const handleSaveChanges = async (updatedUser: EditingUser) => {
   try {
-    const formattedUser: User = {
-      ...updatedUser,
-      testPeriod: updatedUser.testPeriod ? new Date(updatedUser.testPeriod) : null,
-      lastLogin: updatedUser.lastLogin ? new Date(updatedUser.lastLogin) : null,
-      createdAt: new Date(updatedUser.createdAt),
-      testCompletedAt: updatedUser.testCompletedAt ? new Date(updatedUser.testCompletedAt) : null,
-    }
-    await adminStore.updateUser(formattedUser)
-    closeEditModal()
+    // Call the API to update the user
+    await adminStore.updateUserApi(updatedUser)
+    showEditModal.value = false
+    notify('User updated successfully', 'success')
+    fetchData() // Refresh the data
   } catch (error) {
     console.error('Error saving changes:', error)
-    alert('Failed to save changes. Please try again.')
+    notify('Failed to save changes. Please try again.', 'error')
   }
 }
 
-const handleDeleteUser = async (userId: string): Promise<void> => {
+const handleDeleteUser = async (userId: string) => {
   try {
-    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      await adminStore.deleteUser(userId)
-    }
+    await adminStore.deleteUser(userId)
+    fetchData()
   } catch (error) {
     console.error('Error deleting user:', error)
-    alert('Failed to delete user. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to delete user. Please try again.'
+    modalStore.openModal()
   }
 }
 
-const handleResetPassword = async (userId: string): Promise<void> => {
+const handleResetPassword = async (userId: string) => {
+  const user = adminStore.users.find((u) => u.id === userId)
+  if (user) {
+    resetPasswordEmail.value = user.email
+    showResetPasswordModal.value = true
+  }
+}
+
+const closeResetPasswordModal = () => {
+  showResetPasswordModal.value = false
+  resetPasswordEmail.value = ''
+}
+
+const submitResetPassword = async (newPassword: string) => {
   try {
-    if (confirm("Are you sure you want to reset this user's password?")) {
-      const success = await adminStore.resetPassword(userId)
-      if (success) {
-        alert('Password has been reset successfully')
-      } else {
-        alert('Failed to reset password')
-      }
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/reset-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authStore.getToken}`,
+      },
+      body: JSON.stringify({
+        email: resetPasswordEmail.value,
+        new_password: newPassword,
+      }),
+    })
+
+    if (response.ok) {
+      modalStore.typeOfModal('success')
+      modalStore.message = 'Password has been reset successfully'
+      modalStore.openModal()
+      closeResetPasswordModal()
+    } else {
+      modalStore.typeOfModal('error')
+      modalStore.message = 'Failed to reset password'
+      modalStore.openModal()
     }
   } catch (error) {
     console.error('Error resetting password:', error)
-    alert('Failed to reset password. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to reset password. Please try again.'
+    modalStore.openModal()
   }
 }
 

@@ -20,8 +20,19 @@
             {{ user.grade }}
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.school }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ user.testCompletedAt ? formatDate(user.testCompletedAt) : 'Not taken yet' }}
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <span
+              :class="{
+                'text-green-600':
+                  getQuizCompletionStatus(user.quizStatus) === 'All quizzes completed',
+                'text-yellow-600': getQuizCompletionStatus(user.quizStatus).startsWith(
+                  'Completed:',
+                ),
+                'text-gray-600': getQuizCompletionStatus(user.quizStatus) === 'Not started yet',
+              }"
+            >
+              {{ getQuizCompletionStatus(user.quizStatus) }}
+            </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
             {{ formatDate(user.testPeriod) }}
@@ -80,6 +91,7 @@
 
 <script setup lang="ts">
 import { type User } from '@/stores/admin'
+import { useQuizStore } from '@/stores/quizStore'
 
 defineProps<{
   users: User[]
@@ -93,6 +105,9 @@ defineEmits<{
   (e: 'delete', userId: string): void
   (e: 'calculate', userId: string): void
 }>()
+
+const quizStore = useQuizStore()
+const getQuizCompletionStatus = quizStore.getQuizCompletionStatus
 
 const formatDate = (date: Date | null): string => {
   if (!date) return '-'

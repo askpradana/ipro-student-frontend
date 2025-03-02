@@ -28,7 +28,7 @@ export function useQuizSecurity(
 
   // Fungsi untuk mencatat pelanggaran
   const logViolation = (type: string) => {
-    console.log(`Security violation detected: ${type}`)
+    // console.log(`Security violation detected: ${type}`)
 
     quizStore.recordViolation({
       type,

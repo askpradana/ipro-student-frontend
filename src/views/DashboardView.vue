@@ -11,8 +11,10 @@
     </div>
 
     <!-- Main content area -->
-    <h1 class="my-10 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600">
-      Selamat Datang {{ userStore.dataUser?.name }}
+    <h1
+      class="my-10 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600 uppercase"
+    >
+      WELCOME {{ userStore.dataUser?.name }}
     </h1>
     <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-4">
       <!-- Quiz Button -->

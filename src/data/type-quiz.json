@@ -26,5 +26,12 @@
     "description": " Tes ini adalah tes untuk menentukan sebuah benda dari gambar yang disediakan. Jadi disetiap soal akan terdapat sebuah gambar, gambar ini dibagi menjadi 2 bagian. Bagian kiri gambar memperlihatkan selembar karton dalam bentuk tertentu. Gambar disebelah kanan teriri dari 4 buah benda yang berbeda satu sama lain. Salah satu dari 4 benda tersebut terbentuk dari gambar karton yang telah dilipat.",
     "typeQuiz": 4,
     "instructionImage": "/assets/instruksi-soal/instruksi_soal_7.webp"
+  },
+  {
+    "id": 5,
+    "title": "Quiz PPI",
+    "description": " Pada tes ini, Anda akan membaca sejumlah pernyataan mengenai berbagai hal yang mungkin menggambarkan diri Anda atau mungkin juga tidak menggambarkan diri Anda dan pernyataan-pernyataan tersebut selalu disajikan berpasangan. Dari 2 pernyataan yang ada, anda harus memilih mana yang paling mirip dengan anda.",
+    "typeQuiz": 5,
+    "instructionImage": "/assets/instruksi-soal/instruksi_soal_ppi.webp"
   }
 ]
