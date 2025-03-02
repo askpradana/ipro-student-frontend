@@ -14,6 +14,13 @@ export interface UserData {
   school: string
   quiz_period: string
   quiz_completed_at: string
+  quiz_status: {
+    tiga: boolean
+    lima: boolean
+    enam: boolean
+    tujuh: boolean
+    ppi: boolean
+  }
 }
 
 export interface AuthModel {
