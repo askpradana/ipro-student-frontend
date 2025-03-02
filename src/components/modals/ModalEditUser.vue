@@ -29,25 +29,6 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">School</label>
-          <select
-            v-model="localUser.school"
-            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-          >
-            <option v-for="school in schools" :key="school" :value="school">
-              {{ school }}
-            </option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Test Completion</label>
-          <input
-            v-model="localUser.testCompletedAt"
-            type="datetime-local"
-            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-          />
-        </div>
-        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
           <input
             v-model="localUser.testPeriod"
@@ -87,7 +68,6 @@ const props = defineProps<{
   show: boolean
   user: EditingUser
   grades: readonly string[]
-  schools: readonly string[]
 }>()
 
 const emit = defineEmits<{

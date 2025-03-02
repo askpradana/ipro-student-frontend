@@ -124,18 +124,6 @@
                     >
                       Edit
                     </button>
-                    <!-- <button
-                      @click="adminStore.resetAttempts(user.id)"
-                      class="bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200"
-                    >
-                      Reset Login
-                    </button> -->
-                    <!-- <button
-                      @click="handleResetPassword(user.id)"
-                      class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
-                    >
-                      Reset Password
-                    </button> -->
                     <button
                       @click="handleDeleteUser(user.id)"
                       class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
