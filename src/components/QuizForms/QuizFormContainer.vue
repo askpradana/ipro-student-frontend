@@ -14,8 +14,11 @@
     <template v-else-if="typeQuiz == '3'">
       <QuizSixForm />
     </template>
-    <template v-else>
+    <template v-else-if="typeQuiz == '4'">
       <QuizSevenForm />
+    </template>
+    <template v-else>
+      <QuizPPIForm />
     </template>
   </template>
 </template>
@@ -25,6 +28,7 @@ import QuizThreeForm from './QuizThreeForm.vue'
 import QuizFiveForm from './QuizFiveForm.vue'
 import QuizSixForm from './QuizSixForm.vue'
 import QuizSevenForm from './QuizSevenForm.vue'
+import QuizPPIForm from './QuizPPIForm.vue'
 // import ProgressBar from '@/components/QuizForms/ProgressBar.vue'
 import GetQuizSkeleton from '../skeletons/GetQuizSkeleton.vue'
 import { useQuizStore } from '@/stores/quizStore'
@@ -42,6 +46,8 @@ const getTitle = () => {
       return 'Quiz 6'
     case '4':
       return 'Quiz 7'
+    case '5':
+      return 'Quiz PPI'
 
     default:
       break

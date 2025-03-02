@@ -132,6 +132,7 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
       <ModalContainer v-if="modalStore.typeModal == 'show-alert'">
         <ModalAlert title-modal="Alert" message="Please fill in all answers!" />
       </ModalContainer>
+
       <ModalContainer v-if="modalStore.typeModal == 'violation-warning'">
         <ModalWarningViolation />
       </ModalContainer>
