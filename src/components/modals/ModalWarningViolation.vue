@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="modalStore.isOpenModal && modalStore.typeModal === 'violation-warning'"
-    class="bg-white rounded-xl shadow-lg p-4 max-w-md mx-2 transform transition-all duration-300 ease-in-out"
+    class="bg-white rounded-xl shadow-lg p-6 max-w-md mx-2 transform transition-all duration-300 ease-in-out"
   >
     <div class="flex items-center mb-4">
       <div class="bg-red-100 p-3 rounded-full mr-4">
@@ -24,12 +24,13 @@
     </div>
 
     <p class="text-slate-700 mb-6">
+      <b>Warning:</b>
       {{ getViolationWarning(modalStore.message) }}
     </p>
 
-    <div class="text-gray-500 text-sm mb-6">
+    <div class="text-gray-700 text-sm mb-6">
       <p>Pelanggaran yang terdeteksi dapat mempengaruhi nilai akhir Anda.</p>
-      <p class="mt-2">Jumlah pelanggaran: {{ quizStore.violationCount }}</p>
+      <p class="mt-4 font-semibold">Total violation: {{ quizStore.violationCount }}</p>
     </div>
 
     <div class="text-right">
@@ -37,7 +38,7 @@
         @click="modalStore.closeModal()"
         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300"
       >
-        Saya Mengerti
+        Close
       </button>
     </div>
   </div>

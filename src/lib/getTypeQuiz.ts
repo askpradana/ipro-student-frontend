@@ -11,6 +11,8 @@ export const getTypeQuiz = (type: string) => {
       return 'soal-enam'
     case 4:
       return 'soal-tujuh'
+    case 5:
+      return 'soal-ppi'
     default:
       break
   }
@@ -29,6 +31,8 @@ export const getTypeQuizWithUnderscore = (type: string) => {
       return 'quiz_enam'
     case 4:
       return 'quiz_tujuh'
+    case 5:
+      return 'quiz_ppi'
     default:
       break
   }

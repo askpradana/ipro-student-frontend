@@ -1,6 +1,8 @@
 export interface QuizQuestion {
   soalID: number
   question?: string
+  option_a?: string
+  option_b?: string
   pilihan: string[]
   kunci: string[] | string | number
 }
