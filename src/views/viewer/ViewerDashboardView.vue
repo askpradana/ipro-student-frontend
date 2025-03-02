@@ -73,7 +73,7 @@
       :grades="GRADES"
       :schools="SCHOOLS"
       @close="closeEditModal"
-      @save="saveChanges"
+      @save="handleSaveChanges"
     />
 
     <!-- Logout Error Modal -->
@@ -82,6 +82,15 @@
       :message="logoutErrorMessage"
       @force-logout="forceLogout"
     />
+
+    <!-- Add Modal Components -->
+    <ModalContainer>
+      <ModalAlert
+        v-if="modalStore.typeModal === 'success' || modalStore.typeModal === 'error'"
+        :title-modal="modalStore.typeModal === 'success' ? 'Success' : 'Error'"
+        :message="modalStore.message"
+      />
+    </ModalContainer>
   </div>
 </template>
 
@@ -90,6 +99,9 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { useModalStore } from '@/stores/modalStore'
+import ModalContainer from '@/components/modals/ModalContainer.vue'
+import ModalAlert from '@/components/modals/ModalAlert.vue'
 
 // Import Components
 import LoadingSpinner from '@/components/skeletons/LoadingSpinner.vue'
@@ -106,6 +118,7 @@ const router = useRouter()
 const showEditModal = ref(false)
 const searchQuery = ref('')
 const searchField = ref('name')
+const modalStore = useModalStore()
 
 const editingUser = ref<EditingUser>({
   id: '',
@@ -196,8 +209,9 @@ const closeEditModal = (): void => {
   }
 }
 
-const saveChanges = async (updatedUser: EditingUser): Promise<void> => {
+const handleSaveChanges = async (updatedUser: EditingUser) => {
   try {
+    // Convert string dates to Date objects
     const formattedUser: User = {
       ...updatedUser,
       testPeriod: updatedUser.testPeriod ? new Date(updatedUser.testPeriod) : null,
@@ -206,37 +220,52 @@ const saveChanges = async (updatedUser: EditingUser): Promise<void> => {
       testCompletedAt: updatedUser.testCompletedAt ? new Date(updatedUser.testCompletedAt) : null,
     }
     await adminStore.updateUser(formattedUser)
-    closeEditModal()
+    showEditModal.value = false
+    fetchData()
   } catch (error) {
     console.error('Error saving changes:', error)
-    alert('Failed to save changes. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to save changes. Please try again.'
+    modalStore.openModal()
   }
 }
 
-const handleDeleteUser = async (userId: string): Promise<void> => {
+const handleDeleteUser = async (userId: string) => {
   try {
-    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      await adminStore.deleteUser(userId)
-    }
+    await adminStore.deleteUser(userId)
+    fetchData()
   } catch (error) {
     console.error('Error deleting user:', error)
-    alert('Failed to delete user. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to delete user. Please try again.'
+    modalStore.openModal()
   }
 }
 
-const handleResetPassword = async (userId: string): Promise<void> => {
+const handleResetPassword = async (userId: string) => {
   try {
-    if (confirm("Are you sure you want to reset this user's password?")) {
-      const success = await adminStore.resetPassword(userId)
-      if (success) {
-        alert('Password has been reset successfully')
-      } else {
-        alert('Failed to reset password')
-      }
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/reset-password/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authStore.getToken}`,
+      },
+    })
+
+    if (response.ok) {
+      modalStore.typeOfModal('success')
+      modalStore.message = 'Password has been reset successfully'
+      modalStore.openModal()
+    } else {
+      modalStore.typeOfModal('error')
+      modalStore.message = 'Failed to reset password'
+      modalStore.openModal()
     }
   } catch (error) {
     console.error('Error resetting password:', error)
-    alert('Failed to reset password. Please try again.')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to reset password. Please try again.'
+    modalStore.openModal()
   }
 }
 
