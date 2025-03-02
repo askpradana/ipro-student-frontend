@@ -116,6 +116,7 @@
     <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-semibold">Viewers <span class="text-red-500">*</span></h2>
+
         <button
           @click="addViewer"
           class="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700"
@@ -258,6 +259,7 @@ const removeViewer = (index: number) => {
 }
 
 const isFormValid = computed(() => {
+
   const hasSchool = !!newUsersData.value.school.trim()
   const hasPeriod = !!newUsersData.value.testPeriod
   const hasValidUsers =
@@ -328,12 +330,14 @@ const saveNewUsers = async () => {
     }))
 
     await adminStore.addMultipleUsers(users, newUsersData.value.viewers)
+
     notify('Users added successfully!', 'success')
     router.push('/admin/dashboard')
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Failed to add users. Please try again.'
     notify(errorMessage, 'error')
+
   }
 }
 </script>

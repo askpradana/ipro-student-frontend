@@ -66,6 +66,7 @@ export const useAdminStore = defineStore('admin', () => {
       const requestBody = {
         school: newUsers[0].school,
         period: newUsers[0].testPeriod,
+
         users: newUsers.map((user) => ({
           email: user.email,
           name: user.name,
@@ -136,6 +137,7 @@ export const useAdminStore = defineStore('admin', () => {
           createdBy: apiUser.created_by,
           phoneNumber: apiUser.phone_number,
           quizStatus: apiUser.quiz_status,
+
         }),
       )
     } catch (error) {
