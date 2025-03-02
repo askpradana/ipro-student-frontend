@@ -89,14 +89,6 @@
         :message="modalStore.message"
       />
     </ModalContainer>
-
-    <!-- Reset Password Modal -->
-    <ResetPasswordModal
-      :show="showResetPasswordModal"
-      :email="resetPasswordEmail"
-      @close="closeResetPasswordModal"
-      @submit="submitResetPassword"
-    />
   </div>
 </template>
 
@@ -108,7 +100,6 @@ import { useRouter } from 'vue-router'
 import { useModalStore } from '@/stores/modalStore'
 import ModalContainer from '@/components/modals/ModalContainer.vue'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
-import { notify } from '@/lib/notify'
 
 // Import Components
 import LoadingSpinner from '@/components/skeletons/LoadingSpinner.vue'
@@ -219,14 +210,22 @@ const closeEditModal = (): void => {
 
 const handleSaveChanges = async (updatedUser: EditingUser) => {
   try {
-    // Call the API to update the user
-    await adminStore.updateUserApi(updatedUser)
+    // Convert string dates to Date objects
+    const formattedUser: User = {
+      ...updatedUser,
+      testPeriod: updatedUser.testPeriod ? new Date(updatedUser.testPeriod) : null,
+      lastLogin: updatedUser.lastLogin ? new Date(updatedUser.lastLogin) : null,
+      createdAt: new Date(updatedUser.createdAt),
+      testCompletedAt: updatedUser.testCompletedAt ? new Date(updatedUser.testCompletedAt) : null,
+    }
+    await adminStore.updateUser(formattedUser)
     showEditModal.value = false
-    notify('User updated successfully', 'success')
-    fetchData() // Refresh the data
+    fetchData()
   } catch (error) {
     console.error('Error saving changes:', error)
-    notify('Failed to save changes. Please try again.', 'error')
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Failed to save changes. Please try again.'
+    modalStore.openModal()
   }
 }
 
@@ -243,37 +242,19 @@ const handleDeleteUser = async (userId: string) => {
 }
 
 const handleResetPassword = async (userId: string) => {
-  const user = adminStore.users.find((u) => u.id === userId)
-  if (user) {
-    resetPasswordEmail.value = user.email
-    showResetPasswordModal.value = true
-  }
-}
-
-const closeResetPasswordModal = () => {
-  showResetPasswordModal.value = false
-  resetPasswordEmail.value = ''
-}
-
-const submitResetPassword = async (newPassword: string) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/reset-password`, {
-      method: 'PUT',
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/reset-password/${userId}`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authStore.getToken}`,
       },
-      body: JSON.stringify({
-        email: resetPasswordEmail.value,
-        new_password: newPassword,
-      }),
     })
 
     if (response.ok) {
       modalStore.typeOfModal('success')
       modalStore.message = 'Password has been reset successfully'
       modalStore.openModal()
-      closeResetPasswordModal()
     } else {
       modalStore.typeOfModal('error')
       modalStore.message = 'Failed to reset password'
