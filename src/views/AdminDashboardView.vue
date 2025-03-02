@@ -124,18 +124,6 @@
                     >
                       Edit
                     </button>
-                    <!-- <button
-                      @click="adminStore.resetAttempts(user.id)"
-                      class="bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200"
-                    >
-                      Reset Login
-                    </button> -->
-                    <!-- <button
-                      @click="handleResetPassword(user.id)"
-                      class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
-                    >
-                      Reset Password
-                    </button> -->
                     <button
                       @click="handleDeleteUser(user.id)"
                       class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
@@ -280,7 +268,7 @@
             Cancel
           </button>
           <button
-            @click="saveChanges(editingUser.value)"
+            @click="saveChanges(editingUser)"
             class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
           >
             Save Changes
@@ -341,13 +329,19 @@ const editingUser = ref<EditingUser>({
   name: '',
   email: '',
   grade: '',
-  // school: '',
-  // testCompletedAt: null,
+  school: '',
   testPeriod: '',
   lastLogin: null,
   attemptLogin: 0,
   createdAt: '',
   createdBy: '',
+  quizStatus: {
+    tiga: false,
+    lima: false,
+    enam: false,
+    tujuh: false,
+    ppi: false,
+  },
 })
 
 const tableHeaders = [
@@ -402,13 +396,13 @@ const openEditModal = (user: User): void => {
     name: user.name,
     email: user.email,
     grade: user.grade,
-    // school: user.school,
-    // testCompletedAt: user.testCompletedAt ? formatDate(user.testCompletedAt) : null,
+    school: user.school,
     testPeriod: formatDate(user.testPeriod),
     lastLogin: formatDate(user.lastLogin),
     attemptLogin: user.attemptLogin,
     createdAt: formatDate(user.createdAt),
     createdBy: user.createdBy,
+    quizStatus: user.quizStatus,
   }
   showEditModal.value = true
 }
@@ -420,13 +414,19 @@ const closeEditModal = (): void => {
     name: '',
     email: '',
     grade: '',
-    // school: '',
-    // testCompletedAt: null,
+    school: '',
     testPeriod: '',
     lastLogin: null,
     attemptLogin: 0,
     createdAt: '',
     createdBy: '',
+    quizStatus: {
+      tiga: false,
+      lima: false,
+      enam: false,
+      tujuh: false,
+      ppi: false,
+    },
   }
 }
 
@@ -434,15 +434,12 @@ const modalStore = useModalStore()
 
 const saveChanges = async (updatedUser: EditingUser) => {
   try {
-    // Convert string dates to Date objects
-    const formattedUser: User = {
+    await adminStore.updateUserApi({
       ...updatedUser,
-      testPeriod: updatedUser.testPeriod ? new Date(updatedUser.testPeriod) : null,
-      lastLogin: updatedUser.lastLogin ? new Date(updatedUser.lastLogin) : null,
-      createdAt: new Date(updatedUser.createdAt),
-      testCompletedAt: updatedUser.testCompletedAt ? new Date(updatedUser.testCompletedAt) : null,
-    }
-    await adminStore.updateUser(formattedUser)
+      testPeriod: updatedUser.testPeriod || '',
+      lastLogin: updatedUser.lastLogin || null,
+      createdAt: updatedUser.createdAt || '',
+    })
     showEditModal.value = false
     fetchData()
   } catch (error: unknown) {
