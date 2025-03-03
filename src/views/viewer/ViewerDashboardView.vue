@@ -81,15 +81,6 @@
       @force-logout="forceLogout"
     />
 
-    <!-- Add Modal Components -->
-    <ModalContainer>
-      <ModalAlert
-        v-if="modalStore.typeModal === 'success' || modalStore.typeModal === 'error'"
-        :title-modal="modalStore.typeModal === 'success' ? 'Success' : 'Error'"
-        :message="modalStore.message"
-      />
-    </ModalContainer>
-
     <!-- Reset Password Modal -->
     <ResetPasswordModal
       :show="showResetPasswordModal"
@@ -105,9 +96,6 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useAdminStore, type EditingUser, type User } from '@/stores/admin'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-import { useModalStore } from '@/stores/modalStore'
-import ModalContainer from '@/components/modals/ModalContainer.vue'
-import ModalAlert from '@/components/modals/ModalAlert.vue'
 import { notify } from '@/lib/notify'
 
 // Import Components
@@ -118,6 +106,7 @@ import UserTable from '@/components/tables/UserTables.vue'
 import Pagination from '@/components/paginations/PaginationTableUser.vue'
 import EditUserModal from '@/components/modals/ModalEditUser.vue'
 import LogoutErrorModal from '@/components/modals/ModalLogoutError.vue'
+import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue'
 
 const adminStore = useAdminStore()
 const authStore = useAuthStore()
@@ -125,7 +114,6 @@ const router = useRouter()
 const showEditModal = ref(false)
 const searchQuery = ref('')
 const searchField = ref('name')
-const modalStore = useModalStore()
 
 const editingUser = ref<EditingUser>({
   id: '',
@@ -236,9 +224,7 @@ const handleDeleteUser = async (userId: string) => {
     fetchData()
   } catch (error) {
     console.error('Error deleting user:', error)
-    modalStore.typeOfModal('error')
-    modalStore.message = 'Failed to delete user. Please try again.'
-    modalStore.openModal()
+    notify('Failed to delete users!', 'error')
   }
 }
 
@@ -270,20 +256,13 @@ const submitResetPassword = async (newPassword: string) => {
     })
 
     if (response.ok) {
-      modalStore.typeOfModal('success')
-      modalStore.message = 'Password has been reset successfully'
-      modalStore.openModal()
+      notify('Password has been reset successfully!', 'success')
       closeResetPasswordModal()
     } else {
-      modalStore.typeOfModal('error')
-      modalStore.message = 'Failed to reset password'
-      modalStore.openModal()
+      notify('Failed to reset password', 'error')
     }
   } catch (error) {
-    console.error('Error resetting password:', error)
-    modalStore.typeOfModal('error')
-    modalStore.message = 'Failed to reset password. Please try again.'
-    modalStore.openModal()
+    notify('Failed to reset password', 'error')
   }
 }
 

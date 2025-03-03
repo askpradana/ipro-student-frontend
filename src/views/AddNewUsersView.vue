@@ -7,9 +7,7 @@
       <h2 class="text-lg font-semibold mb-4">School Information</h2>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            School Name <span class="text-red-500">*</span>
-          </label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">School Name</label>
           <input
             v-model="newUsersData.school"
             type="text"
@@ -18,9 +16,7 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Test Period <span class="text-red-500">*</span>
-          </label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
           <Datepicker
             v-model="newUsersData.testPeriod"
             class="w-full"
