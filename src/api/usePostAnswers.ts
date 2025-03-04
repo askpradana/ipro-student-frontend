@@ -13,8 +13,6 @@ export const usePostAnswerApi = (answers: (string | number | string[] | null)[])
   }
   const authStore = useAuthStore()
 
-  console.log('dari postAPI', dataAnswer)
-
   const postAnswer = async () => {
     loading.value = true
     error.value = null
