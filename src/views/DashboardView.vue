@@ -22,14 +22,47 @@
         v-for="type in TypeListData"
         :key="type.id"
         @click="handleTakeQuiz(type.typeQuiz)"
-        class="w-full p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200 hover:bg-white hover:scale-[1.02] hover:border-teal-500 active:scale-[0.98] transition-all duration-300 ease-out text-left group"
+        class="w-full p-8 backdrop-blur-sm rounded-2xl border border-slate-200 transition-all duration-300 ease-out text-left group"
+        :class="
+          userStore.dataUser?.[
+            type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
+          ]
+            ? 'bg-slate-100 hover:cursor-not-allowed'
+            : 'bg-white/80 hover:bg-white hover:scale-[1.02] hover:border-teal-500 active:scale-[0.98]'
+        "
+        v-bind:disabled="
+          userStore.dataUser?.[
+            type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
+          ]
+            ? true
+            : false
+        "
       >
-        <h2
-          class="text-xl font-bold text-teal-600 mb-2 group-hover:translate-x-1 transition-transform duration-300"
-        >
-          Take {{ type.title }}
-        </h2>
-        <p class="text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
+        <div class="flex justify-between !items-center">
+          <h2
+            class="text-xl font-bold transition-transform duration-300"
+            :class="
+              userStore.dataUser?.[
+                type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
+              ]
+                ? 'text-slate-600'
+                : 'text-teal-600 group-hover:translate-x-1'
+            "
+          >
+            Take {{ type.title }}
+          </h2>
+          <p
+            class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
+            :class="
+              !userStore.dataUser?.[
+                type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
+              ] && 'hidden'
+            "
+          >
+            DONE
+          </p>
+        </div>
+        <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
           Start a new assessment to test your knowledge
         </p>
       </button>

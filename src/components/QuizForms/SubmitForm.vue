@@ -1,8 +1,15 @@
 <template>
   <h2 class="text-2xl font-bold mb-4 text-teal-600">All answers are filled</h2>
+  <h2
+    class="text-2xl font-bold mb-4"
+    :class="timerStore.timer > 30 ? 'text-teal-600' : 'text-red-600'"
+  >
+    {{ timerStore.formattedTime }}
+  </h2>
   <p class="text-slate-600 mb-8">
     All answers have been filled, are you sure want to collect answers and end the quiz session?
   </p>
+
   <div v-if="!isDone" class="space-x-4">
     <button
       :disabled="quizStore.loading"
@@ -33,11 +40,13 @@
 
 <script setup lang="ts">
 import { useQuizStore } from '@/stores/quizStore'
+import { useTimerStore } from '@/stores/timerStore'
 import { notify } from '@/lib/notify'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
 const quizStore = useQuizStore()
+const timerStore = useTimerStore()
 const router = useRouter()
 const isDone = ref(false)
 
@@ -46,21 +55,22 @@ const backToQuizForm = () => {
 }
 
 const sumbitQuizHandler = () => {
-  quizStore.submitFinalAnswer().then(() => {
-    if (quizStore.error) {
-      notify(quizStore.error, 'error')
-    } else {
-      notify(quizStore.message, 'success')
-      isDone.value = true
-      setTimeout(() => {
-        router.push('/dashboard')
-        quizStore.typeQuiz = 0
-        quizStore.isComplete = false
-        quizStore.resetQuiz()
-      }, 1500)
-    }
-  })
+  quizStore
+    .submitFinalAnswer()
+    .then(() => {
+      if (quizStore.error) {
+        notify(quizStore.error, 'error')
+      } else {
+        notify(quizStore.message, 'success')
+        isDone.value = true
+        setTimeout(() => {
+          router.push('/dashboard')
+          quizStore.typeQuiz = 0
+          quizStore.isComplete = false
+          quizStore.resetQuiz()
+        }, 1500)
+      }
+    })
+    .finally(() => timerStore.stopTimer())
 }
 </script>
-
-<style scoped></style>

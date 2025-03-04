@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useModalStore } from '@/stores/modalStore'
 import { useUserStores } from '@/stores/userStores'
+import { useTimerStore } from '@/stores/timerStore'
 import { useRouter } from 'vue-router'
 import QuizFormContainer from '@/components/QuizForms/QuizFormContainer.vue'
 import ModalContainer from '@/components/modals/ModalContainer.vue'
@@ -17,6 +18,7 @@ const store = useQuizStore()
 const router = useRouter()
 const modalStore = useModalStore()
 const userStore = useUserStores()
+const timerStore = useTimerStore()
 const selectedAnswer = ref<string[] | number | string | null>(null)
 const selectedQuiz = localStorage.getItem('type-quiz')
 
@@ -50,6 +52,7 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
     router.push('/completed')
   } else {
     store.startQuiz(selectedTypeQuiz)
+    timerStore.resetTimer(40)
   }
 }
 </script>
