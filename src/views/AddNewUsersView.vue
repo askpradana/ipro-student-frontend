@@ -1,7 +1,6 @@
 <template>
   <div class="max-w-4xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-6">Add New Users</h1>
-
     <!-- School Information -->
     <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
       <h2 class="text-lg font-semibold mb-4">School Information</h2>

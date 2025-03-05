@@ -50,12 +50,18 @@
         </div>
 
         <!-- Add this button after the search controls and before the table -->
-        <div class="mb-6 flex justify-end">
+        <div class="mb-6 flex justify-end gap-2">
           <router-link
             to="/admin/add-users"
             class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
           >
-            Add Users
+            Add New
+          </router-link>
+          <router-link
+            to="/admin/add-students"
+            class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
+          >
+            Add More
           </router-link>
         </div>
 
