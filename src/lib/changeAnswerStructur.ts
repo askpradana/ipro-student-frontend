@@ -15,8 +15,9 @@ export const changeStructur = (answers: (string | number | string[] | null)[]) =
       case 'object':
         transformedAnswer = answerValue
         break
+
       default:
-        transformedAnswer = null
+        transformedAnswer = ''
     }
 
     return {

@@ -1,28 +1,19 @@
 <template>
   <div>
-    <h2 class="text-xl font-bold text-slate-800 mb-2">
-      Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
-      {{ store.questions.length }}
-    </h2>
-    <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
-      <span
-        v-for="(question, index) of store.questions"
-        :key="question.soalID"
-        :class="
-          store.currentQuestionIndex === index
-            ? 'bg-teal-600 text-white'
-            : store.answers[index] !== null
-              ? 'bg-teal-400 text-white'
-              : ''
-        "
-        class="text-xs text-center rounded-sm w-6 py-1 border border-teal-600 hover:bg-teal-200"
-        @click="store.currentQuestionIndex = index"
+    <div class="flex flex-col-reverse md:flex-row justify-between items-center">
+      <h2 class="text-xl font-bold text-slate-800">
+        Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
+        {{ store.questions.length }}
+      </h2>
+      <h2
+        class="font-semibold text-lg"
+        :class="timerStore.timer > 30 ? 'text-teal-600' : 'text-red-600'"
       >
-        {{ question.soalID }}
-      </span>
+        Time Left: {{ timerStore.formattedTime }}s
+      </h2>
     </div>
 
-    <p class="text-slate-800 my-8">
+    <p class="text-slate-800 my-8 mt-12">
       Telitilah apakah rangkaian angka atau huruf yang berada di depan dan di belakang garis pemisah
       itu sama ataukah berbeda.
     </p>
@@ -83,14 +74,7 @@
     </div>
 
     <!-- Navigation Buttons -->
-    <div class="flex justify-between mt-8">
-      <button
-        @click="handlePrevious"
-        :disabled="store.currentQuestionIndex === 0"
-        class="px-6 py-2 rounded-lg font-semibold text-teal-600 hover:bg-teal-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-      >
-        Previous
-      </button>
+    <div class="flex justify-end mt-8">
       <button
         @click="handleNext"
         :disabled="selectedAnswer === null"
@@ -108,11 +92,12 @@ import { useQuizStore } from '@/stores/quizStore'
 import { useModalStore } from '@/stores/modalStore'
 import { useUserStores } from '@/stores/userStores'
 import { useQuizSecurity } from '@/lib/useQuizSecurity'
+import { useTimerStore } from '@/stores/timerStore'
 
 const store = useQuizStore()
 const modalStore = useModalStore()
 const userStore = useUserStores()
-
+const timerStore = useTimerStore()
 const selectedAnswer = ref<string[] | number | string | null>(null)
 
 const { addWatermark } = useQuizSecurity({
@@ -132,6 +117,8 @@ const { addWatermark } = useQuizSecurity({
 
 // Initialize security features when component mounts
 onMounted(() => {
+  timerStore.startTimer()
+
   // Tambahkan watermark dengan ID peserta (bisa dari auth store)
   const userEmail = userStore.dataUser?.email
   addWatermark(userEmail as string)
@@ -163,10 +150,6 @@ const handleNext = () => {
 
     store.nextQuestion()
   }
-}
-
-const handlePrevious = () => {
-  store.previousQuestion()
 }
 </script>
 

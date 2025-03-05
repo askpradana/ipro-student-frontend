@@ -1,9 +1,17 @@
 <template>
   <div>
-    <h2 class="text-xl font-bold text-slate-800 mb-2">
-      Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
-      {{ store.questions.length }}
-    </h2>
+    <div class="flex flex-col-reverse md:flex-row justify-between items-center">
+      <h2 class="text-xl font-bold text-slate-800">
+        Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
+        {{ store.questions.length }}
+      </h2>
+      <h2
+        class="font-semibold text-lg"
+        :class="timerStore.timer > 30 ? 'text-teal-600' : 'text-red-600'"
+      >
+        Time Left: {{ timerStore.formattedTime }}s
+      </h2>
+    </div>
 
     <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
       <span
@@ -91,10 +99,12 @@ import { useQuizStore } from '@/stores/quizStore'
 import { useModalStore } from '@/stores/modalStore'
 import { useQuizSecurity } from '@/lib/useQuizSecurity'
 import { useUserStores } from '@/stores/userStores'
+import { useTimerStore } from '@/stores/timerStore'
 
 const store = useQuizStore()
 const modalStore = useModalStore()
 const userStore = useUserStores()
+const timerStore = useTimerStore()
 const selectedAnswers = ref<string[]>([])
 
 const { addWatermark } = useQuizSecurity({
@@ -114,6 +124,8 @@ const { addWatermark } = useQuizSecurity({
 
 // Initialize security features when component mounts
 onMounted(() => {
+  timerStore.startTimer()
+
   // Tambahkan watermark dengan ID peserta (bisa dari auth store)
   const userEmail = userStore.dataUser?.email
   addWatermark(userEmail as string)

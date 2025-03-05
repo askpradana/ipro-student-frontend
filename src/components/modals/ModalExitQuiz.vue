@@ -40,15 +40,18 @@
 <script setup lang="ts">
 import { useModalStore } from '@/stores/modalStore'
 import { useQuizStore } from '@/stores/quizStore'
+import { useTimerStore } from '@/stores/timerStore'
 import { useRouter } from 'vue-router'
 
 const modalStore = useModalStore()
 const quizStore = useQuizStore()
+const timerStore = useTimerStore()
 const router = useRouter()
 
 const quitHandler = () => {
   router.push('/dashboard')
   quizStore.resetQuiz()
+  timerStore.stopTimer()
   modalStore.closeModal()
 }
 </script>
