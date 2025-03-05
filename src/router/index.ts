@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 import SampleChartView from '@/views/SampleChartView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import AddNewUsersView from '@/views/AddNewUsersView.vue'
+import AddNewStudentsView from '@/views/AddNewStudentsView.vue'
 import ViewerDashboardView from '@/views/viewer/ViewerDashboardView.vue'
 import CalculateView from '@/views/viewer/CalculateView.vue'
 
@@ -92,6 +93,12 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/add-users',
     name: 'add-users',
     component: AddNewUsersView,
+    meta: { requiresAuth: true, requiresRole: ['ADMIN'] }, // Use array for multiple roles
+  },
+  {
+    path: '/admin/add-students',
+    name: 'add-students',
+    component: AddNewStudentsView,
     meta: { requiresAuth: true, requiresRole: ['ADMIN'] }, // Use array for multiple roles
   },
   {
