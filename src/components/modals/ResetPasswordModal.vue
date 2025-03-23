@@ -6,21 +6,21 @@
     <div class="bg-white rounded-lg p-6 w-96">
       <h2 class="text-xl font-bold mb-4">Reset Password</h2>
       <div class="mb-4">
-        <p class="text-gray-600 mb-2">Resetting password for:</p>
+        <p class="text-gray-600 mb-2">Reset password untuk:</p>
         <p class="font-medium">{{ email }}</p>
       </div>
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
         <input
           type="password"
           v-model="newPassword"
           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-          placeholder="Enter new password"
+          placeholder="Masukan password baru"
         />
       </div>
       <div class="flex justify-end space-x-3">
         <button @click="$emit('close')" class="px-4 py-2 text-gray-600 hover:text-gray-800">
-          Cancel
+          Batal
         </button>
         <button
           @click="handleSubmit"

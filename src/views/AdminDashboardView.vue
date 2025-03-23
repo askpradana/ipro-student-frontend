@@ -11,7 +11,7 @@
           @click="handleLogout"
           class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
         >
-          Logout
+          Keluar
         </button>
       </div>
 
@@ -35,17 +35,17 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search..."
+            placeholder="Pencarian..."
             class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
           />
           <select
             v-model="searchField"
             class="rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
           >
-            <option value="name">Name</option>
+            <option value="name">Nama</option>
             <option value="email">Email</option>
-            <option value="school">School</option>
-            <option value="createdBy">Created By</option>
+            <option value="school">Sekolah</option>
+            <option value="createdBy">Dibuat oleh</option>
           </select>
         </div>
 
@@ -55,13 +55,13 @@
             to="/admin/add-users"
             class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
           >
-            Add New
+            Buat User
           </router-link>
           <router-link
             to="/admin/add-students"
             class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
           >
-            Add More
+            Tambah Murid
           </router-link>
         </div>
 
@@ -90,7 +90,7 @@
                 <th
                   v-for="header in tableHeaders"
                   :key="header"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center"
                 >
                   {{ header }}
                 </th>
@@ -134,7 +134,7 @@
                       @click="handleDeleteUser(user.id)"
                       class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
                     >
-                      Delete
+                      Hapus
                     </button>
                   </div>
                 </td>
@@ -209,7 +209,7 @@
         <h2 class="text-xl font-bold mb-4">Edit User</h2>
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
             <input
               v-model="editingUser.name"
               type="text"
@@ -225,7 +225,7 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
             <select
               v-model="editingUser.grade"
               class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
@@ -253,7 +253,7 @@
             />
           </div> -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Periode Tes</label>
             <input
               v-model="editingUser.testPeriod"
               type="datetime-local"
@@ -271,13 +271,13 @@
             @click="closeEditModal"
             class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
           >
-            Cancel
+            Batal
           </button>
           <button
             @click="saveChanges(editingUser)"
             class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
           >
-            Save Changes
+            Simpan
           </button>
         </div>
       </div>
@@ -351,17 +351,17 @@ const editingUser = ref<EditingUser>({
 })
 
 const tableHeaders = [
-  'Name',
+  'Nama',
   'Email',
-  'Grade',
-  'School',
+  'Kelas',
+  'Sekolah',
   // 'Test Completion',
-  'Test Period',
-  'Last Login',
-  'Login Attempts',
-  'Created At',
-  'Created By',
-  'Actions',
+  'Tes Periode',
+  'Terakhir Login',
+  'Percobaan Login',
+  'Dibuat Pada',
+  'Dibuat Oleh',
+  'Aksi',
 ] as const
 
 const GRADES = ['9', '10', '11', '12'] as const
@@ -449,9 +449,9 @@ const saveChanges = async (updatedUser: EditingUser) => {
     showEditModal.value = false
     fetchData()
   } catch (error: unknown) {
-    console.error('Error saving changes:', error)
+    console.error('Error menyimpan perubahan:', error)
     modalStore.typeOfModal('error')
-    modalStore.message = 'Failed to save changes. Please try again.'
+    modalStore.message = 'Gagal menyimpan perubahan. Silahkan coba lagi.'
     modalStore.openModal()
   }
 }
@@ -461,9 +461,9 @@ const handleDeleteUser = async (userId: string) => {
     await adminStore.deleteUser(userId)
     fetchData()
   } catch (error: unknown) {
-    console.error('Error deleting user:', error)
+    console.error('Error menghapus user:', error)
     modalStore.typeOfModal('error')
-    modalStore.message = 'Failed to delete user. Please try again.'
+    modalStore.message = 'Gagal menghapus data. Silahkan coba lagi.'
     modalStore.openModal()
   }
 }

@@ -24,7 +24,7 @@
             <span
               :class="{
                 'text-green-600':
-                  getQuizCompletionStatus(user.quizStatus) === 'All quizzes completed',
+                  getQuizCompletionStatus(user.quizStatus) === 'All tests completed',
                 'text-yellow-600': getQuizCompletionStatus(user.quizStatus).startsWith(
                   'Completed:',
                 ),
@@ -55,7 +55,7 @@
                 @click="$emit('calculate', user.id)"
                 class="bg-teal-100 text-teal-600 px-3 py-1 rounded hover:bg-teal-200"
               >
-                Calculate
+                Laporan
               </button>
               <button
                 @click="$emit('edit', user)"
@@ -79,7 +79,7 @@
                 @click="$emit('delete', user.id)"
                 class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
               >
-                Delete
+                Hapus
               </button>
             </div>
           </td>

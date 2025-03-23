@@ -1,5 +1,5 @@
 <template>
-  <h2 class="text-2xl font-bold mb-4 text-teal-600">All answers are filled</h2>
+  <h2 class="text-2xl font-bold mb-4 text-teal-600">Semua jawaban telah tersimpan</h2>
   <h2
     class="text-2xl font-bold mb-4"
     :class="timerStore.timer > 30 ? 'text-teal-600' : 'text-red-600'"
@@ -7,7 +7,8 @@
     {{ timerStore.formattedTime }}
   </h2>
   <p class="text-slate-600 mb-8">
-    All answers have been filled, are you sure want to collect answers and end the quiz session?
+    Semua jawaban telah diisi, apakah anda yakin ingin mengumpulkan jawaban dan mengakhiri sesi
+    kuis?
   </p>
 
   <div v-if="!isDone" class="space-x-4">
@@ -17,7 +18,7 @@
       class="px-6 py-3 rounded-lg font-semibold border border-teal-700 text-teal-600 hover:border-teal-500 hover:bg-teal-50 transition-all duration-300"
       :class="isDone ? 'hidden' : ''"
     >
-      Check answer
+      Cek jawaban
     </button>
     <button
       :disabled="quizStore.loading"
@@ -25,7 +26,7 @@
       class="px-6 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 transition-all duration-300"
       :class="isDone ? 'hidden' : ''"
     >
-      Submit
+      Kirim
     </button>
   </div>
   <div v-else class="space-x-4">
@@ -33,7 +34,7 @@
       :disabled="quizStore.loading"
       class="px-6 py-3 rounded-lg font-semibold border border-teal-700 text-teal-600 hover:border-teal-500 hover:bg-teal-50 transition-all duration-300"
     >
-      Already Submited
+      Telah Terkirim
     </button>
   </div>
 </template>

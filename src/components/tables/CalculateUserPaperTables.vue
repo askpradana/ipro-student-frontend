@@ -1,24 +1,24 @@
 <template>
   <div class="bg-white border border-slate-100 rounded-lg shadow-lg p-4">
     <div class="bg-gradient-to-r from-teal-600 to-emerald-700-500 text-white rounded-t-lg p-4">
-      <h1 class="text-2xl font-bold">Student Psychogram</h1>
-      <p class="text-sm">Cognitive & Personal Assessment Profile</p>
+      <h1 class="text-2xl font-bold">Psikogram Murid</h1>
+      <p class="text-sm">Profil Penilaian Kognitif & Pribadi</p>
     </div>
     <div class="bg-white p-4 rounded-b-lg">
       <div
         class="text-center text-slate-700 text-sm mb-8 mt-4 flex justify-center items-center gap-2"
       >
-        <span>1 - Below Average 🥺</span>
-        <span>2 - Somewhat Below Average 😐</span>
-        <span>3 - Average 🙂</span>
-        <span>4 - Above Average 😊</span>
-        <span>5 - Excellent 🌟</span>
+        <span>1 - Perlu Penguatan 🥺</span>
+        <span>2 - Perlu Perhatian 😐</span>
+        <span>3 - Cukup Berkembang 🙂</span>
+        <span>4 - Unggul 😊</span>
+        <span>5 - Sangat Unggul 🌟</span>
       </div>
 
       <!-- <CalclulateUserTables :user-data="userData" /> -->
 
       <!-- Cognitive Abilities Section -->
-      <h2 class="text-lg font-bold mb-2">Cognitive Abilities</h2>
+      <h2 class="text-lg font-bold mb-2">Kemampuan Berpikir</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div class="bg-teal-50 p-4 rounded-lg shadow">
           <span class="flex justify-between items-center">
@@ -148,7 +148,7 @@
       </div>
 
       <!-- Personal Qualities Section -->
-      <h2 class="text-lg font-bold mb-2">Personal Qualities</h2>
+      <h2 class="text-lg font-bold mb-2">Kualitas Pribadi</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div class="bg-teal-50 p-4 rounded-lg shadow">
           <span class="flex justify-between items-center">
@@ -278,8 +278,8 @@
       </div>
 
       <p class="text-xs text-gray-500 text-center">
-        This psychogram is intended as a guidance tool and should be considered alongside other
-        assessments and observations.
+        Psikogram ini dimaksudkan sebagai alat panduan dan harus dipertimbangkan bersama lainnya
+        penilaian dan pengamatan.
       </p>
     </div>
   </div>

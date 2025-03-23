@@ -20,17 +20,17 @@
           />
         </svg>
       </div>
-      <h3 class="text-lg font-bold text-slate-800">Violation Alert</h3>
+      <h3 class="text-lg font-bold text-slate-800 tracking-tight">Pelanggaran</h3>
     </div>
 
     <p class="text-slate-700 mb-6">
-      <b>Warning:</b>
+      <b>Peringatan:</b>
       {{ getViolationWarning(modalStore.message) }}
     </p>
 
     <div class="text-gray-700 text-sm mb-6">
       <p>Pelanggaran yang terdeteksi dapat mempengaruhi nilai akhir Anda.</p>
-      <p class="mt-4 font-semibold">Total violation: {{ quizStore.violationCount }}</p>
+      <p class="mt-4 font-semibold">Total pelanggaran: {{ quizStore.violationCount }}</p>
     </div>
 
     <div class="text-right">
@@ -38,7 +38,7 @@
         @click="modalStore.closeModal()"
         class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300"
       >
-        Close
+        Tutup
       </button>
     </div>
   </div>

@@ -1,10 +1,10 @@
 <template>
   <div v-if="show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
     <div class="bg-white rounded-xl p-6 max-w-lg w-full">
-      <h2 class="text-xl font-bold mb-4">Edit User</h2>
+      <h2 class="text-xl font-bold mb-4">Ubah User</h2>
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
           <input
             v-model="localUser.name"
             type="text"
@@ -20,7 +20,7 @@
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
           <select
             v-model="localUser.grade"
             class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
@@ -29,7 +29,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Periode Tes</label>
           <input
             v-model="localUser.testPeriod"
             type="datetime-local"
@@ -47,13 +47,13 @@
           @click="$emit('close')"
           class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200"
         >
-          Cancel
+          Batal
         </button>
         <button
           @click="$emit('save', localUser)"
           class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
         >
-          Save Changes
+          Simpan Perubahan
         </button>
       </div>
     </div>
