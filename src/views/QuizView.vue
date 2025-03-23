@@ -52,7 +52,8 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
     router.push('/completed')
   } else {
     store.startQuiz(selectedTypeQuiz)
-    timerStore.resetTimer(40)
+    timerStore.resetTimer(60 * 20)
+    // timerStore.resetTimer(40)
   }
 }
 </script>
@@ -62,9 +63,9 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
     <!-- Header -->
     <div class="mb-12 flex justify-between items-center">
       <h1
-        class="text-xl md:text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
+        class="text-xl md:text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent tracking-tight"
       >
-        Learning Style Assessment
+        Penilaian Gaya Belajar
       </h1>
       <button
         @click="handleBack"
@@ -98,13 +99,13 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
               @click="showIntructionTest(type.instructionImage)"
               class="w-full mb-4 p-2 border border-teal-600 text-teal-600 rounded-xl font-semibold hover:bg-teal-100 active:scale-[0.98] transition-all duration-300"
             >
-              Test Instructions
+              Instruksi Kuis
             </button>
             <button
               @click="startQuizHandler(type.typeQuiz)"
               class="w-full p-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300"
             >
-              Start Assessment
+              Mulai Kuis
             </button>
           </div>
         </template>

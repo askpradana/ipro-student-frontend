@@ -25,7 +25,7 @@
         @click="quitHandler"
         class="px-4 py-2 rounded-lg text-white bg-gradient-to-r from-red-600 to-red-600 hover:from-red-700 hover:to-red-700 transition-all duration-300"
       >
-        Quit
+        Tutup
       </button>
     </div>
   </div>

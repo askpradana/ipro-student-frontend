@@ -17,21 +17,21 @@
           />
         </svg>
       </div>
-      <h2 class="text-xl font-bold text-slate-800">Leave Quiz</h2>
+      <h2 class="text-xl font-bold text-slate-800 tracking-tight">Meninggalkan Kuis</h2>
     </div>
-    <p class="my-4 text-slate-600">Are you sure want to leave from this quiz section?</p>
+    <p class="my-4 text-slate-600">Kamu yakin ingin meninggalkan sesi kuis saat ini?</p>
     <div class="mt-8 flex w-full justify-end gap-2">
       <button
         @click="modalStore.closeModal"
         class="px-4 py-2 rounded-lg text-white bg-gradient-to-r from-slate-400 to-slate-400 hover:from-slate-500 hover:to-slate-600 transition-all duration-300"
       >
-        Cancel
+        Batal
       </button>
       <button
         @click="quitHandler"
         class="px-4 py-2 rounded-lg text-white bg-gradient-to-r from-red-600 to-red-600 hover:from-red-700 hover:to-red-700 transition-all duration-300"
       >
-        Quit
+        Keluar
       </button>
     </div>
   </div>

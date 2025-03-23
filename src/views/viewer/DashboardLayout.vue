@@ -78,7 +78,7 @@
             @click="handleLogout"
             class="text-white text-sm cursor-pointer bg-red-600 p-2 rounded-md hover:bg-red-500"
           >
-            Sign out
+            Keluar
           </button>
         </span>
       </header>

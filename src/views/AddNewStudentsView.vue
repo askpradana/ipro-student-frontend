@@ -1,33 +1,33 @@
 <template>
   <div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Add More Students</h1>
+    <h1 class="text-2xl font-bold mb-6">Tambahkan Murid</h1>
     <!-- School Information -->
     <LoadingSpinner v-if="loading" />
     <template v-else-if="!loading">
       <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
-        <h2 class="text-lg font-semibold mb-4">School Information</h2>
+        <h2 class="text-lg font-semibold mb-4">Informasi Sekolah</h2>
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">School Name</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Sekolah</label>
             <select
               v-model="newUsersData.school"
               class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-              placeholder="Enter school name"
+              placeholder="Masukan nama sekolah"
             >
-              <option disabled value="">Choose School</option>
+              <option disabled value="">Pilih Sekolah</option>
               <option v-for="school in listSchool" :key="school" :value="school">
                 {{ school }}
               </option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Test Period</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Periode Tes</label>
             <Datepicker
               v-model="newUsersData.testPeriod"
               class="w-full"
               :enable-time-picker="false"
               :format="formatDate"
-              placeholder="Select test period"
+              placeholder="Pilih Periode Tes"
               :min-date="new Date()"
               autoApply
               textInput
@@ -39,7 +39,7 @@
       <!-- Add validation messages -->
       <div v-if="hasSubmitAttempt && validationMessages.length > 0" class="mb-6">
         <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-          <h3 class="text-red-700 font-medium mb-2">Please fix the following errors:</h3>
+          <h3 class="text-red-700 font-medium mb-2">Harap perbaiki kesalahan berikut:</h3>
           <ul class="list-disc list-inside text-red-600">
             <li v-for="message in validationMessages" :key="message">{{ message }}</li>
           </ul>
@@ -49,7 +49,7 @@
       <!-- Students Section -->
       <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold">Students <span class="text-red-500">*</span></h2>
+          <h2 class="text-lg font-semibold">Murid <span class="text-red-500">*</span></h2>
           <button
             @click="addStudent"
             class="px-4 py-2 text-sm text-white rounded-lg"
@@ -58,7 +58,7 @@
             "
             :disabled="submitLoading"
           >
-            Add Student
+            Tambah Murid
           </button>
         </div>
 
@@ -69,12 +69,12 @@
         >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
               <input
                 v-model="user.name"
                 type="text"
                 class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                placeholder="Student name"
+                placeholder="Nama Murid"
               />
             </div>
             <div>
@@ -87,19 +87,19 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
               <select
                 v-model="user.grade"
                 class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
               >
-                <option value="">Select grade</option>
+                <option value="">Pilih Kelas</option>
                 <option v-for="grade in GRADES" :key="grade" :value="grade">
-                  Grade {{ grade }}
+                  Kelas {{ grade }}
                 </option>
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
               <input
                 v-model="user.phoneNumber"
                 type="tel"
@@ -114,7 +114,7 @@
                 :class="submitLoading ? 'bg-slate-200 cursor-not-allowed' : 'hover:bg-red-50'"
                 :disabled="submitLoading"
               >
-                Remove
+                Hapus
               </button>
             </div>
           </div>
@@ -124,7 +124,7 @@
       <!-- Viewers Section -->
       <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold">Viewers <span class="text-red-500">*</span></h2>
+          <h2 class="text-lg font-semibold">Viewer <span class="text-red-500">*</span></h2>
 
           <button
             @click="addViewer"
@@ -134,7 +134,7 @@
             "
             :disabled="submitLoading"
           >
-            Add Viewer
+            Tambah Viewer
           </button>
         </div>
 
@@ -145,12 +145,12 @@
         >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
               <input
                 v-model="viewer.name"
                 type="text"
                 class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                placeholder="Viewer name"
+                placeholder="Nama Viewer"
               />
             </div>
             <div>
@@ -163,7 +163,7 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
               <input
                 v-model="viewer.phoneNumber"
                 type="tel"
@@ -178,7 +178,7 @@
                 :class="submitLoading ? 'bg-slate-200 cursor-not-allowed' : 'hover:bg-red-50'"
                 :disabled="submitLoading"
               >
-                Remove
+                Hapus
               </button>
             </div>
           </div>
@@ -193,7 +193,7 @@
           :class="submitLoading ? 'bg-slate-200 cursor-not-allowed' : 'hover:bg-gray-50'"
           :disabled="submitLoading"
         >
-          Cancel
+          Batal
         </button>
         <button
           @click="saveNewStudents"
@@ -203,7 +203,7 @@
           "
           :disabled="submitLoading"
         >
-          Save
+          Simpan
         </button>
       </div>
     </template>

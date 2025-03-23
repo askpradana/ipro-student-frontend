@@ -2,14 +2,14 @@
   <div>
     <div class="flex flex-col-reverse md:flex-row justify-between items-center">
       <h2 class="text-xl font-bold text-slate-800">
-        Question {{ store.questions[store.currentQuestionIndex]?.soalID }} of
+        Pertanyaan {{ store.questions[store.currentQuestionIndex]?.soalID }} dari
         {{ store.questions.length }}
       </h2>
       <h2
         class="font-semibold text-lg"
         :class="timerStore.timer > 30 ? 'text-teal-600' : 'text-red-600'"
       >
-        Time Left: {{ timerStore.formattedTime }}s
+        Waktu: {{ timerStore.formattedTime }}s
       </h2>
     </div>
 
@@ -97,14 +97,14 @@
         :disabled="store.currentQuestionIndex === 0"
         class="px-6 py-2 rounded-lg font-semibold text-teal-600 hover:bg-teal-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
       >
-        Previous
+        Sebelumnya
       </button>
       <button
         @click="handleNext"
         :disabled="selectedAnswer === null"
         class="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
       >
-        {{ store.currentQuestionIndex === store.questions.length - 1 ? 'Complete' : 'Next' }}
+        {{ store.currentQuestionIndex === store.questions.length - 1 ? 'Selesai' : 'Berikutnya' }}
       </button>
     </div>
   </div>

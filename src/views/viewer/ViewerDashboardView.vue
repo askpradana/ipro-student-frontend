@@ -11,7 +11,7 @@
           @click="handleLogout"
           class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
         >
-          Logout
+          Keluar
         </button>
       </div>
 
@@ -136,17 +136,17 @@ const editingUser = ref<EditingUser>({
 })
 
 const tableHeaders = [
-  'Name',
+  'Nama',
   'Email',
-  'Grade',
-  'School',
-  'Test Status',
-  'Test Period',
-  'Last Login',
-  'Login Attempts',
-  'Created At',
-  'Created By',
-  'Actions',
+  'Kelas',
+  'Sekolah',
+  'Tes Status',
+  'Tes Periode',
+  'Terakhir Login',
+  'Percobaan Login',
+  'Dibuat Pada',
+  'Dibuat Oleh',
+  'Aksi',
 ] as const
 
 const GRADES = ['9', '10', '11', '12'] as const

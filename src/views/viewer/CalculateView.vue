@@ -5,8 +5,8 @@
       <div class="flex justify-between items-center">
         <router-link
           to="/viewer/dashboard"
-          class="block my-4 bg-red-400 text-white px-4 py-2 rounded-lg transition duration-150 hover:bg-red-500 size-fit"
-          >Back to Dashboard</router-link
+          class="block text-sm my-4 bg-red-400 text-white px-4 py-2 rounded-lg transition duration-150 hover:bg-red-500 size-fit"
+          >Kembali ke Dashboard</router-link
         >
         <div
           class="relative flex h-10 w-64 cursor-pointer rounded-md border border-gray-200 bg-gray-100 p-1 overflow-hidden"
@@ -33,7 +33,7 @@
               class="transition-transform"
               :class="viewMode === 'report' ? 'transform-none' : ' opacity-70'"
             >
-              Report
+              Laporan
             </span>
           </div>
 
@@ -50,7 +50,7 @@
               class="transition-transform"
               :class="viewMode === 'table' ? 'transform-none' : ' opacity-70'"
             >
-              Table
+              Tabel
             </span>
           </div>
         </div>

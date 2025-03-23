@@ -3,7 +3,7 @@
     <input
       v-model="localSearchQuery"
       type="text"
-      placeholder="Search..."
+      placeholder="Pencarian..."
       class="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
       @input="updateSearch"
     />
@@ -12,10 +12,10 @@
       class="rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
       @change="updateSearch"
     >
-      <option value="name">Name</option>
+      <option value="name">Nama</option>
       <option value="email">Email</option>
-      <option value="school">School</option>
-      <option value="createdBy">Created By</option>
+      <option value="school">Sekolah</option>
+      <option value="createdBy">Dibuat oleh</option>
     </select>
   </div>
 </template>

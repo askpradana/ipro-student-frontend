@@ -2,21 +2,21 @@
   <div class="bg-white border border-slate-100 rounded-lg shadow-lg p-4">
     <div class="overflow-x-auto">
       <div class="bg-gradient-to-r from-teal-600 to-emerald-700-500 text-white rounded-t-lg p-4">
-        <h1 class="text-2xl font-bold">Student Psychogram Table</h1>
-        <p class="text-sm">Cognitive & Personal Assessment Profile</p>
+        <h1 class="text-2xl font-bold">Tabel Psikogram Murid</h1>
+        <p class="text-sm">Profil Penilaian Kognitif & Pribadi</p>
       </div>
       <div class="text-center text-slate-700 text-sm my-8 flex justify-center items-center gap-2">
-        <span>1 - Below Average 🥺</span>
-        <span>2 - Somewhat Below Average 😐</span>
-        <span>3 - Average 🙂</span>
-        <span>4 - Above Average 😊</span>
-        <span>5 - Excellent 🌟</span>
+        <span>1 - Perlu Penguatan 🥺</span>
+        <span>2 - Perlu Perhatian 😐</span>
+        <span>3 - Cukup Berkembang 🙂</span>
+        <span>4 - Unggul 😊</span>
+        <span>5 - Sangat Unggul 🌟</span>
       </div>
       <table class="min-w-full border-collapse border border-gray-400 rounded-xl mb-4">
         <thead>
           <tr>
             <th class="border border-gray-400 p-2 bg-teal-600 text-white" colspan="7">
-              Student Psychogram Table
+              Tabel Psikogram Murid
             </th>
           </tr>
         </thead>
@@ -264,8 +264,8 @@
         </tbody>
       </table>
       <p class="text-xs text-gray-500 text-center mb-4 mt-6">
-        This psychogram is intended as a guidance tool and should be considered alongside other
-        assessments and observations.
+        Psikogram ini dimaksudkan sebagai alat panduan dan harus dipertimbangkan bersama lainnya
+        penilaian dan pengamatan.
       </p>
     </div>
   </div>

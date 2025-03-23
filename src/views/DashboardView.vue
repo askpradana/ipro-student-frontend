@@ -14,7 +14,7 @@
     <h1
       class="my-10 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600 uppercase"
     >
-      WELCOME {{ userStore.dataUser?.name }}
+      SELAMAT DATANG {{ userStore.dataUser?.name }}
     </h1>
     <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-4">
       <!-- Quiz Button -->
@@ -49,7 +49,7 @@
                 : 'text-teal-600 group-hover:translate-x-1'
             "
           >
-            Take {{ type.title }}
+            Kerjakan {{ type.title }}
           </h2>
           <p
             class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
@@ -59,11 +59,11 @@
               ] && 'hidden'
             "
           >
-            DONE
+            Selesai
           </p>
         </div>
         <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
-          Start a new assessment to test your knowledge
+          Mulai penilaian baru untuk menguji pengetahuan Anda
         </p>
       </button>
 
