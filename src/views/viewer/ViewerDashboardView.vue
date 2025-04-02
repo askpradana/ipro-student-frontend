@@ -41,6 +41,8 @@
           </router-link>
         </div> -->
 
+        <ExportAll />
+
         <!-- Pagination Controls -->
         <PaginationControls
           v-model:itemsPerPage="itemsPerPage"
@@ -107,6 +109,7 @@ import Pagination from '@/components/paginations/PaginationTableUser.vue'
 import EditUserModal from '@/components/modals/ModalEditUser.vue'
 import LogoutErrorModal from '@/components/modals/ModalLogoutError.vue'
 import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue'
+import ExportAll from '@/components/exports/ExportAll.vue'
 
 const adminStore = useAdminStore()
 const authStore = useAuthStore()

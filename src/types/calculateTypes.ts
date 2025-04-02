@@ -38,3 +38,17 @@ export interface CognitiveAspectsInterface {
   kecepatan_perseptual: AssessmentAspect
   ketelitian_kerja: AssessmentAspect
 }
+
+export interface PsikogramExportDataInterface {
+  message: string
+  code: number
+  status: string
+  data: {
+    email: string
+    name: string
+    grade: string
+    phone_number: string
+    quiz_period: string
+    result: AssessmentAspect[]
+  }[]
+}
