@@ -81,11 +81,9 @@ const exportToPDF = async () => {
 
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
-      doc.addFont('/assets/fonts/DejaVuSans.ttf', 'DejaVu', 'normal')
-      doc.setFont('DejaVu')
 
       doc.text(
-        `${student?.name ? student.name.toUpperCase() : 'NAMA TIDAK TERSEDIA 😊 🙂 😐 🥺 🌟'} - Kelas ${student?.grade || 'N/A'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
+        `${student?.name ? student.name.toUpperCase() : 'NAMA TIDAK TERSEDIA'} - Kelas ${student?.grade || 'N/A'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
         22,
         33,
       )
@@ -126,7 +124,7 @@ const exportToPDF = async () => {
         columnStyles: {
           0: { cellWidth: 'auto', fontStyle: 'bold' },
           1: { cellWidth: 'auto', halign: 'justify', overflow: 'linebreak' },
-          2: { cellWidth: 'auto', halign: 'center', valign: 'middle', font: 'DejaVu' },
+          2: { cellWidth: 'auto', halign: 'center', valign: 'middle' },
         },
       })
 
