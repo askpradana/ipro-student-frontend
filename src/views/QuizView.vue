@@ -51,8 +51,28 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
   if (userStore[getTypeOfQuiz!]) {
     router.push('/completed')
   } else {
+    const getTimer = () => {
+      switch (getTypeOfQuiz) {
+        case 'quiz_tiga':
+          return 60 * 6
+        case 'quiz_lima':
+          return 60 * 10
+        case 'quiz_enam':
+          return 60 * 4
+        case 'quiz_tujuh':
+          return 60 * 6
+        case 'quiz_ppi':
+          return 60 * 15
+
+        default:
+          break
+      }
+    }
+
+    const timer = getTimer()
+
     store.startQuiz(selectedTypeQuiz)
-    timerStore.resetTimer(60 * 20)
+    timerStore.resetTimer(timer)
     // timerStore.resetTimer(40)
   }
 }
