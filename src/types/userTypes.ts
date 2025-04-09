@@ -3,6 +3,10 @@ export interface UserProfileData {
   email: string
   grade: string
   school: string
+  agreeDisclaimer: {
+    Time: string
+    Valid: boolean
+  }
   quiz_tiga: boolean
   quiz_lima: boolean
   quiz_enam: boolean
@@ -30,4 +34,6 @@ export interface UserState {
   quiz_ppi: boolean
   loading: boolean
   error: string | null
+  dateAgreement: string
+  discalaimerAgreement: boolean
 }
