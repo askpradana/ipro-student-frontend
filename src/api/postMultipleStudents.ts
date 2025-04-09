@@ -23,8 +23,6 @@ export const postNewStudents = async (dataProps: BodyDataInterface) => {
     viewer: dataProps.viewer,
   }
 
-  console.log('body:', bodyData)
-
   try {
     if (!token) {
       throw new Error('No user token found')
