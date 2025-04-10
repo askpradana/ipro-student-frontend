@@ -7,6 +7,7 @@ import AddNewUsersView from '@/views/AddNewUsersView.vue'
 import AddNewStudentsView from '@/views/AddNewStudentsView.vue'
 import ViewerDashboardView from '@/views/viewer/ViewerDashboardView.vue'
 import CalculateView from '@/views/viewer/CalculateView.vue'
+import AgreementView from '@/views/AgreementView.vue'
 
 // Define custom meta type
 declare module 'vue-router' {
@@ -63,6 +64,12 @@ const routes: RouteRecordRaw[] = [
     path: '/dashboard',
     name: 'dashboard',
     component: DashboardView,
+    meta: { requiresAuth: true, requiresRole: ['USER'] },
+  },
+  {
+    path: '/agreement',
+    name: 'agreement',
+    component: AgreementView,
     meta: { requiresAuth: true, requiresRole: ['USER'] },
   },
   {

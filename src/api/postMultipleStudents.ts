@@ -23,14 +23,12 @@ export const postNewStudents = async (dataProps: BodyDataInterface) => {
     viewer: dataProps.viewer,
   }
 
-  console.log('body:', bodyData)
-
   try {
     if (!token) {
       throw new Error('No user token found')
     }
 
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admini/users/add-more`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/add-more`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
