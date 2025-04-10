@@ -129,7 +129,11 @@ const showLogoutErrorModal = ref(false)
 const logoutErrorMessage = ref('')
 
 onMounted(() => {
-  userStore.initializeQuiz()
+  userStore.initializeQuiz().then(() => {
+    if (!userStore.discalaimerAgreement) {
+      router.push('/agreement')
+    }
+  })
 })
 
 onBeforeMount(() => {
@@ -139,10 +143,12 @@ onBeforeMount(() => {
 })
 
 const handleTakeQuiz = (selectedTypeQuiz: number) => {
-  // Will be implemented later
-  // console.log('Navigate to quiz')
-  localStorage.setItem('type-quiz', JSON.stringify(selectedTypeQuiz))
-  router.push('/quiz')
+  if (!userStore.discalaimerAgreement) {
+    router.push('/agreement')
+  } else {
+    localStorage.setItem('type-quiz', JSON.stringify(selectedTypeQuiz))
+    router.push('/quiz')
+  }
 }
 
 const handleSeeResults = () => {
