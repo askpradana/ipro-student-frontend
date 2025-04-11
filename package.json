@@ -13,10 +13,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/file-saver": "^2.0.7",
     "@vuepic/vue-datepicker": "^11.0.1",
     "chart.js": "^4.4.7",
+    "file-saver": "^2.0.5",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
+    "jszip": "^3.10.1",
     "pinia": "^2.3.1",
     "vue": "^3.5.13",
     "vue-chartjs": "^5.3.2",
