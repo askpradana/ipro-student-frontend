@@ -85,7 +85,6 @@ onMounted(() => {
   postCalculateUser(listID).then((res) => {
     dataCalculateUser.value = res
     loading.value = false
-    console.log(userData.value)
   })
 })
 
