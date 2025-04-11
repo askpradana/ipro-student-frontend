@@ -1,7 +1,8 @@
 export interface AssessmentAspect {
+  aspek: string
   skor: number
   definisi_aspek: string
-  deskripsi: string
+  hasil: string
 }
 
 export interface UserAssessment {
@@ -44,11 +45,15 @@ export interface PsikogramExportDataInterface {
   code: number
   status: string
   data: {
-    email: string
-    name: string
-    grade: string
-    phone_number: string
-    quiz_period: string
-    result: AssessmentAspect[]
-  }[]
+    school: string
+    person_data: {
+      email: string
+      name: string
+      grade: string
+      phone_number: string
+      quiz_period: string
+      jurusan: string
+      result: AssessmentAspect[]
+    }[]
+  }
 }

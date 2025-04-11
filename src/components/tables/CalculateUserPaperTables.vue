@@ -37,7 +37,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.kecerdasan_umum.deskripsi }}
+            {{ userData?.kecerdasan_umum.hasil }}
           </p>
         </div>
 
@@ -58,7 +58,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.penalaran_numerik.deskripsi }}
+            {{ userData?.penalaran_numerik.hasil }}
           </p>
         </div>
 
@@ -79,7 +79,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.penalaran_verbal.deskripsi }}
+            {{ userData?.penalaran_verbal.hasil }}
           </p>
         </div>
 
@@ -100,7 +100,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.penalaran_non_verbal.deskripsi }}
+            {{ userData?.penalaran_non_verbal.hasil }}
           </p>
         </div>
 
@@ -121,7 +121,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.kecepatan_perseptual.deskripsi }}
+            {{ userData?.kecepatan_perseptual.hasil }}
           </p>
         </div>
 
@@ -142,7 +142,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.ketelitian_kerja.deskripsi }}
+            {{ userData?.ketelitian_kerja.hasil }}
           </p>
         </div>
       </div>
@@ -167,7 +167,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.sistematik_kerja.deskripsi }}
+            {{ userData?.sistematik_kerja.hasil }}
           </p>
         </div>
 
@@ -188,7 +188,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.ketangguhan.deskripsi }}
+            {{ userData?.ketangguhan.hasil }}
           </p>
         </div>
 
@@ -209,7 +209,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.penyesuaian_diri.deskripsi }}
+            {{ userData?.penyesuaian_diri.hasil }}
           </p>
         </div>
 
@@ -230,7 +230,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.hubungan_interpersonal.deskripsi }}
+            {{ userData?.hubungan_interpersonal.hasil }}
           </p>
         </div>
 
@@ -251,7 +251,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.motivasi_berprestasi.deskripsi }}
+            {{ userData?.motivasi_berprestasi.hasil }}
           </p>
         </div>
 
@@ -272,7 +272,7 @@
           </p>
           <p class="text-sm font-semibold my-2 text-slate-700">Penilaian:</p>
           <p class="text-sm">
-            {{ userData?.kemandirian.deskripsi }}
+            {{ userData?.kemandirian.hasil }}
           </p>
         </div>
       </div>
