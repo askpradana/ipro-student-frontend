@@ -4,31 +4,14 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { type PsikogramExportDataInterface } from '@/types/calculateTypes'
 import { getExportAll } from '@/api/getExportAll'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
+import { getXPosValue, page2Content, getEmotResult, getEmoticon } from '@/lib/exportAllStyle'
 import sadEmot from '/assets/emoji/sad.png'
-import netralEmot from '/assets/emoji/netral.png'
-import smileEmot from '/assets/emoji/smile.png'
-import shyEmot from '/assets/emoji/shy.png'
 import starEmot from '/assets/emoji/star.png'
 
 const dataNilaiSiswa = ref<PsikogramExportDataInterface>()
 const isLoading = ref(false)
-
-const getEmoticon = (skor: number) => {
-  switch (skor) {
-    case 1:
-      return sadEmot
-    case 2:
-      return netralEmot
-    case 3:
-      return smileEmot
-    case 4:
-      return shyEmot
-    case 5:
-      return starEmot
-    default:
-      return netralEmot
-  }
-}
 
 const exportToPDF = async () => {
   isLoading.value = true
@@ -37,18 +20,12 @@ const exportToPDF = async () => {
     const response = await getExportAll()
     dataNilaiSiswa.value = response
 
-    if (!dataNilaiSiswa.value?.data?.length) {
-      console.error('Tidak ada data untuk diexport')
+    if (!dataNilaiSiswa.value?.data?.person_data.length) {
       alert('Tidak ada data untuk diexport')
       return
     }
 
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    })
-
+    const zip = new JSZip()
     const aspekKemampuanBerpikir = [
       'Kecerdasan Umum',
       'Penalaran Numerik',
@@ -56,9 +33,7 @@ const exportToPDF = async () => {
       'Penalaran Non Verbal',
       'Kecepatan Perseptual',
     ]
-
     const aspekSikapKerja = ['Ketelitian Kerja', 'Sistematik Kerja', 'Ketangguhan']
-
     const aspekKepribadian = [
       'Penyesuaian Diri',
       'Hubungan Interpersonal',
@@ -66,12 +41,81 @@ const exportToPDF = async () => {
       'Kemandirian',
     ]
 
-    dataNilaiSiswa.value.data.forEach((student, index) => {
-      if (index > 0) {
-        doc.addPage()
-      }
+    for (const student of dataNilaiSiswa.value.data.person_data) {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      })
 
-      // Add header
+      // === PAGE 1 - Cover ===
+      doc.setFontSize(20)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Laporan Psikogram Siswa', 105, 50, { align: 'center' })
+
+      doc.addImage(sadEmot, 'PNG', 30, 80, 60, 60)
+      doc.addImage(starEmot, 'PNG', 120, 80, 60, 60)
+
+      doc.setFontSize(16)
+      doc.setFont('helvetica', 'normal')
+      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 170, { align: 'center' })
+      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 180, { align: 'center' })
+      doc.text(`KELAS ${student?.grade || '-'}`, 105, 190, { align: 'center' })
+      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
+      // doc.text(` ${student?.phone_number || '-'}`, 105, 120, { align: 'center' })
+      // doc.text(`${student?.email || '-'}`, 105, 130, { align: 'center' })
+
+      // === PAGE 2 - Cara Menguakan ===
+      doc.addPage()
+      let yPosition = 20 // Posisi Y awal
+
+      page2Content.forEach((content) => {
+        if (content.style == 'title') {
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(16)
+          doc.text(content.text, 210 / 2, 27, { align: 'center' })
+          yPosition += 28
+        } else if (content.style == 'subtitle') {
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(14)
+          doc.text(content.text, 210 / 2, yPosition, { align: 'center' })
+          yPosition += 10
+        } else if (content.style == 'disclaimer') {
+          doc.setFontSize(10)
+          doc.setFont('helvetica', 'bold')
+          doc.text(content.text, 210 / 2, yPosition - 1, { align: 'center' })
+          yPosition += 10
+        } else if (content.style == 'paragraph-disclaimer') {
+          doc.setFontSize(9)
+          doc.setFont('helvetica', 'italic')
+          doc.text(content.text, 210 / 2, yPosition - 1, { align: 'center' })
+        } else if (content.style == 'paragraph') {
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(12)
+
+          // Margin kiri dan kanan
+          const leftMargin = 20
+          const rightMargin = 20
+
+          // Lebar area teks yang digunakan
+          const pageWidth = 210 // A4 width in mm
+          const textWidth = pageWidth - leftMargin - rightMargin
+
+          // Split teks menjadi beberapa baris berdasarkan lebar halaman
+          const textLines = doc.splitTextToSize(content.text, textWidth)
+
+          // Loop untuk menambahkan setiap baris ke dokumen
+          textLines.forEach((line: string) => {
+            doc.text(line, leftMargin, yPosition, { align: 'justify' })
+            yPosition += 6 // yPosition untuk setiap baris, sesuaikan ukuran ini sesuai kebutuhan
+          })
+
+          yPosition += textLines.length + 5 // +5 untuk jarak ekstra
+        }
+      })
+
+      // === PAGE 3 - Tabel Psikogram ===
+      doc.addPage()
       doc.setFontSize(14)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(255, 255, 255)
@@ -81,146 +125,291 @@ const exportToPDF = async () => {
 
       doc.setFontSize(10)
       doc.setFont('helvetica', 'normal')
-
+      doc.setTextColor(255, 255, 255)
       doc.text(
-        `${student?.name ? student.name.toUpperCase() : 'NAMA TIDAK TERSEDIA'} - Kelas ${student?.grade || 'N/A'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
+        `${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'} - Kelas ${student?.grade || 'N/A'} - ${student?.jurusan || '-'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
         22,
         33,
       )
 
-      // Pastikan result ada dan jumlahnya sesuai
-      if (!student?.result || !Array.isArray(student.result)) {
-        console.error('Data result tidak valid', student)
-        return
-      }
+      let startY = 40
 
-      // Start position for first table
-      let startY = 38
-
-      // 1. Table Kemampuan Berpikir
       autoTable(doc, {
-        head: [['Kemampuan Berpikir', 'Analisa', 'Nilai']],
+        head: [['No', 'Kemampuan Berpikir', '1', '2', '3', '4', '5']],
         body: student.result
           .slice(0, 5)
-          .map((item, i) => [aspekKemampuanBerpikir[i], item?.deskripsi, '']),
+          .map((item, i) => [i + 1, aspekKemampuanBerpikir[i], '', '', '', '', '', '']),
         startY,
         margin: { vertical: 20, horizontal: 20 },
-        theme: 'striped', // Tambahkan tema untuk tampilan lebih rapi
-        tableWidth: 'auto',
+        theme: 'grid',
         headStyles: {
-          fontSize: 10,
           fillColor: '#51A2FF',
           textColor: '#fff',
           fontStyle: 'bold',
           halign: 'center',
+          valign: 'middle',
           lineColor: '#000',
+          lineWidth: 0.1,
         },
         styles: {
-          fontSize: 10,
+          fontSize: 12,
           cellPadding: 2,
           textColor: '#000',
           valign: 'middle',
+          lineColor: '#000',
         },
         columnStyles: {
-          0: { cellWidth: 'auto', fontStyle: 'bold' },
-          1: { cellWidth: 'auto', halign: 'justify', overflow: 'linebreak' },
-          2: { cellWidth: 'auto', halign: 'center', valign: 'middle' },
+          0: { halign: 'center', cellWidth: 20 },
+          1: { textColor: '#000', cellWidth: 70 },
         },
       })
 
       student.result.slice(0, 5).forEach((item, i) => {
         const emoticon = getEmoticon(item.skor)
-        const xPos = 181 // Geser kanan kiri semakin besar semakin ke kanan
-        const rowHeight = 16 // Tinggi per baris dalam tabel (jarak antar emoji)
-        const yPos = startY + (i + 1.2) * rowHeight - 0 // Perbaiki posisi vertikal
-        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
+        const xPos = getXPosValue(item.skor)
+        const rowHeight = 9
+        const yPos = startY + (i + 1.1) * rowHeight
+        doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
       })
 
-      startY = (doc as any).lastAutoTable.finalY
+      startY = (doc as any).lastAutoTable.finalY + 4
 
-      // 2. Table Sikap Kerja
       autoTable(doc, {
-        head: [['Sikap Kerja', 'Analisa', 'Nilai']],
+        head: [['No', '   Sikap Kerja    ', '1', '2', '3', '4', '5']],
         body: student.result
           .slice(5, 8)
-          .map((item, i) => [aspekSikapKerja[i], item?.deskripsi, '']),
+          .map((item, i) => [i + 1, aspekSikapKerja[i], '', '', '', '', '']),
         startY,
         margin: { vertical: 20, horizontal: 20 },
-        tableWidth: 'auto',
+        theme: 'grid',
         headStyles: {
-          fontSize: 10,
           fillColor: '#05DF72',
           textColor: '#fff',
           fontStyle: 'bold',
           halign: 'center',
+          valign: 'middle',
           lineColor: '#000',
+          lineWidth: 0.1,
         },
         styles: {
-          fontSize: 10,
+          fontSize: 12,
           cellPadding: 2,
           textColor: '#000',
           valign: 'middle',
+          lineColor: '#000',
         },
         columnStyles: {
-          0: { cellWidth: 'auto', fontStyle: 'bold' },
-          1: { cellWidth: 'auto', halign: 'justify', overflow: 'linebreak' },
-          2: { cellWidth: 'auto', halign: 'center', valign: 'middle' },
+          0: { halign: 'center', cellWidth: 20 },
+          1: { textColor: '#000', cellWidth: 70 },
         },
       })
 
       student.result.slice(5, 8).forEach((item, i) => {
         const emoticon = getEmoticon(item.skor)
-        const xPos = 181 // Geser kanan kiri semakin besar semakin ke kanan
-        const rowHeight = 16 // Tinggi per baris dalam tabel (jarak antar emoji)
-        const yPos = startY + (i + 0.8) * rowHeight - 0 // Perbaiki posisi vertikal
-        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
+        const xPos = getXPosValue(item.skor)
+        const rowHeight = 9
+        const yPos = startY + (i + 1.1) * rowHeight
+        doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
       })
 
-      startY = (doc as any).lastAutoTable.finalY
+      startY = (doc as any).lastAutoTable.finalY + 4
 
-      // 3. Table Kepribadian
       autoTable(doc, {
-        head: [['Kepribadian', 'Analisa', 'Nilai']],
+        head: [['No', 'Kepribadian', '1', '2', '3', '4', '5']],
         body: student.result
           .slice(8, 12)
-          .map((item, i) => [aspekKepribadian[i], item?.deskripsi, '']),
+          .map((item, i) => [i + 1, aspekKepribadian[i], '', '', '', '', '']),
         startY,
-        margin: { left: 20, right: 20 },
-        tableWidth: 'auto',
+        margin: { vertical: 20, horizontal: 20 },
+        theme: 'grid',
         headStyles: {
-          fontSize: 10,
-          fillColor: 'FF8904',
+          fillColor: '#FF8904',
           textColor: '#fff',
           fontStyle: 'bold',
           halign: 'center',
+          valign: 'middle',
           lineColor: '#000',
+          lineWidth: 0.1,
         },
         styles: {
-          fontSize: 10,
+          fontSize: 12,
           cellPadding: 2,
           textColor: '#000',
           valign: 'middle',
+          lineColor: '#000',
         },
         columnStyles: {
-          0: { cellWidth: 'auto', fontStyle: 'bold' },
-          1: { cellWidth: 'auto', halign: 'justify', overflow: 'linebreak' },
-          2: { cellWidth: 'auto', halign: 'center', valign: 'middle' },
+          0: { halign: 'center', cellWidth: 20 },
+          1: { textColor: '#000', cellWidth: 70 },
         },
       })
 
       student.result.slice(8, 12).forEach((item, i) => {
         const emoticon = getEmoticon(item.skor)
-        const xPos = 181 // Geser kanan kiri semakin besar semakin ke kanan
-        const rowHeight = 16 // Tinggi per baris dalam tabel (jarak antar emoji)
-        const yPos = startY + (i + 1) * rowHeight - 0 // Perbaiki posisi vertikal
-        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
+        const xPos = getXPosValue(item.skor)
+        const rowHeight = 9
+        const yPos = startY + (i + 1.1) * rowHeight
+        doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
       })
-    })
 
-    doc.save('Laporan-Psikogram-Siswa.pdf')
-  } catch (error) {
-    console.error('Gagal export PDF:', error)
-    alert('Gagal export PDF, mohon ulangi sekali lagi')
+      // ==== HALAMAN 4 TABEL HASIL ASPEK KEMAMPUAN BERPIKIR ====
+      doc.addPage()
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.setFillColor(51, 171, 161)
+      doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+      doc.text('Tabel Kemampuan Berpikir', 210 / 2, 28, { align: 'center' })
+      startY = 32
+
+      autoTable(doc, {
+        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        body: student.result
+          .slice(0, 5)
+          .map((item, i) => [aspekKemampuanBerpikir[i], '', item.definisi_aspek, item.hasil]),
+        startY,
+        margin: { vertical: 20, horizontal: 20 },
+        theme: 'striped',
+        headStyles: {
+          fillColor: '#51A2FF',
+          textColor: '#fff',
+          fontStyle: 'bold',
+          halign: 'center',
+          valign: 'middle',
+          lineColor: '#000',
+        },
+        styles: {
+          fontSize: 12,
+          cellPadding: 2,
+          textColor: '#000',
+          valign: 'middle',
+          lineColor: '#000',
+        },
+        columnStyles: {
+          0: { halign: 'left', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+          1: { textColor: '#000', cellWidth: 30 },
+          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          3: { textColor: '#000', fontSize: 11, valign: 'top' },
+        },
+      })
+
+      student.result.slice(0, 5).forEach((item, i) => {
+        const emoticon = getEmotResult(item.skor)
+        const xPos = item.skor > 1 ? 59 : 61 // Geser kanan kiri semakin besar semakin ke kanan
+        const rowHeight = 40 // Tinggi per baris dalam tabel (jarak antar emoji)
+        const yPos = startY + (i + 1.2) * rowHeight - 27 // Perbaiki posisi vertikal
+        doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
+      })
+
+      // ==== HALAMAN 5 TABEL HASIL ASPEK SIKAP KERJA ====
+      doc.addPage()
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.setFillColor(51, 171, 161)
+      doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+      doc.text('Tabel Sikap Kerja', 210 / 2, 28, { align: 'center' })
+      startY = 32
+
+      autoTable(doc, {
+        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        body: student.result
+          .slice(5, 8)
+          .map((item, i) => [aspekSikapKerja[i], '', item.definisi_aspek, item.hasil]),
+        startY,
+        margin: { vertical: 20, horizontal: 20 },
+        theme: 'striped',
+        headStyles: {
+          fillColor: '#05DF72',
+          textColor: '#fff',
+          fontStyle: 'bold',
+          halign: 'center',
+          valign: 'middle',
+          lineColor: '#000',
+        },
+        styles: {
+          fontSize: 12,
+          cellPadding: 2,
+          textColor: '#000',
+          valign: 'middle',
+          lineColor: '#000',
+        },
+        columnStyles: {
+          0: { halign: 'left', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+          1: { textColor: '#000', cellWidth: 30 },
+          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          3: { textColor: '#000', fontSize: 11, valign: 'top' },
+        },
+      })
+
+      student.result.slice(5, 8).forEach((item, i) => {
+        const emoticon = getEmotResult(item.skor)
+        const xPos = item.skor > 1 ? 59 : 61 // Geser kanan kiri semakin besar semakin ke kanan
+        const rowHeight = 40 // Tinggi per baris dalam tabel (jarak antar emoji)
+        const yPos = startY + (i + 1.2) * rowHeight - 27 // Perbaiki posisi vertikal
+        doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
+      })
+
+      // ==== HALAMAN 6 TABEL HASIL ASPEK KEPRIBADIAN ====
+      doc.addPage()
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.setFillColor(51, 171, 161)
+      doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+      doc.text('Tabel Kepribadian', 210 / 2, 28, { align: 'center' })
+      startY = 32
+
+      autoTable(doc, {
+        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        body: student.result
+          .slice(8, 12)
+          .map((item, i) => [aspekKepribadian[i], '', item.definisi_aspek, item.hasil]),
+        startY,
+        margin: { vertical: 20, horizontal: 20 },
+        theme: 'striped',
+        headStyles: {
+          fillColor: '#FF8904',
+          textColor: '#fff',
+          fontStyle: 'bold',
+          halign: 'center',
+          valign: 'middle',
+          lineColor: '#000',
+        },
+        styles: {
+          fontSize: 12,
+          cellPadding: 2,
+          textColor: '#000',
+          valign: 'middle',
+          lineColor: '#000',
+        },
+        columnStyles: {
+          0: { halign: 'left', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+          1: { textColor: '#000', cellWidth: 30 },
+          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          3: { textColor: '#000', fontSize: 11, valign: 'top' },
+        },
+      })
+
+      student.result.slice(8, 12).forEach((item, i) => {
+        const emoticon = getEmotResult(item.skor)
+        const xPos = item.skor > 1 ? 59 : 61 // Geser kanan kiri semakin besar semakin ke kanan
+        const rowHeight = 40 // Tinggi per baris dalam tabel (jarak antar emoji)
+        const yPos = startY + (i + 1.2) * rowHeight - 27 // Perbaiki posisi vertikal
+        doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
+      })
+
+      const pdfBlob = doc.output('blob')
+      const filename = `Psikogram-${student.name?.replace(/\s+/g, '_') || 'Siswa'}.pdf`
+      zip.file(filename, pdfBlob)
+    }
+
+    zip.generateAsync({ type: 'blob' }).then((content) => {
+      saveAs(content, 'Laporan-Psikogram-Siswa.zip')
+    })
+  } catch (err) {
+    console.error(err)
+    alert('Gagal export PDF!')
   } finally {
     isLoading.value = false
   }
