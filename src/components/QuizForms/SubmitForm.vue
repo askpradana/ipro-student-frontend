@@ -50,12 +50,26 @@ const quizStore = useQuizStore()
 const timerStore = useTimerStore()
 const router = useRouter()
 const isDone = ref(false)
+const isTraining = localStorage.getItem('isTraining')
 
 const backToQuizForm = () => {
   quizStore.isComplete = false
 }
 
 const sumbitQuizHandler = () => {
+  if (isTraining === 'true') {
+    notify('Latihan selesai', 'success')
+    setTimeout(() => {
+      router.push('/dashboard')
+      quizStore.typeQuiz = 0
+      quizStore.isComplete = false
+      timerStore.stopTimer()
+      quizStore.resetQuiz()
+    }, 1500)
+
+    return
+  }
+
   quizStore
     .submitFinalAnswer()
     .then(() => {

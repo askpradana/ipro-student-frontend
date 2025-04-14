@@ -4,7 +4,7 @@ export interface QuizQuestion {
   option_a?: string
   option_b?: string
   pilihan: string[]
-  kunci: string[] | string | number
+  kunci?: string[] | string | number
 }
 
 export interface APIResponse {

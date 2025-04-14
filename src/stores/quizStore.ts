@@ -54,7 +54,10 @@ export const useQuizStore = defineStore('quiz', {
       }
     },
 
-    startQuiz(typeQuiz: number) {
+    startQuiz(typeQuiz: number, istraining: boolean) {
+      if (istraining) {
+        localStorage.setItem('isTraining', JSON.stringify(istraining))
+      }
       this.initializeQuiz()
       this.typeQuiz = typeQuiz
       this.quizStarted = true
@@ -97,6 +100,7 @@ export const useQuizStore = defineStore('quiz', {
       this.quizStartTime = null
       this.quizEndTime = null
       localStorage.removeItem('type-quiz')
+      localStorage.removeItem('isTraining')
     },
 
     recordViolation(violation: Violation) {
