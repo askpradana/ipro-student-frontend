@@ -31,7 +31,7 @@
       </span>
     </div>
 
-    <p class="text-slate-800 my-8 text-justify">
+    <p class="text-slate-800 my-8 text-justify font-bold">
       Dari 4 pilihan kata yang ada, carilah kata - kata yang memiliki kemiripan makna atau yang
       bertentangan.
     </p>

@@ -9,6 +9,16 @@ import { saveAs } from 'file-saver'
 import { getXPosValue, page2Content, getEmotResult, getEmoticon } from '@/lib/exportAllStyle'
 import sadEmot from '/assets/emoji/sad.png'
 import starEmot from '/assets/emoji/star.png'
+import {
+  aspekKemampuanBerpikirEmoji,
+  aspekKepribadianEmoji,
+  aspekSikapKerjaEmoji,
+} from './exportAspekEmoji'
+import Kerahasiaan from '/assets/instruction-header/kerahasiaan.png'
+import CetakHasilTes from '/assets/instruction-header/cetak-hasil-tes.png'
+import PotensiPrestasi from '/assets/instruction-header/potensi-vs-prestasi.png'
+import Tujuan from '/assets/instruction-header/tujuan.png'
+import OptimalkanInformasi from '/assets/instruction-header/optimalkan-informasi.png'
 
 const dataNilaiSiswa = ref<PsikogramExportDataInterface>()
 const isLoading = ref(false)
@@ -78,8 +88,16 @@ const exportToPDF = async () => {
         } else if (content.style == 'subtitle') {
           doc.setFont('helvetica', 'bold')
           doc.setFontSize(14)
-          doc.text(content.text, 210 / 2, yPosition, { align: 'center' })
-          yPosition += 10
+          let header = ''
+          if (content.text.includes('KERAHASIAAN')) header = Kerahasiaan
+          if (content.text.includes('MENYELURUH')) header = Tujuan
+          if (content.text.includes('POTENSI')) header = PotensiPrestasi
+          if (content.text.includes('OPTIMALKAN')) header = OptimalkanInformasi
+          if (content.text.includes('HASIL')) header = CetakHasilTes
+
+          doc.addImage(header, 'PNG', 210 / 2 - 34, yPosition - 5, 64, 12)
+          // doc.text(content.text, 210 / 2, yPosition, { align: 'center' })
+          yPosition += 14
         } else if (content.style == 'disclaimer') {
           doc.setFontSize(10)
           doc.setFont('helvetica', 'bold')
@@ -286,11 +304,19 @@ const exportToPDF = async () => {
           lineColor: '#000',
         },
         columnStyles: {
-          0: { halign: 'left', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+          0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
           1: { textColor: '#000', cellWidth: 30 },
           2: { textColor: '#000', fontSize: 11, valign: 'top' },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
+      })
+
+      aspekKemampuanBerpikirEmoji.forEach((item, i) => {
+        const emoticon = item
+        const xPos = 34
+        const rowHeight = 40
+        const yPos = startY + (i + 1.2) * rowHeight - 33
+        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
       })
 
       student.result.slice(0, 5).forEach((item, i) => {
@@ -335,11 +361,19 @@ const exportToPDF = async () => {
           lineColor: '#000',
         },
         columnStyles: {
-          0: { halign: 'left', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+          0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
           1: { textColor: '#000', cellWidth: 30 },
           2: { textColor: '#000', fontSize: 11, valign: 'top' },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
+      })
+
+      aspekSikapKerjaEmoji.forEach((item, i) => {
+        const emoticon = item
+        const xPos = 34
+        const rowHeight = 40
+        const yPos = startY + (i + 1.2) * rowHeight - 33
+        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
       })
 
       student.result.slice(5, 8).forEach((item, i) => {
@@ -384,11 +418,19 @@ const exportToPDF = async () => {
           lineColor: '#000',
         },
         columnStyles: {
-          0: { halign: 'left', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+          0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
           1: { textColor: '#000', cellWidth: 30 },
           2: { textColor: '#000', fontSize: 11, valign: 'top' },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
+      })
+
+      aspekKepribadianEmoji.forEach((item, i) => {
+        const emoticon = item
+        const xPos = 34
+        const rowHeight = 40
+        const yPos = startY + (i + 1.2) * rowHeight - 33
+        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
       })
 
       student.result.slice(8, 12).forEach((item, i) => {

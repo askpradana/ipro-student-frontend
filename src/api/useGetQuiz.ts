@@ -34,6 +34,9 @@ export const useGetQuizApi = () => {
       }
 
       const data: APIResponse = await response.json()
+
+      console.log(data)
+
       return data.data
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'An error occurred'
