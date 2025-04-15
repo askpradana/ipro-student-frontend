@@ -1,0 +1,25 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "soalID": 1,
+      "option_a": "Saya suka mengamati tingkah laku orang lain ketika menghadapi situasi tertentu",
+      "option_b": "Saya suka mengerjakan tugas yang dianggap membutuhkan keterampilan lebih oleh orang lain",
+      "pilihan": []
+    },
+    {
+      "soalID": 2,
+      "option_a": "Saya suka melakukan kegiatan bersama dengan teman-teman",
+      "option_b": "Saya ingin bebas melakukan apa pun yang saya kehendaki",
+      "pilihan": []
+    },
+    {
+      "soalID": 3,
+      "option_a": "Saya ikut merasa senang atas keberhasilan rekan kerja yang dipromosikan",
+      "option_b": "Saya senang menjadi pusat perhatian di depan umum",
+      "pilihan": []
+    }
+  ],
+  "message": "Successfully retrieved soal",
+  "status": "success"
+}

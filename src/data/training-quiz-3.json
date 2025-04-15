@@ -1,0 +1,12 @@
+{
+  "code": 200,
+  "data": [
+    { "soalID": 1, "pilihan": ["menikah", "menebang", "kawin", "meneduh"] },
+    { "soalID": 2, "pilihan": ["selesai", "tua", "usia", "muda"] },
+    { "soalID": 3, "pilihan": ["salah", "lembut", "betul", "sama"] },
+    { "soalID": 4, "pilihan": ["membuka", "menyongsong", "menoleh", "menutup"] },
+    { "soalID": 5, "pilihan": ["jenaka", "kecil", "canggung", "lucu"] }
+  ],
+  "message": "Successfully retrieved soal",
+  "status": "success"
+}

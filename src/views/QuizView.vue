@@ -36,6 +36,7 @@ const handleBack = () => {
   } else {
     router.push('/dashboard')
     localStorage.removeItem('type-quiz')
+    localStorage.removeItem('isTraining')
   }
 }
 
@@ -45,7 +46,7 @@ const showIntructionTest = (imageSrc: string) => {
   modalStore.imageSource = imageSrc
 }
 
-const startQuizHandler = (selectedTypeQuiz: number) => {
+const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false) => {
   const getTypeOfQuiz = getTypeQuizWithUnderscore(selectedTypeQuiz.toString())
 
   if (userStore[getTypeOfQuiz!]) {
@@ -71,7 +72,7 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
 
     const timer = getTimer()
 
-    store.startQuiz(selectedTypeQuiz)
+    store.startQuiz(selectedTypeQuiz, isTraining)
     timerStore.resetTimer(timer)
     // timerStore.resetTimer(40)
   }
@@ -120,6 +121,12 @@ const startQuizHandler = (selectedTypeQuiz: number) => {
               class="w-full mb-4 p-2 border border-teal-600 text-teal-600 rounded-xl font-semibold hover:bg-teal-100 active:scale-[0.98] transition-all duration-300"
             >
               Instruksi Kuis
+            </button>
+            <button
+              @click="startQuizHandler(type.typeQuiz, true)"
+              class="w-full mb-4 p-2 border border-teal-600 text-teal-600 rounded-xl font-semibold hover:bg-teal-100 active:scale-[0.98] transition-all duration-300"
+            >
+              Latihan Kuis
             </button>
             <button
               @click="startQuizHandler(type.typeQuiz)"

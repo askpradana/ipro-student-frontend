@@ -31,7 +31,7 @@
       </span>
     </div>
 
-    <p class="text-slate-800 my-8">
+    <p class="text-slate-800 my-8 font-bold">
       Dari 2 pernyataan yang ada, silahkan pilih mana yang paling menggambarkan diri anda!
     </p>
 
@@ -127,17 +127,17 @@ const selectedAnswer = ref<string[] | number | string | null>(null)
 
 const { addWatermark } = useQuizSecurity({
   preventRightClick: true,
-  preventKeyboardShortcuts: false,
+  preventKeyboardShortcuts: true,
   enforceFullscreen: true, // Set true untuk paksa fullscreen
   detectTabChange: true,
   detectMouseLeave: true,
   addWatermark: true,
   // Callback untuk menampilkan peringatan modal
-  // warningCallback: (violationType) => {
-  //   modalStore.message = violationType
-  //   modalStore.openModal()
-  //   modalStore.typeModal = 'violation-warning'
-  // },
+  warningCallback: (violationType) => {
+    modalStore.message = violationType
+    modalStore.openModal()
+    modalStore.typeModal = 'violation-warning'
+  },
 })
 
 // Initialize security features when component mounts
