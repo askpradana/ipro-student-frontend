@@ -9,6 +9,7 @@ import { saveAs } from 'file-saver'
 import { getXPosValue, page2Content, getEmotResult, getEmoticon } from '@/lib/exportAllStyle'
 import sadEmot from '/assets/emoji/sad.png'
 import starEmot from '/assets/emoji/star.png'
+import logoIradat from '/assets/iradat-konsultan.png'
 import {
   aspekKemampuanBerpikirEmoji,
   aspekKepribadianEmoji,
@@ -50,7 +51,7 @@ const exportToPDF = async () => {
       doc.text('Laporan Psikogram Siswa', 105, 50, { align: 'center' })
 
       doc.addImage(sadEmot, 'PNG', 30, 80, 60, 60)
-      doc.addImage(starEmot, 'PNG', 120, 80, 60, 60)
+      doc.addImage(logoIradat, 'PNG', 115, 95, 65, 30)
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')

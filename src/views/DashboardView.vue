@@ -62,9 +62,9 @@
             Selesai
           </p>
         </div>
-        <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
+        <!-- <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
           Mulai penilaian baru untuk menguji pengetahuan Anda
-        </p>
+        </p> -->
       </button>
 
       <!-- Results Button -->
