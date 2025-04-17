@@ -8,6 +8,9 @@ import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { getXPosValue, page2Content, getEmotResult, getEmoticon } from '@/lib/exportAllStyle'
 import sadEmot from '/assets/emoji/sad.png'
+import netralEmot from '/assets/emoji/netral.png'
+import smileEmot from '/assets/emoji/smile.png'
+import shyEmot from '/assets/emoji/shy.png'
 import starEmot from '/assets/emoji/star.png'
 import logoIradat from '/assets/iradat-konsultan.png'
 import {
@@ -252,6 +255,21 @@ const exportToPDF = async () => {
         const yPos = startY + (i + 1.1) * rowHeight
         doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
       })
+
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor('#000')
+
+      doc.addImage(sadEmot, 'PNG', 26, 190, 9, 9)
+      doc.text('Perlu Penguatan', 40, 196)
+      doc.addImage(netralEmot, 'PNG', 26, 200, 9, 9)
+      doc.text('Perlu Perhatian', 40, 206)
+      doc.addImage(smileEmot, 'PNG', 26, 210, 9, 9)
+      doc.text('Cukup Berkembang', 40, 216)
+      doc.addImage(shyEmot, 'PNG', 26, 220, 9, 9)
+      doc.text('Unggul', 40, 226)
+      doc.addImage(starEmot, 'PNG', 26, 230, 9, 9)
+      doc.text('Sangat Unggul', 40, 236)
 
       // ==== HALAMAN 4 TABEL HASIL ASPEK KEMAMPUAN BERPIKIR ====
       doc.addPage()
