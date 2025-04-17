@@ -265,10 +265,10 @@ const exportToPDF = async () => {
 
       const rowData: { y: number; height: number }[] = []
       autoTable(doc, {
-        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
         body: student.result
           .slice(0, 5)
-          .map((item) => [item.aspek, '', item.definisi_aspek, item.hasil]),
+          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
         startY,
         margin: { vertical: 20, horizontal: 20 },
         theme: 'striped',
@@ -289,8 +289,8 @@ const exportToPDF = async () => {
         },
         columnStyles: {
           0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', cellWidth: 30 },
-          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+          2: { textColor: '#000', cellWidth: 30 },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
         didDrawCell: (data) => {
@@ -315,7 +315,7 @@ const exportToPDF = async () => {
 
       student.result.slice(0, 5).forEach((item, i) => {
         const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 59 : 61
+        const xPos = item.skor > 1 ? 110 : 111
         // Center the emoji vertically: row's y position + half the row height - half the emoji height
         const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
         doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
@@ -332,10 +332,10 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
         body: student.result
           .slice(5, 8)
-          .map((item) => [item.aspek, '', item.definisi_aspek, item.hasil]),
+          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
         startY,
         margin: { vertical: 20, horizontal: 20 },
         theme: 'striped',
@@ -346,7 +346,6 @@ const exportToPDF = async () => {
           halign: 'center',
           valign: 'middle',
           lineColor: '#000',
-          lineWidth: 0.1,
         },
         styles: {
           fontSize: 12,
@@ -357,8 +356,8 @@ const exportToPDF = async () => {
         },
         columnStyles: {
           0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', cellWidth: 30 },
-          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+          2: { textColor: '#000', cellWidth: 30 },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
         didDrawCell: (data) => {
@@ -382,7 +381,7 @@ const exportToPDF = async () => {
 
       student.result.slice(5, 8).forEach((item, i) => {
         const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 59 : 61
+        const xPos = item.skor > 1 ? 110 : 111
         // Center the emoji vertically: row's y position + half the row height - half the emoji height
         const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
         doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
@@ -399,10 +398,10 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
         body: student.result
           .slice(8, 12)
-          .map((item) => [item.aspek, '', item.definisi_aspek, item.hasil]),
+          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
         startY,
         margin: { vertical: 20, horizontal: 20 },
         theme: 'striped',
@@ -413,7 +412,6 @@ const exportToPDF = async () => {
           halign: 'center',
           valign: 'middle',
           lineColor: '#000',
-          lineWidth: 0.1,
         },
         styles: {
           fontSize: 12,
@@ -424,8 +422,8 @@ const exportToPDF = async () => {
         },
         columnStyles: {
           0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', cellWidth: 30 },
-          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+          2: { textColor: '#000', cellWidth: 30 },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
         didDrawCell: (data) => {
@@ -449,7 +447,7 @@ const exportToPDF = async () => {
 
       student.result.slice(8, 12).forEach((item, i) => {
         const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 59 : 61
+        const xPos = item.skor > 1 ? 110 : 111
         // Center the emoji vertically: row's y position + half the row height - half the emoji height
         const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
         doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
