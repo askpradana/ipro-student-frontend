@@ -13,7 +13,7 @@
       </h2>
     </div>
 
-    <p class="text-slate-800 my-8 mt-12">
+    <p class="text-slate-800 my-8 mt-12 font-bold">
       Telitilah apakah rangkaian angka atau huruf yang berada di depan dan di belakang garis pemisah
       itu sama ataukah berbeda.
     </p>

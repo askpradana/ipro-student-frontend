@@ -1,0 +1,22 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "soalID": 1,
+      "question": "Seseorang memerlukan waktu 1/2 jam untuk mencatat sebuah kursi.Berapa kursikah yang dapat dicatat selama 8 jam?",
+      "pilihan": ["8", "10", "16", "24", "t.a."]
+    },
+    {
+      "soalID": 2,
+      "question": "Ahmad membelanjakan 1/6 dari gaji per jam untuk makan. Gajinya adalah Rp 47,40. Berapakah uang yang dibelanjakan untuk makanannya?",
+      "pilihan": ["Rp 5,20", "Rp 6,90", "Rp 7 -", "Rp 7,60", "t.a."]
+    },
+    {
+      "soalID": 3,
+      "question": "Harun mendapat upah Rp 75 tiap jam. Berapa upah yang diterima Harun selama 7 jam?",
+      "pilihan": ["Rp 400", "Rp 475", "Rp 490 -", "Rp 525", "t.a."]
+    }
+  ],
+  "message": "Successfully retrieved soal",
+  "status": "success"
+}

@@ -31,7 +31,7 @@
       </span>
     </div>
 
-    <p class="text-slate-800 mb-8 mt-4 text-justify text-xs md:text-base">
+    <p class="text-slate-800 mb-8 mt-4 text-justify text-xs md:text-base font-bold">
       Dari 4 gambar di samping kanan, pilihlah mana yang merupakan hasil lipatan dari gambar sebelah
       kiri!
     </p>
@@ -113,7 +113,7 @@ const userStore = useUserStores()
 const { addWatermark } = useQuizSecurity({
   preventRightClick: true,
   preventKeyboardShortcuts: true,
-  enforceFullscreen: false, // Set true untuk paksa fullscreen
+  enforceFullscreen: true, // Set true untuk paksa fullscreen
   detectTabChange: true,
   detectMouseLeave: true,
   addWatermark: true,

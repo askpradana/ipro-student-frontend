@@ -3,12 +3,7 @@
     <!-- Header Section -->
     <header class="max-w-6xl mx-auto p-4 sm:p-6">
       <div class="flex justify-between items-center mb-8 sm:mb-16">
-        <img
-          src="../../public/assets/iradat-konsultan.png"
-          height="80"
-          width="80"
-          alt="company-profile"
-        />
+        <img src="/assets/iradat-konsultan.png" height="80" width="80" alt="company-profile" />
         <RouterLink
           to="/login"
           class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all duration-300 shadow-lg hover:shadow-teal-500/25 text-sm sm:text-base"
@@ -163,10 +158,11 @@
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
             <img
-              src="../../public/assets/iradat-konsultan.png"
+              src="/assets/iradat-konsultan.png"
               height="80"
               width="80"
               alt="company-profile"
+              class="select-none"
             />
 
             <p

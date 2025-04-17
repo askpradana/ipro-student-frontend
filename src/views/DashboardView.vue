@@ -49,7 +49,7 @@
                 : 'text-teal-600 group-hover:translate-x-1'
             "
           >
-            Kerjakan {{ type.title }}
+            {{ type.title }}
           </h2>
           <p
             class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
@@ -62,9 +62,9 @@
             Selesai
           </p>
         </div>
-<!--        <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">-->
-<!--          Mulai penilaian baru untuk menguji pengetahuan Anda-->
-<!--        </p>-->
+        <!--        <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">-->
+        <!--          Mulai penilaian baru untuk menguji pengetahuan Anda-->
+        <!--        </p>-->
       </button>
 
       <!-- Results Button -->
