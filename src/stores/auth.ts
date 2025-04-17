@@ -114,6 +114,11 @@ export const useAuthStore = defineStore('auth', {
           // Clear localStorage
           localStorage.removeItem('user')
           localStorage.removeItem('isAuthenticated')
+          localStorage.removeItem('exerciseQuiz1')
+          localStorage.removeItem('exerciseQuiz2')
+          localStorage.removeItem('exerciseQuiz3')
+          localStorage.removeItem('exerciseQuiz4')
+          localStorage.removeItem('exerciseQuiz5')
 
           // Return true to indicate successful logout
           return true
