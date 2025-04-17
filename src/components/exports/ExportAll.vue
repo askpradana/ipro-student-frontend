@@ -346,6 +346,7 @@ const exportToPDF = async () => {
           halign: 'center',
           valign: 'middle',
           lineColor: '#000',
+          lineWidth: 0.1,
         },
         styles: {
           fontSize: 12,
@@ -412,6 +413,7 @@ const exportToPDF = async () => {
           halign: 'center',
           valign: 'middle',
           lineColor: '#000',
+          lineWidth: 0.1,
         },
         styles: {
           fontSize: 12,
