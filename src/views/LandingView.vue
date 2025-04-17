@@ -100,34 +100,57 @@
         Bagaimana Cara Kerjanya?
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
-        <div class="text-center">
+        <!-- Step 1 -->
+        <div
+          class="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+        >
           <div
-            class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6"
+            class="w-48 h-48 sm:w-56 sm:h-56 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6"
           >
-            <span class="text-2xl">1</span>
+            <img
+              src="/assets/landing/1.png"
+              alt="Ikuti Tes - Ikon tes online"
+              class="w-full h-full object-cover"
+            />
           </div>
-          <h3 class="text-xl font-semibold mb-3">Ikuti Tesnya</h3>
-          <p class="text-slate-600">Kerjakan tes ini</p>
+          <h3 class="text-xl font-semibold mb-3">Ikuti Tes-nya</h3>
+          <p class="text-slate-600">Kerjakan tes ini dengan mudah dan nyaman secara online</p>
         </div>
-        <div class="text-center">
+
+        <!-- Step 2 -->
+        <div
+          class="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+        >
           <div
-            class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6"
+            class="w-48 h-48 sm:w-56 sm:h-56 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6"
           >
-            <span class="text-2xl">2</span>
+            <img
+              src="/assets/landing/2.png"
+              alt="Hasil Tes - Ikon analisis hasil"
+              class="w-full h-full object-cover"
+            />
           </div>
-          <h3 class="text-xl font-semibold mb-3">Dapatkan hasil</h3>
+          <h3 class="text-xl font-semibold mb-3">Dapatkan Hasil</h3>
           <p class="text-slate-600">
             Temukan sisi unik kepribadian kamu yang mungkin belum kamu sadari
           </p>
         </div>
-        <div class="text-center">
+
+        <!-- Step 3 -->
+        <div
+          class="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
+        >
           <div
-            class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
+            class="w-48 h-48 sm:w-56 sm:h-56 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
           >
-            <span class="text-2xl">3</span>
+            <img
+              src="/assets/landing/3.png"
+              alt="Panduan Personal - Ikon rekomendasi"
+              class="w-full h-full object-cover"
+            />
           </div>
-          <h3 class="text-xl font-semibold mb-3">Dapatkan hasil yang disesuaikan denganmu</h3>
-          <p class="text-slate-600">Dapat panduan yang disesuaikan dengan dirimu</p>
+          <h3 class="text-xl font-semibold mb-3">Panduan Personal</h3>
+          <p class="text-slate-600">Dapatkan panduan yang disesuaikan dengan potensi dan minatmu</p>
         </div>
       </div>
     </section>
@@ -168,10 +191,14 @@
             <p
               class="mt-6 max-w-md text-center leading-relaxed text-gray-500 sm:max-w-xs sm:text-left"
             >
-              Iradat Konsultan adalah konsultan SDM terkemuka yang berdedikasi untuk memberdayakan
-              siswa melalui penilaian yang disesuaikan. Pendekatan inovatif kami membantu mengungkap
-              kekuatan dan potensi unik Anda, membimbing Anda menuju jalur akademis dan karier yang
-              sukses.
+              PT Iradat, konsultan SDM berpengalaman lebih dari 40 tahun, terus berinovasi dengan
+              menghadirkan solusi yang relevan dan berkelanjutan dalam pengembangan Sumber Daya
+              Manusia. Menjawab kebutuhan industri yang makin berkembang, kami telah mengembangkan
+              layanan psikotes online yang praktis, fleksibel, dan tetap menjunjung tinggi etika
+              profesi psikologi. Dalam industri pendidikan, PT Iradat mengembangkan IPro Student,
+              layanan psikotes berbasis online yang membantu mengenali potensi siswa secara
+              menyeluruh, termasuk kapasitas berpikir, kepribadian, yang mendukung pengembangan diri
+              yang optimal untuk masa depan
             </p>
 
             <ul class="mt-8 flex justify-center gap-6 sm:justify-start md:gap-8">
@@ -195,7 +222,7 @@
 
               <li>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/iradat.konsultan/"
                   rel="noreferrer"
                   target="_blank"
                   class="text-teal-700 transition hover:text-teal-700/75"
@@ -229,18 +256,30 @@
 
               <li>
                 <a
-                  href="#"
+                  href="https://iradatkonsultan.com"
                   rel="noreferrer"
                   target="_blank"
                   class="text-teal-700 transition hover:text-teal-700/75"
                 >
-                  <span class="sr-only">GitHub</span>
-                  <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      fill-rule="evenodd"
-                      d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                      clip-rule="evenodd"
-                    />
+                  <span class="sr-only">Website</span>
+                  <svg
+                    class="size-6"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#0e766e"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M20.501 6.028V6h-.02A10.28 10.28 0 0 0 4.519 6H4.5v.028a10.262 10.262 0 0 0 0 12.944V19h.02a10.28 10.28 0 0 0 15.962 0h.021v-.028a10.262 10.262 0 0 0 0-12.944zM13 6V3.272A4.533 4.533 0 0 1 15.54 6zm2.935 1a16.827 16.827 0 0 1 .853 5H13V7zM12 3.272V6H9.46A4.533 4.533 0 0 1 12 3.272zM12 7v5H8.212a16.827 16.827 0 0 1 .853-5zm-4.787 5H3.226a9.234 9.234 0 0 1 1.792-5h2.984a17.952 17.952 0 0 0-.79 5zm0 1a17.952 17.952 0 0 0 .789 5H5.018a9.234 9.234 0 0 1-1.792-5zm1 0H12v5H9.065a16.827 16.827 0 0 1-.853-5zM12 19v2.728A4.533 4.533 0 0 1 9.46 19zm1 2.728V19h2.54A4.533 4.533 0 0 1 13 21.728zM13 18v-5h3.788a16.827 16.827 0 0 1-.853 5zm4.787-5h3.987a9.234 9.234 0 0 1-1.792 5h-2.984a17.952 17.952 0 0 0 .79-5zm0-1a17.952 17.952 0 0 0-.789-5h2.984a9.234 9.234 0 0 1 1.792 5zm1.352-6h-2.501a8.524 8.524 0 0 0-1.441-2.398A9.306 9.306 0 0 1 19.139 6zM9.803 3.602A8.524 8.524 0 0 0 8.363 6H5.86a9.306 9.306 0 0 1 3.942-2.398zM5.861 19h2.501a8.524 8.524 0 0 0 1.441 2.398A9.306 9.306 0 0 1 5.861 19zm9.336 2.398A8.524 8.524 0 0 0 16.637 19h2.502a9.306 9.306 0 0 1-3.942 2.398z"
+                      ></path>
+                      <path fill="none" d="M0 0h24v24H0z"></path>
+                    </g>
                   </svg>
                 </a>
               </li>
@@ -339,13 +378,13 @@
             </div>
 
             <div class="text-center sm:text-left">
-              <p class="text-lg font-medium text-gray-900">Contact Us</p>
+              <p class="text-lg font-medium text-gray-900">Hubungi Kami</p>
 
               <ul class="mt-8 space-y-4 text-sm">
                 <li>
                   <a
                     class="flex items-center justify-center gap-1.5 ltr:sm:justify-start rtl:sm:justify-end"
-                    href="#"
+                    href="mailto:ipro@iradat.com"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -362,7 +401,7 @@
                       />
                     </svg>
 
-                    <span class="flex-1 text-gray-700">john@doe.com</span>
+                    <span class="flex-1 text-gray-700">ipro@iradat.com</span>
                   </a>
                 </li>
 
@@ -386,7 +425,7 @@
                       />
                     </svg>
 
-                    <span class="flex-1 text-gray-700">0123456789</span>
+                    <span class="flex-1 text-gray-700">+62-123456789</span>
                   </a>
                 </li>
 
@@ -414,7 +453,7 @@
                   </svg>
 
                   <address class="-mt-0.5 flex-1 not-italic text-gray-700">
-                    213 Lane, London, United Kingdom
+                    Gedung Vinilon lt 3, Suite 3-5 Jl. Raden Saleh No 13-17 Jakarta10430
                   </address>
                 </li>
               </ul>
