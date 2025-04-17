@@ -12,6 +12,10 @@ A modern, high-performance Vue 3 frontend application built with TypeScript, Vit
   - Bun as the JavaScript runtime and package manager
   - Tailwind CSS for utility-first styling
   - ESLint and Prettier for code quality and formatting
+  - Pinia for state management
+  - Vue Router for navigation
+  - Chart.js for data visualization
+  - PDF generation capabilities with jsPDF
 
 - **Developer Experience**
 
@@ -20,12 +24,14 @@ A modern, high-performance Vue 3 frontend application built with TypeScript, Vit
   - Automatic imports and component registration
   - Built-in code formatting and linting
   - Comprehensive error reporting
+  - Vue DevTools integration
 
 - **Performance Optimizations**
   - Code splitting and lazy loading
   - Optimized asset handling
   - Efficient bundling with Vite
   - Tree-shaking for unused code elimination
+  - Responsive design with Tailwind CSS
 
 ## 🛠️ Prerequisites
 
@@ -174,7 +180,16 @@ The `vite.config.ts` file includes:
 - Document complex logic
 - Write unit tests for critical functionality
 
-## 🤝 Contributing
+## 👥 Contributors
+
+We would like to thank all the contributors who have helped make this project better:
+
+### Core Team
+
+- [Naufaldy Pradana](https://github.com/askpradana)
+- [Achmad Rizal Yogaswara](https://github.com/rizalyoga)
+
+### How to Contribute
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -192,3 +207,6 @@ The `vite.config.ts` file includes:
 - [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
 - [Bun](https://bun.sh/) - Fast all-in-one JavaScript runtime
 - [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
+- [Pinia](https://pinia.vuejs.org/) - Vue Store
+- [Chart.js](https://www.chartjs.org/) - Simple yet flexible JavaScript charting
+- [jsPDF](https://parall.ax/products/jspdf) - PDF generation library
