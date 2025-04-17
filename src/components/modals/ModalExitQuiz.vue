@@ -17,9 +17,9 @@
           />
         </svg>
       </div>
-      <h2 class="text-xl font-bold text-slate-800 tracking-tight">Meninggalkan Kuis</h2>
+      <h2 class="text-xl font-bold text-slate-800 tracking-tight">Meninggalkan Tes</h2>
     </div>
-    <p class="my-4 text-slate-600">Kamu yakin ingin meninggalkan sesi kuis saat ini?</p>
+    <p class="my-4 text-slate-600">Kamu yakin ingin meninggalkan sesi tes saat ini?</p>
     <div class="mt-8 flex w-full justify-end gap-2">
       <button
         @click="modalStore.closeModal"

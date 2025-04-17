@@ -3,11 +3,13 @@
   <div v-else class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
     <!-- Logo area -->
     <div class="mb-12 animate-fade-in">
-      <h1
-        class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
-      >
-        iPro student
-      </h1>
+      <img
+        src="/assets/iradat-konsultan.png"
+        height="80"
+        width="80"
+        alt="company-profile"
+        class="select-none"
+      />
     </div>
 
     <!-- Main content area -->

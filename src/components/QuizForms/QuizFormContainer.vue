@@ -39,15 +39,15 @@ const typeQuiz = localStorage.getItem('type-quiz')
 const getTitle = () => {
   switch (typeQuiz) {
     case '1':
-      return 'Kuis 3'
+      return 'Tes 1'
     case '2':
-      return 'Kuis 5'
+      return 'Tes 2'
     case '3':
-      return 'Kuis 6'
+      return 'Tes 3'
     case '4':
-      return 'Kuis 7'
+      return 'Tes 4'
     case '5':
-      return 'Kuis PPI'
+      return 'Tes Kepribadian'
 
     default:
       break
