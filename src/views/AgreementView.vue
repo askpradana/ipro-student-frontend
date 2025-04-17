@@ -1,13 +1,24 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
     <!-- Logo area -->
-    <div class="mb-12 animate-fade-in">
-      <h1
-        class="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent"
+    <div class="mb-12 animate-fade-in flex justify-between items-center">
+      <img
+        src="/assets/iradat-konsultan.png"
+        height="80"
+        width="80"
+        alt="company-profile"
+        class="select-none"
+      />
+      <button
+        @click="handleLogout"
+        class="text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+        :class="isLoading ? 'bg-slate-400 text-black' : 'bg-red-600'"
+        :disabled="isLoading"
       >
-        iPro student
-      </h1>
+        {{ isLoading ? 'Keluar...' : 'Keluar' }}
+      </button>
     </div>
+
     <h1
       class="my-10 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600 uppercase"
     >
@@ -87,14 +98,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useAuthStore } from '@/stores/auth'
 import { getDisclaimerAgreement } from '@/api/getDisclaimerAgreement'
 import { notify } from '@/lib/notify'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const isCheck = ref(false)
 const isLoading = ref(false)
 const isAlert = ref('')
+const logoutErrorMessage = ref('')
+
+const handleLogout = async () => {
+  isLoading.value = true
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error: any) {
+    console.error('Logout failed:', error)
+    // Show the error modal with the message from the API
+    logoutErrorMessage.value =
+      error.response?.data?.message || 'Failed to logout. Please try again.'
+    alert(error.response?.data?.message || 'Failed to logout. Please try again.')
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const dislaimerAgreementPost = () => {
   if (isCheck.value) {
