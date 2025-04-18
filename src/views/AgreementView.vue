@@ -33,7 +33,7 @@
       <h2 class="text-lg font-semibold mt-4 mb-2">Penggunaan Layanan</h2>
       <p>Dengan menggunakan platform ini, Anda setuju untuk:</p>
       <ul class="list-disc list-inside mb-4 ml-4">
-        <li class="mb-2">Menggunakan platform kuis hanya untuk tujuan pendidikan.</li>
+        <li class="mb-2">Menggunakan platform Tes hanya untuk tujuan pendidikan.</li>
         <li class="mb-2">Menjaga etika dan tidak melakukan kecurangan.</li>
       </ul>
 

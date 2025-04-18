@@ -146,7 +146,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 @click="startQuizHandler(type.typeQuiz, true)"
                 class="w-full p-3 border-2 border-teal-600 text-teal-600 rounded-xl font-semibold hover:bg-teal-50 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                Latihan Kuis
+                Latihan Tes
               </button>
               <!-- Quiz 1 Button -->
               <button
@@ -154,7 +154,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz1 === '1' && selectedQuiz === '1' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 2 Button -->
@@ -163,7 +163,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz2 === '2' && selectedQuiz === '2' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 3 Button -->
@@ -172,7 +172,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz3 === '3' && selectedQuiz === '3' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 4 Button -->
@@ -181,7 +181,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz4 === '4' && selectedQuiz === '4' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 5 Button -->
@@ -190,7 +190,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz5 === '5' && selectedQuiz === '5' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
             </div>
           </div>

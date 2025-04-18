@@ -4,7 +4,7 @@
     <p class="text-slate-600 mb-6 text-center">
       Terima kasih telah menyelesaikan penilaian. Hasil Anda sedang diproses.
       <br />
-      Jika Anda ingin mengikuti kuis ini lagi, silakan hubungi admin.
+      Jika Anda ingin mengikuti Tes ini lagi, silakan hubungi admin.
     </p>
     <div class="space-x-4 flex">
       <button
