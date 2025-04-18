@@ -56,11 +56,35 @@ const backToQuizForm = () => {
   quizStore.isComplete = false
 }
 
+const setLocalStorageExercise = (typeOfQuiz: number) => {
+  switch (typeOfQuiz) {
+    case 1:
+      localStorage.setItem('exerciseQuiz1', JSON.stringify(typeOfQuiz))
+      return
+    case 2:
+      localStorage.setItem('exerciseQuiz2', JSON.stringify(typeOfQuiz))
+      return
+    case 3:
+      localStorage.setItem('exerciseQuiz3', JSON.stringify(typeOfQuiz))
+      return
+    case 4:
+      localStorage.setItem('exerciseQuiz4', JSON.stringify(typeOfQuiz))
+      return
+    case 5:
+      localStorage.setItem('exerciseQuiz5', JSON.stringify(typeOfQuiz))
+      return
+
+    default:
+      break
+  }
+}
+
 const sumbitQuizHandler = () => {
   if (isTraining === 'true') {
     notify('Latihan selesai', 'success')
     setTimeout(() => {
       router.push('/dashboard')
+      setLocalStorageExercise(quizStore.typeQuiz)
       quizStore.typeQuiz = 0
       quizStore.isComplete = false
       timerStore.stopTimer()

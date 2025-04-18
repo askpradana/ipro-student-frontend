@@ -8,6 +8,9 @@ import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { getXPosValue, page2Content, getEmotResult, getEmoticon } from '@/lib/exportAllStyle'
 import sadEmot from '/assets/emoji/sad.png'
+import netralEmot from '/assets/emoji/netral.png'
+import smileEmot from '/assets/emoji/smile.png'
+import shyEmot from '/assets/emoji/shy.png'
 import starEmot from '/assets/emoji/star.png'
 import logoIradat from '/assets/iradat-konsultan.png'
 import {
@@ -48,17 +51,17 @@ const exportToPDF = async () => {
       // === PAGE 1 - Cover ===
       doc.setFontSize(20)
       doc.setFont('helvetica', 'bold')
-      doc.text('Laporan Psikogram Siswa', 105, 50, { align: 'center' })
+      doc.addImage(logoIradat, 'PNG', 20, 20, 35, 15)
+      doc.text('Laporan Psikogram Siswa', 105, 80, { align: 'center' })
 
-      doc.addImage(sadEmot, 'PNG', 30, 80, 60, 60)
-      doc.addImage(logoIradat, 'PNG', 115, 95, 65, 30)
+      doc.addImage(starEmot, 'PNG', 75, 110, 60, 60)
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
-      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 170, { align: 'center' })
-      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 180, { align: 'center' })
-      doc.text(`KELAS ${student?.grade || '-'}`, 105, 190, { align: 'center' })
-      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
+      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
+      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 210, { align: 'center' })
+      doc.text(`KELAS ${student?.grade || '-'}`, 105, 220, { align: 'center' })
+      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 230, { align: 'center' })
       // doc.text(` ${student?.phone_number || '-'}`, 105, 120, { align: 'center' })
       // doc.text(`${student?.email || '-'}`, 105, 130, { align: 'center' })
 
@@ -253,6 +256,21 @@ const exportToPDF = async () => {
         doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
       })
 
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor('#000')
+
+      doc.addImage(sadEmot, 'PNG', 26, 200, 9, 9)
+      doc.text('Perlu Penguatan', 40, 206)
+      doc.addImage(netralEmot, 'PNG', 26, 210, 9, 9)
+      doc.text('Perlu Perhatian', 40, 216)
+      doc.addImage(smileEmot, 'PNG', 26, 220, 9, 9)
+      doc.text('Cukup Berkembang', 40, 226)
+      doc.addImage(shyEmot, 'PNG', 26, 230, 9, 9)
+      doc.text('Unggul', 40, 236)
+      doc.addImage(starEmot, 'PNG', 26, 240, 9, 9)
+      doc.text('Sangat Unggul', 40, 246)
+
       // ==== HALAMAN 4 TABEL HASIL ASPEK KEMAMPUAN BERPIKIR ====
       doc.addPage()
       doc.setFontSize(14)
@@ -265,10 +283,10 @@ const exportToPDF = async () => {
 
       const rowData: { y: number; height: number }[] = []
       autoTable(doc, {
-        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
         body: student.result
           .slice(0, 5)
-          .map((item) => [item.aspek, '', item.definisi_aspek, item.hasil]),
+          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
         startY,
         margin: { vertical: 20, horizontal: 20 },
         theme: 'striped',
@@ -289,8 +307,8 @@ const exportToPDF = async () => {
         },
         columnStyles: {
           0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', cellWidth: 30 },
-          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+          2: { textColor: '#000', cellWidth: 30 },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
         didDrawCell: (data) => {
@@ -315,7 +333,7 @@ const exportToPDF = async () => {
 
       student.result.slice(0, 5).forEach((item, i) => {
         const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 59 : 61
+        const xPos = item.skor > 1 ? 110 : 111
         // Center the emoji vertically: row's y position + half the row height - half the emoji height
         const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
         doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
@@ -332,10 +350,10 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
         body: student.result
           .slice(5, 8)
-          .map((item) => [item.aspek, '', item.definisi_aspek, item.hasil]),
+          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
         startY,
         margin: { vertical: 20, horizontal: 20 },
         theme: 'striped',
@@ -346,7 +364,6 @@ const exportToPDF = async () => {
           halign: 'center',
           valign: 'middle',
           lineColor: '#000',
-          lineWidth: 0.1,
         },
         styles: {
           fontSize: 12,
@@ -357,8 +374,8 @@ const exportToPDF = async () => {
         },
         columnStyles: {
           0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', cellWidth: 30 },
-          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+          2: { textColor: '#000', cellWidth: 30 },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
         didDrawCell: (data) => {
@@ -382,7 +399,7 @@ const exportToPDF = async () => {
 
       student.result.slice(5, 8).forEach((item, i) => {
         const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 59 : 61
+        const xPos = item.skor > 1 ? 110 : 111
         // Center the emoji vertically: row's y position + half the row height - half the emoji height
         const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
         doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
@@ -399,10 +416,10 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Nilai', 'Definisi Aspek', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
         body: student.result
           .slice(8, 12)
-          .map((item) => [item.aspek, '', item.definisi_aspek, item.hasil]),
+          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
         startY,
         margin: { vertical: 20, horizontal: 20 },
         theme: 'striped',
@@ -413,7 +430,6 @@ const exportToPDF = async () => {
           halign: 'center',
           valign: 'middle',
           lineColor: '#000',
-          lineWidth: 0.1,
         },
         styles: {
           fontSize: 12,
@@ -424,8 +440,8 @@ const exportToPDF = async () => {
         },
         columnStyles: {
           0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', cellWidth: 30 },
-          2: { textColor: '#000', fontSize: 11, valign: 'top' },
+          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+          2: { textColor: '#000', cellWidth: 30 },
           3: { textColor: '#000', fontSize: 11, valign: 'top' },
         },
         didDrawCell: (data) => {
@@ -449,7 +465,7 @@ const exportToPDF = async () => {
 
       student.result.slice(8, 12).forEach((item, i) => {
         const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 59 : 61
+        const xPos = item.skor > 1 ? 110 : 111
         // Center the emoji vertically: row's y position + half the row height - half the emoji height
         const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
         doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
