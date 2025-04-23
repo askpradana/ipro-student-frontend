@@ -24,65 +24,81 @@
         v-for="type in TypeListData"
         :key="type.id"
         @click="handleTakeQuiz(type.typeQuiz)"
-        class="w-full p-8 backdrop-blur-sm rounded-2xl border border-slate-200 transition-all duration-300 ease-out text-left group"
-        :class="
+        class="w-full p-8 backdrop-blur-sm rounded-2xl border border-slate-200 transition-all duration-300 ease-out text-left group relative"
+        :class="[
           userStore.dataUser?.[
-            type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
+            type.quiz as
+              | 'quiz_tiga'
+              | 'quiz_lima'
+              | 'quiz_enam'
+              | 'quiz_tujuh'
+              | 'quiz_ppi'
+              | 'quiz_riasec'
           ]
             ? 'bg-slate-100 hover:cursor-not-allowed'
-            : 'bg-white/80 hover:bg-white hover:scale-[1.02] hover:border-teal-500 active:scale-[0.98]'
-        "
+            : type.disabled
+              ? 'bg-slate-100/50 hover:cursor-not-allowed'
+              : 'bg-white/80 hover:bg-white hover:scale-[1.02] hover:border-teal-500 active:scale-[0.98]',
+        ]"
         v-bind:disabled="
           userStore.dataUser?.[
-            type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
-          ]
-            ? true
-            : false
+            type.quiz as
+              | 'quiz_tiga'
+              | 'quiz_lima'
+              | 'quiz_enam'
+              | 'quiz_tujuh'
+              | 'quiz_ppi'
+              | 'quiz_riasec'
+          ] || type.disabled
         "
       >
         <div class="flex justify-between !items-center">
           <h2
             class="text-xl font-bold transition-transform duration-300"
-            :class="
+            :class="[
               userStore.dataUser?.[
-                type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
+                type.quiz as
+                  | 'quiz_tiga'
+                  | 'quiz_lima'
+                  | 'quiz_enam'
+                  | 'quiz_tujuh'
+                  | 'quiz_ppi'
+                  | 'quiz_riasec'
               ]
                 ? 'text-slate-600'
-                : 'text-teal-600 group-hover:translate-x-1'
-            "
+                : type.disabled
+                  ? 'text-slate-400'
+                  : 'text-teal-600 group-hover:translate-x-1',
+            ]"
           >
             {{ type.title }}
           </h2>
-          <p
-            class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
-            :class="
-              !userStore.dataUser?.[
-                type.quiz as 'quiz_tiga' | 'quiz_lima' | 'quiz_enam' | 'quiz_tujuh' | 'quiz_ppi'
-              ] && 'hidden'
-            "
-          >
-            Selesai
-          </p>
+          <div class="flex items-center gap-2">
+            <p
+              v-if="type.disabled"
+              class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-slate-400"
+            >
+              Coming Soon
+            </p>
+            <p
+              v-else-if="
+                userStore.dataUser?.[
+                  type.quiz as
+                    | 'quiz_tiga'
+                    | 'quiz_lima'
+                    | 'quiz_enam'
+                    | 'quiz_tujuh'
+                    | 'quiz_ppi'
+                    | 'quiz_riasec'
+                ]
+              "
+              class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
+            >
+              Selesai
+            </p>
+          </div>
         </div>
-        <!--        <p class="mt-3 text-slate-600 group-hover:text-slate-700 transition-colors duration-300">-->
-        <!--          Mulai penilaian baru untuk menguji pengetahuan Anda-->
-        <!--        </p>-->
       </button>
-
-      <!-- Results Button -->
-      <!-- <button
-        @click="handleSeeResults"
-        class="w-full p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-100 hover:bg-white hover:scale-[1.02] hover:border-emerald-100 active:scale-[0.98] transition-all duration-300 ease-out text-left group"
-      >
-        <h2
-          class="text-xl font-bold text-emerald-600 mb-2 group-hover:translate-x-1 transition-transform duration-300"
-        >
-          See Results
-        </h2>
-        <p class="text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
-          View your past quiz results and progress
-        </p>
-      </button> -->
     </div>
 
     <!-- Utility buttons -->
@@ -109,6 +125,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Coming Soon Modal -->
+    <div
+      v-if="showComingSoonModal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+        <h2 class="text-xl font-bold text-slate-800 mb-3">Coming Soon</h2>
+        <p class="text-slate-600 mb-6">Tes RIASEC akan segera hadir. Mohon bersabar.</p>
+        <div class="flex justify-end">
+          <button
+            @click="showComingSoonModal = false"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-300"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -128,6 +163,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const showLogoutErrorModal = ref(false)
+const showComingSoonModal = ref(false)
 const logoutErrorMessage = ref('')
 
 onMounted(() => {
@@ -145,16 +181,19 @@ onBeforeMount(() => {
 })
 
 const handleTakeQuiz = (selectedTypeQuiz: number) => {
+  const quizType = TypeListData.find((q) => q.typeQuiz === selectedTypeQuiz)
+
+  if (quizType?.disabled) {
+    showComingSoonModal.value = true
+    return
+  }
+
   if (!userStore.discalaimerAgreement) {
     router.push('/agreement')
   } else {
     localStorage.setItem('type-quiz', JSON.stringify(selectedTypeQuiz))
     router.push('/quiz')
   }
-}
-
-const handleSeeResults = () => {
-  router.push('/results')
 }
 
 const handleHelp = () => {
@@ -178,9 +217,9 @@ const handleLogout = async () => {
   try {
     await authStore.logout()
     router.push('/')
-  } catch (error: any) {
-    console.error('Logout error:', error.response?.data)
-    const errorData: LogoutErrorResponse = error.response?.data
+  } catch (error: unknown) {
+    console.error('Logout error:', error)
+    const errorData = error as LogoutErrorResponse
 
     if (errorData?.code === 401 && errorData?.message === 'token not found or invalidated') {
       logoutErrorMessage.value = 'Your session has expired. Please log in again.'
@@ -198,15 +237,13 @@ const handleLogout = async () => {
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.6s ease-out;
+  animation: fade-in 0.5s ease-out;
 }
 </style>

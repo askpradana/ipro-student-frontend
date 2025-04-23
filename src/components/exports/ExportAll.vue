@@ -98,6 +98,8 @@ const exportToPDF = async () => {
           doc.setFont('helvetica', 'normal')
           doc.setFontSize(12)
 
+          // TODO => pakai gambar terbaru
+
           // Margin kiri dan kanan
           const leftMargin = 20
           const rightMargin = 20

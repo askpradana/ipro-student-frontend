@@ -12,6 +12,7 @@ export const useUserStores = defineStore('user', {
     quiz_enam: false,
     quiz_tujuh: false,
     quiz_ppi: false,
+    quiz_riasec: false,
     dateAgreement: '',
     discalaimerAgreement: false,
   }),
@@ -30,6 +31,7 @@ export const useUserStores = defineStore('user', {
         this.quiz_enam = userProfile.quiz_enam
         this.quiz_tujuh = userProfile.quiz_tujuh
         this.quiz_ppi = userProfile.quiz_ppi
+        this.quiz_riasec = userProfile.quiz_riasec
         this.dateAgreement = userProfile.agreeDisclaimer.Time
         this.discalaimerAgreement = userProfile.agreeDisclaimer.Valid
       } catch (error) {
