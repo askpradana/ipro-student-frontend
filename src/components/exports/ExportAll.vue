@@ -12,6 +12,7 @@ import netralEmot from '/assets/emoji/netral.png'
 import smileEmot from '/assets/emoji/smile.png'
 import shyEmot from '/assets/emoji/shy.png'
 import starEmot from '/assets/emoji/star.png'
+import studentImage from '/assets/student.png'
 import logoIradat from '/assets/iradat-konsultan.png'
 import {
   aspekKemampuanBerpikirEmoji,
@@ -54,7 +55,7 @@ const exportToPDF = async () => {
       doc.addImage(logoIradat, 'PNG', 20, 20, 35, 15)
       doc.text('Laporan Psikogram Siswa', 105, 80, { align: 'center' })
 
-      doc.addImage(starEmot, 'PNG', 75, 110, 60, 60)
+      doc.addImage(studentImage, 'PNG', 65, 100, 80, 50)
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
@@ -94,9 +95,29 @@ const exportToPDF = async () => {
           doc.text(content.text, 210 / 2, yPosition - 1, { align: 'center' })
           yPosition += 10
         } else if (content.style == 'paragraph-disclaimer') {
-          doc.setFontSize(9)
-          doc.setFont('helvetica', 'italic')
-          doc.text(content.text, 210 / 2, yPosition - 1, { align: 'center' })
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(12)
+
+          // TODO => pakai gambar terbaru
+
+          // Margin kiri dan kanan
+          const leftMargin = 20
+          const rightMargin = 20
+
+          // Lebar area teks yang digunakan
+          const pageWidth = 210 // A4 width in mm
+          const textWidth = pageWidth - leftMargin - rightMargin
+
+          // Split teks menjadi beberapa baris berdasarkan lebar halaman
+          const textLines = doc.splitTextToSize(content.text, textWidth)
+
+          // Loop untuk menambahkan setiap baris ke dokumen
+          textLines.forEach((line: string) => {
+            doc.text(line, leftMargin, yPosition, { align: 'justify' })
+            yPosition += 6 // yPosition untuk setiap baris, sesuaikan ukuran ini sesuai kebutuhan
+          })
+
+          yPosition += textLines.length + 5 // +5 untuk jarak ekstra
         } else if (content.style == 'paragraph') {
           doc.setFont('helvetica', 'normal')
           doc.setFontSize(12)
@@ -283,7 +304,7 @@ const exportToPDF = async () => {
 
       const rowData: { y: number; height: number }[] = []
       autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', ' Deskripsi Nilai']],
         body: student.result
           .slice(0, 5)
           .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
@@ -350,7 +371,7 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', ' Deskripsi Nilai']],
         body: student.result
           .slice(5, 8)
           .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
@@ -416,7 +437,7 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', ' Deskripsi Nilai']],
         body: student.result
           .slice(8, 12)
           .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),

@@ -33,10 +33,20 @@
   },
   {
     "id": 5,
-    "title": "Tes Kepribadian",
+    "title": "Inventori Kepribadian",
     "description": "<b>Instruksi:</b>\n\nPada halaman-halaman berikut ini, Anda akan membaca sejumlah pernyataan mengenai berbagai hal yang mungkin menggambarkan diri Anda atau mungkin juga tidak menggambarkan diri Anda. Pernyataan-pernyataan tersebut selalu disajikan berpasangan.\n\n<b>Contoh:</b>\n\nA. Saya suka mengamati tingkah laku orang lain ketika menghadapi situasi tertentu\nB. Saya suka mengerjakan tugas yang dianggap membutuhkan keterampilan lebih oleh orang lain\n\n<b>Cara Menjawab:</b>\n\nManakah dari dua pernyataan tersebut yang lebih menggambarkan diri Anda? \n- Bila Anda lebih mirip \"suka mengamati tingkah laku orang lain ketika menghadapi situasi tertentu\" daripada \"suka mengerjakan tugas yang dianggap membutuhkan keterampilan lebih oleh orang lain\", maka Anda hendaknya memilih 'A'. \n- Bila Anda lebih mirip \"mengerjakan tugas yang dianggap membutuhkan keterampilan lebih oleh orang lain\" daripada \"suka mengamati tingkah laku orang lain ketika menghadapi situasi tertentu\" maka hendaknya Anda memilih 'B'.\n\n<b>Catatan Penting:</b>\n\n- Jika kedua pernyataan menggambarkan diri Anda, maka hendaknya Anda memilih yang lebih mirip dengan diri Anda. \n- Jika tidak ada satupun di antara kedua pernyataan itu dengan tepat menggambarkan diri Anda, maka Anda memilih yang paling mendekati diri Anda. \n- Setiap pilihan Anda hendaknya didasarkan atas kemiripan dengan gambaran atau perasaan Anda sekarang dan tidak didasarkan atas hal-hal yang Anda anggap wajar.\n\n<b>Tidak ada jawaban yang BENAR ataupun SALAH.</b> Bacalah setiap pasangan dan pilihlah pernyataan yang paling menggambarkan diri Anda.\n\n<b>HARAP SELURUH PERNYATAAN DIJAWAB, JANGAN ADA YANG TERLEWATI.</b>\n\n<b>KETIDAKJUJURAN & KETIDAKLENGKAPAN HASIL, AKAN MENYEBABKAN HASIL TES ANDA TIDAK DAPAT DIPROSES.</b>",
     "typeQuiz": 5,
     "instructionImage": "/assets/instruksi-soal/instruksi_soal_ppi.webp",
     "quiz": "quiz_ppi"
+  },
+  {
+    "id": 6,
+    "title": "Inventori Minat",
+    "description": "<b>Coming Soon</b>\n\nTes RIASEC (Realistic, Investigative, Artistic, Social, Enterprising, Conventional) adalah tes minat karir yang akan membantu Anda memahami preferensi dan minat Anda dalam berbagai bidang pekerjaan.\n\n<i>Fitur ini akan segera hadir. Mohon bersabar.</i>",
+    "typeQuiz": 6,
+    "instructionImage": "/assets/instruksi-soal/instruksi_soal_riasec.webp",
+    "quiz": "quiz_riasec",
+    "disabled": true,
+    "notReady": true
   }
 ]

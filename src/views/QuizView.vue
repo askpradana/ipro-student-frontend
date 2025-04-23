@@ -58,6 +58,13 @@ const formattedDescription = (description: string) => {
 
 const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false) => {
   const getTypeOfQuiz = getTypeQuizWithUnderscore(selectedTypeQuiz.toString())
+  const quizType = TypeQuizData.find((q) => q.typeQuiz === selectedTypeQuiz)
+
+  if (quizType?.disabled) {
+    modalStore.typeOfModal('show-alert')
+    modalStore.openModal()
+    return
+  }
 
   if (userStore[getTypeOfQuiz!]) {
     router.push('/completed')
@@ -74,7 +81,8 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
           return 60 * 6
         case 'quiz_ppi':
           return 60 * 15
-
+        case 'quiz_riasec':
+          return 60 * 15
         default:
           break
       }

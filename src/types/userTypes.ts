@@ -12,6 +12,7 @@ export interface UserProfileData {
   quiz_enam: boolean
   quiz_tujuh: boolean
   quiz_ppi: boolean
+  quiz_riasec: boolean
   quiz_period: {
     String: string
     Valid: boolean
@@ -32,6 +33,7 @@ export interface UserState {
   quiz_enam: boolean
   quiz_tujuh: boolean
   quiz_ppi: boolean
+  quiz_riasec: boolean
   loading: boolean
   error: string | null
   dateAgreement: string

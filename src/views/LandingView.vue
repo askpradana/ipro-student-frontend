@@ -384,7 +384,7 @@
                 <li>
                   <a
                     class="flex items-center justify-center gap-1.5 ltr:sm:justify-start rtl:sm:justify-end"
-                    href="mailto:ipro@iradat.com"
+                    href="mailto:support-ipro@iradatkonsultan.co"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

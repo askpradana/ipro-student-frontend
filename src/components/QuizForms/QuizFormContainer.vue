@@ -17,8 +17,14 @@
     <template v-else-if="typeQuiz == '4'">
       <QuizSevenForm />
     </template>
-    <template v-else>
+    <template v-else-if="typeQuiz == '5'">
       <QuizPPIForm />
+    </template>
+    <template v-else-if="typeQuiz == '6'">
+      <div class="text-center py-8">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">Coming Soon</h2>
+        <p class="text-slate-600 mb-6">Tes RIASEC akan segera hadir. Mohon bersabar.</p>
+      </div>
     </template>
   </template>
 </template>
@@ -32,26 +38,14 @@ import QuizPPIForm from './QuizPPIForm.vue'
 // import ProgressBar from '@/components/QuizForms/ProgressBar.vue'
 import GetQuizSkeleton from '../skeletons/GetQuizSkeleton.vue'
 import { useQuizStore } from '@/stores/quizStore'
+import TypeQuizData from '@/data/type-quiz.json'
 
 const quizStore = useQuizStore()
 const typeQuiz = localStorage.getItem('type-quiz')
 
 const getTitle = () => {
-  switch (typeQuiz) {
-    case '1':
-      return 'Tes 1'
-    case '2':
-      return 'Tes 2'
-    case '3':
-      return 'Tes 3'
-    case '4':
-      return 'Tes 4'
-    case '5':
-      return 'Tes Kepribadian'
-
-    default:
-      break
-  }
+  const quizType = TypeQuizData.find((q) => q.typeQuiz === +typeQuiz!)
+  return quizType?.title || 'Tes'
 }
 </script>
 
