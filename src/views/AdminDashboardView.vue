@@ -55,7 +55,7 @@
             to="/admin/add-users"
             class="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
           >
-            Buat User
+            Tambahkan Sekolah
           </router-link>
           <router-link
             to="/admin/add-students"

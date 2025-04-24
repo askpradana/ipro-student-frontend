@@ -7,8 +7,7 @@
     {{ timerStore.formattedTime }}
   </h2>
   <p class="text-slate-600 mb-8">
-    Semua jawaban telah diisi, apakah anda yakin ingin mengumpulkan jawaban dan mengakhiri sesi
-    kuis?
+    Semua jawaban telah diisi, apakah anda yakin ingin mengumpulkan jawaban dan mengakhiri sesi Tes?
   </p>
 
   <div v-if="!isDone" class="space-x-4">

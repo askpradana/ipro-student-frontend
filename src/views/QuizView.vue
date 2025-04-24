@@ -58,6 +58,13 @@ const formattedDescription = (description: string) => {
 
 const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false) => {
   const getTypeOfQuiz = getTypeQuizWithUnderscore(selectedTypeQuiz.toString())
+  const quizType = TypeQuizData.find((q) => q.typeQuiz === selectedTypeQuiz)
+
+  if (quizType?.disabled) {
+    modalStore.typeOfModal('show-alert')
+    modalStore.openModal()
+    return
+  }
 
   if (userStore[getTypeOfQuiz!]) {
     router.push('/completed')
@@ -74,7 +81,8 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
           return 60 * 6
         case 'quiz_ppi':
           return 60 * 15
-
+        case 'quiz_riasec':
+          return 60 * 15
         default:
           break
       }
@@ -146,7 +154,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 @click="startQuizHandler(type.typeQuiz, true)"
                 class="w-full p-3 border-2 border-teal-600 text-teal-600 rounded-xl font-semibold hover:bg-teal-50 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
               >
-                Latihan Kuis
+                Latihan Tes
               </button>
               <!-- Quiz 1 Button -->
               <button
@@ -154,7 +162,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz1 === '1' && selectedQuiz === '1' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 2 Button -->
@@ -163,7 +171,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz2 === '2' && selectedQuiz === '2' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 3 Button -->
@@ -172,7 +180,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz3 === '3' && selectedQuiz === '3' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 4 Button -->
@@ -181,7 +189,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz4 === '4' && selectedQuiz === '4' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
 
               <!-- Quiz 5 Button -->
@@ -190,7 +198,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz5 === '5' && selectedQuiz === '5' ? 'flex' : 'hidden'"
               >
-                Mulai Kuis
+                Mulai Tes
               </button>
             </div>
           </div>

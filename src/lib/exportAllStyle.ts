@@ -60,7 +60,7 @@ export const page2Content = [
     style: 'disclaimer',
   },
   {
-    text: 'I-Pro Student ini ditujukan untuk siswa kelas 9 hingga 12 SLTA dan sederajat.\n\nI-Pro Student ini bukan merupakan alat untuk seleksi melainkan untuk pengenalan akan potensi diri dan \nkeperluan pengembangan diri.\n\nLaporan ini dihasilkan secara otomatis menggunakan komputer. Jika tidak ada pengawasan saat proses pengisian tes, \nkami tidak dapat menjamin kesesuaian identitas dari responden yang mengisi.',
+    text: 'I-Pro Student ini ditujukan untuk siswa kelas 9 SLTP hingga 12 SLTA/sederajat\ndan membantu siswa mengenali potensi psikologi dan pengembangan diri.\nLaporan ini dihasilkan secara otomatis menggunakan komputer. Jika tidak ada pengawasan saat proses pengisian tes, \nkami tidak dapat menjamin kesesuaian identitas dari responden yang mengisi.',
     style: 'paragraph-disclaimer',
   },
 ]
