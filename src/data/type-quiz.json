@@ -46,7 +46,7 @@
     "typeQuiz": 6,
     "instructionImage": "/assets/instruksi-soal/instruksi_soal_riasec.webp",
     "quiz": "quiz_riasec",
-    "disabled": true,
+    "disabled": false,
     "notReady": true
   }
 ]

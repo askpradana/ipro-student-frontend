@@ -87,6 +87,15 @@
             </select>
           </div>
           <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Jurusan</label>
+            <input
+              v-model="user.jurusan"
+              type="text"
+              class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+              placeholder="Jurusan"
+            />
+          </div>
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
             <input
               v-model="user.phoneNumber"
@@ -214,6 +223,7 @@ interface NewUser {
   email: string
   grade: string
   phoneNumber: string
+  jurusan: string
 }
 
 interface NewViewer {
@@ -225,7 +235,7 @@ interface NewViewer {
 const newUsersData = ref({
   school: '',
   testPeriod: new Date(),
-  users: [{ name: '', email: '', grade: '', phoneNumber: '' }] as NewUser[],
+  users: [{ name: '', email: '', grade: '', phoneNumber: '', jurusan: '' }] as NewUser[],
   viewers: [] as NewViewer[],
 })
 
@@ -238,7 +248,7 @@ const formatDate = (date: Date) => {
 }
 
 const addStudent = () => {
-  newUsersData.value.users.push({ name: '', email: '', grade: '', phoneNumber: '' })
+  newUsersData.value.users.push({ name: '', email: '', grade: '', phoneNumber: '', jurusan: '' })
 }
 
 const removeStudent = (index: number) => {
@@ -259,7 +269,12 @@ const isFormValid = computed(() => {
   const hasValidUsers =
     newUsersData.value.users.length > 0 &&
     newUsersData.value.users.every(
-      (user) => user.name.trim() && user.email.trim() && user.grade && user.phoneNumber.trim(),
+      (user) =>
+        user.name.trim() &&
+        user.email.trim() &&
+        user.grade &&
+        user.phoneNumber.trim() &&
+        user.jurusan.trim(),
     )
   const hasValidViewers =
     newUsersData.value.viewers.length > 0 &&
@@ -286,10 +301,15 @@ const validationMessages = computed(() => {
     messages.push('At least one student is required')
   } else {
     const invalidUsers = newUsersData.value.users.filter(
-      (user) => !user.name.trim() || !user.email.trim() || !user.grade || !user.phoneNumber.trim(),
+      (user) =>
+        !user.name.trim() ||
+        !user.email.trim() ||
+        !user.grade ||
+        !user.phoneNumber.trim() ||
+        !user.jurusan.trim(),
     )
     if (invalidUsers.length > 0) {
-      messages.push('All student fields (name, email, grade, phone number) are required')
+      messages.push('All student fields (name, email, grade, phone number, jurusan) are required')
     }
   }
 
