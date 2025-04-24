@@ -14,7 +14,7 @@
 
     <!-- Main content area -->
     <h1
-      class="my-10 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600 uppercase"
+      class="my-14 font-semibold md:font-bold text-2xl md:text-3xl text-center text-teal-600 uppercase"
     >
       SELAMAT DATANG {{ userStore.dataUser?.name }}
     </h1>
@@ -99,6 +99,32 @@
           </div>
         </div>
       </button>
+    </div>
+
+    <div
+      class="flex justify-center items-center flex-col mt-14"
+      :class="
+        userStore.quiz_tiga &&
+        userStore.quiz_lima &&
+        userStore.quiz_enam &&
+        userStore.quiz_tujuh &&
+        userStore.quiz_ppi &&
+        userStore.quiz_riasec
+          ? ''
+          : 'hidden'
+      "
+    >
+      <q class="text-center max-w-screen-md mx-auto">
+        Terima kasih telah menyelesaikan semua tes! Kami sangat menghargai waktu dan usaha Anda.
+        Mohon luangkan sedikit waktu untuk mengisi kuisioner di bawah ini untuk membantu kami
+        meningkatkan pengalaman Anda.
+      </q>
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSfoXnrrN7jhoK0M_IgbYLputHDoNjBenkYDvrzaG3zuzffN3g/viewform"
+        target="_blank"
+        class="mt-4 px-6 py-3 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 transition-all duration-300"
+        >Kuisioner</a
+      >
     </div>
 
     <!-- Utility buttons -->
