@@ -13,6 +13,7 @@ import smileEmot from '/assets/emoji/smile.png'
 import shyEmot from '/assets/emoji/shy.png'
 import starEmot from '/assets/emoji/star.png'
 import logoIradat from '/assets/iradat-konsultan.png'
+import highschoolImg from '/assets/highschool.png'
 import {
   aspekKemampuanBerpikirEmoji,
   aspekKepribadianEmoji,
@@ -54,7 +55,8 @@ const exportToPDF = async () => {
       doc.addImage(logoIradat, 'PNG', 20, 20, 35, 15)
       doc.text('Laporan Psikogram Siswa', 105, 80, { align: 'center' })
 
-      doc.addImage(starEmot, 'PNG', 75, 110, 60, 60)
+      // Center the image horizontally (A4 width is 210mm, image width is 120mm)
+      doc.addImage(highschoolImg, 'PNG', (210 - 120) / 2, 95, 120, 100)
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
