@@ -35,7 +35,7 @@
       Tentukan apakah peryataan di bawah sesuai dengan minat anda.
     </p>
 
-    <p class="text-black text-xl my-8 text-center mt-12">
+    <p class="text-black text-lg my-8 text-center mt-12">
       {{ store.currentQuestion?.pilihan[0] }}
     </p>
 

@@ -60,10 +60,10 @@ const exportToPDF = async () => {
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
-      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
-      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 210, { align: 'center' })
-      doc.text(`KELAS ${student?.grade || '-'}`, 105, 220, { align: 'center' })
-      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 230, { align: 'center' })
+      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 210, { align: 'center' })
+      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 220, { align: 'center' })
+      doc.text(`KELAS ${student?.grade || '-'}`, 105, 230, { align: 'center' })
+      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 240, { align: 'center' })
       // doc.text(` ${student?.phone_number || '-'}`, 105, 120, { align: 'center' })
       // doc.text(`${student?.email || '-'}`, 105, 130, { align: 'center' })
 
