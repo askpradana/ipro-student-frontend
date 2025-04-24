@@ -27,6 +27,7 @@ const exerciseQuiz2 = localStorage.getItem('exerciseQuiz2')
 const exerciseQuiz3 = localStorage.getItem('exerciseQuiz3')
 const exerciseQuiz4 = localStorage.getItem('exerciseQuiz4')
 const exerciseQuiz5 = localStorage.getItem('exerciseQuiz5')
+const exerciseQuiz6 = localStorage.getItem('exerciseQuiz6')
 
 watch(
   () => store.currentQuestionIndex,
@@ -197,6 +198,15 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
                 @click="startQuizHandler(type.typeQuiz)"
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
                 :class="exerciseQuiz5 === '5' && selectedQuiz === '5' ? 'flex' : 'hidden'"
+              >
+                Mulai Tes
+              </button>
+
+              <!-- Quiz 6 Button -->
+              <button
+                @click="startQuizHandler(type.typeQuiz)"
+                class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+                :class="exerciseQuiz6 === '6' && selectedQuiz === '6' ? 'flex' : 'hidden'"
               >
                 Mulai Tes
               </button>

@@ -21,10 +21,7 @@
       <QuizPPIForm />
     </template>
     <template v-else-if="typeQuiz == '6'">
-      <div class="text-center py-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-4">Coming Soon</h2>
-        <p class="text-slate-600 mb-6">Tes RIASEC akan segera hadir. Mohon bersabar.</p>
-      </div>
+      <QuizRiasecForm />
     </template>
   </template>
 </template>
@@ -35,6 +32,7 @@ import QuizFiveForm from './QuizFiveForm.vue'
 import QuizSixForm from './QuizSixForm.vue'
 import QuizSevenForm from './QuizSevenForm.vue'
 import QuizPPIForm from './QuizPPIForm.vue'
+import QuizRiasecForm from './QuizRiasecForm.vue'
 // import ProgressBar from '@/components/QuizForms/ProgressBar.vue'
 import GetQuizSkeleton from '../skeletons/GetQuizSkeleton.vue'
 import { useQuizStore } from '@/stores/quizStore'

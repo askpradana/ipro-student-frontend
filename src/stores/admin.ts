@@ -82,7 +82,6 @@ export const useAdminStore = defineStore('admin', () => {
       })
 
       const data = await response.json()
-      console.log('hasil POST:', data)
 
       if (response.status === 409) {
         throw new Error(data.message)

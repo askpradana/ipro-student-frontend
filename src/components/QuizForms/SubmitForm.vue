@@ -72,6 +72,9 @@ const setLocalStorageExercise = (typeOfQuiz: number) => {
     case 5:
       localStorage.setItem('exerciseQuiz5', JSON.stringify(typeOfQuiz))
       return
+    case 6:
+      localStorage.setItem('exerciseQuiz6', JSON.stringify(typeOfQuiz))
+      return
 
     default:
       break
