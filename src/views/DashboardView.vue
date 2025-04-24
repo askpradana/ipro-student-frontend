@@ -123,7 +123,7 @@
         href="https://docs.google.com/forms/d/e/1FAIpQLSfoXnrrN7jhoK0M_IgbYLputHDoNjBenkYDvrzaG3zuzffN3g/viewform"
         target="_blank"
         class="mt-4 px-6 py-3 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 transition-all duration-300"
-        >Kuisioner</a
+        >Isi Feedback</a
       >
     </div>
 
@@ -180,7 +180,6 @@ import { ref, onMounted, onBeforeMount } from 'vue'
 import TypeListData from '@/data/type-quiz.json'
 import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 import HelpUserButton from '@/components/buttons/helpUserButton.vue'
-import { notify } from '@/lib/notify'
 import { useUserStores } from '@/stores/userStores'
 import UserDashboardSkeleton from '@/components/skeletons/UserDashboardSkeleton.vue'
 
@@ -223,8 +222,7 @@ const handleTakeQuiz = (selectedTypeQuiz: number) => {
 }
 
 const handleHelp = () => {
-  notify('really', 'success')
-  console.log('Show help')
+  console.info('help')
 }
 
 const handleModalConfirm = () => {
