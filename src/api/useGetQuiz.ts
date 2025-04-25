@@ -7,6 +7,7 @@ import Training5 from '@/data/training-quiz-5.json'
 import Training6 from '@/data/training-quiz-6.json'
 import Training7 from '@/data/training-quiz-7.json'
 import TrainingPPI from '@/data/training-quiz-ppi.json'
+import TrainingRiasec from '@/data/training-quiz-riasec.json'
 
 export const useGetQuizApi = () => {
   const loading = ref(false)
@@ -23,6 +24,7 @@ export const useGetQuizApi = () => {
       if (type == '3') return Training6.data
       if (type == '4') return Training7.data
       if (type == '5') return TrainingPPI.data
+      if (type == '6') return TrainingRiasec.data
     }
 
     try {

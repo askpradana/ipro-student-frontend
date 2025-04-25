@@ -3,6 +3,7 @@ export interface NewUser {
   email: string
   grade: string
   phoneNumber: string
+  jurusan: string
 }
 
 export interface NewViewer {

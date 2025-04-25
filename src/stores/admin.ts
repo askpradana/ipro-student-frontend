@@ -17,6 +17,7 @@ export interface User {
   email: string
   grade: string
   school: string
+  jurusan?: string
   lastLogin: Date | null
   attemptLogin: number
   testPeriod: Date | null
@@ -61,6 +62,7 @@ export const useAdminStore = defineStore('admin', () => {
           email: user.email,
           name: user.name,
           grade: user.grade,
+          jurusan: user.jurusan,
           phoneNumber: user.phoneNumber || '',
         })),
         viewer: viewers.map((viewer) => ({
@@ -117,6 +119,7 @@ export const useAdminStore = defineStore('admin', () => {
           email: apiUser.email || ' - ',
           grade: apiUser.grade || ' - ',
           school: apiUser.school || ' - ',
+          jurusan: apiUser.jurusan || ' - ',
           lastLogin:
             apiUser.last_login !== '0001-01-01T00:00:00Z' ? new Date(apiUser.last_login) : null,
           attemptLogin: apiUser.attempt_login,

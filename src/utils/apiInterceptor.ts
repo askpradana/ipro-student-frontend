@@ -12,6 +12,7 @@ export interface UserData {
   name: string
   grade: string
   school: string
+  jurusan?: string
   quiz_period: string
   quiz_completed_at: string
   quiz_status: {
