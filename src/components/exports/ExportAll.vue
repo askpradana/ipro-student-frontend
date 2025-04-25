@@ -285,7 +285,7 @@ const exportToPDF = async () => {
 
       const rowData: { y: number; height: number }[] = []
       autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
         body: student.result
           .slice(0, 5)
           .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
@@ -352,7 +352,7 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
         body: student.result
           .slice(5, 8)
           .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
@@ -418,7 +418,7 @@ const exportToPDF = async () => {
       startY = 32
 
       autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Hasil']],
+        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
         body: student.result
           .slice(8, 12)
           .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
