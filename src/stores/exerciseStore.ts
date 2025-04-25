@@ -40,6 +40,14 @@ export const useExerciseStore = defineStore('excerciseType', {
         case 6:
           this.exerciseQuiz6 = '6'
           break
+        case 0:
+          this.exerciseQuiz1 = '0'
+          this.exerciseQuiz2 = '0'
+          this.exerciseQuiz3 = '0'
+          this.exerciseQuiz4 = '0'
+          this.exerciseQuiz5 = '0'
+          this.exerciseQuiz6 = '0'
+          break
         default:
           break
       }
