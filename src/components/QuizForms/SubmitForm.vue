@@ -44,8 +44,10 @@ import { useTimerStore } from '@/stores/timerStore'
 import { notify } from '@/lib/notify'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useExerciseStore } from '@/stores/exerciseStore'
 
 const quizStore = useQuizStore()
+const exerciseStore = useExerciseStore()
 const timerStore = useTimerStore()
 const router = useRouter()
 const isDone = ref(false)
@@ -55,42 +57,46 @@ const backToQuizForm = () => {
   quizStore.isComplete = false
 }
 
-const setLocalStorageExercise = (typeOfQuiz: number) => {
-  switch (typeOfQuiz) {
-    case 1:
-      localStorage.setItem('exerciseQuiz1', JSON.stringify(typeOfQuiz))
-      return
-    case 2:
-      localStorage.setItem('exerciseQuiz2', JSON.stringify(typeOfQuiz))
-      return
-    case 3:
-      localStorage.setItem('exerciseQuiz3', JSON.stringify(typeOfQuiz))
-      return
-    case 4:
-      localStorage.setItem('exerciseQuiz4', JSON.stringify(typeOfQuiz))
-      return
-    case 5:
-      localStorage.setItem('exerciseQuiz5', JSON.stringify(typeOfQuiz))
-      return
-    case 6:
-      localStorage.setItem('exerciseQuiz6', JSON.stringify(typeOfQuiz))
-      return
+// const setLocalStorageExercise = (typeOfQuiz: number) => {
+//   switch (typeOfQuiz) {
+//     case 1:
+//       localStorage.setItem('exerciseQuiz1', JSON.stringify(typeOfQuiz))
+//       return
+//     case 2:
+//       localStorage.setItem('exerciseQuiz2', JSON.stringify(typeOfQuiz))
+//       return
+//     case 3:
+//       localStorage.setItem('exerciseQuiz3', JSON.stringify(typeOfQuiz))
+//       return
+//     case 4:
+//       localStorage.setItem('exerciseQuiz4', JSON.stringify(typeOfQuiz))
+//       return
+//     case 5:
+//       localStorage.setItem('exerciseQuiz5', JSON.stringify(typeOfQuiz))
+//       return
+//     case 6:
+//       localStorage.setItem('exerciseQuiz6', JSON.stringify(typeOfQuiz))
+//       return
 
-    default:
-      break
-  }
-}
+//     default:
+//       break
+//   }
+// }
 
 const sumbitQuizHandler = () => {
   if (isTraining === 'true') {
     notify('Latihan selesai', 'success')
+    const quizType = quizStore.typeQuiz
     setTimeout(() => {
-      router.push('/dashboard')
-      setLocalStorageExercise(quizStore.typeQuiz)
-      quizStore.typeQuiz = 0
+      // setLocalStorageExercise(quizStore.typeQuiz)
+      exerciseStore.updateExercise(quizType)
       quizStore.isComplete = false
       timerStore.stopTimer()
       quizStore.resetQuiz()
+      localStorage.setItem('type-quiz', JSON.stringify(quizType))
+      setTimeout(() => {
+        router.push('/quiz')
+      }, 100)
     }, 1500)
 
     return
