@@ -77,7 +77,6 @@ const backToQuizForm = () => {
 //     case 6:
 //       localStorage.setItem('exerciseQuiz6', JSON.stringify(typeOfQuiz))
 //       return
-
 //     default:
 //       break
 //   }
