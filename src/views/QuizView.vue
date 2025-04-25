@@ -13,20 +13,16 @@ import SubmitForm from '@/components/QuizForms/SubmitForm.vue'
 import { getTypeQuizWithUnderscore } from '@/lib/getTypeQuiz'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
 import ModalWarningViolation from '@/components/modals/ModalWarningViolation.vue'
+import { useExerciseStore } from '@/stores/exerciseStore'
 
 const store = useQuizStore()
 const router = useRouter()
 const modalStore = useModalStore()
 const userStore = useUserStores()
 const timerStore = useTimerStore()
+const exerciseStore = useExerciseStore()
 const selectedAnswer = ref<string[] | number | string | null>(null)
 const selectedQuiz = localStorage.getItem('type-quiz')
-
-const exerciseQuiz1 = localStorage.getItem('exerciseQuiz1')
-const exerciseQuiz2 = localStorage.getItem('exerciseQuiz2')
-const exerciseQuiz3 = localStorage.getItem('exerciseQuiz3')
-const exerciseQuiz4 = localStorage.getItem('exerciseQuiz4')
-const exerciseQuiz5 = localStorage.getItem('exerciseQuiz5')
 
 watch(
   () => store.currentQuestionIndex,
@@ -161,7 +157,9 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
               <button
                 @click="startQuizHandler(type.typeQuiz)"
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                :class="exerciseQuiz1 === '1' && selectedQuiz === '1' ? 'flex' : 'hidden'"
+                :class="
+                  exerciseStore.exerciseQuiz1 === '1' && selectedQuiz === '1' ? 'flex' : 'hidden'
+                "
               >
                 Mulai Tes
               </button>
@@ -170,7 +168,9 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
               <button
                 @click="startQuizHandler(type.typeQuiz)"
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                :class="exerciseQuiz2 === '2' && selectedQuiz === '2' ? 'flex' : 'hidden'"
+                :class="
+                  exerciseStore.exerciseQuiz2 === '2' && selectedQuiz === '2' ? 'flex' : 'hidden'
+                "
               >
                 Mulai Tes
               </button>
@@ -179,7 +179,9 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
               <button
                 @click="startQuizHandler(type.typeQuiz)"
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                :class="exerciseQuiz3 === '3' && selectedQuiz === '3' ? 'flex' : 'hidden'"
+                :class="
+                  exerciseStore.exerciseQuiz3 === '3' && selectedQuiz === '3' ? 'flex' : 'hidden'
+                "
               >
                 Mulai Tes
               </button>
@@ -188,7 +190,9 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
               <button
                 @click="startQuizHandler(type.typeQuiz)"
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                :class="exerciseQuiz4 === '4' && selectedQuiz === '4' ? 'flex' : 'hidden'"
+                :class="
+                  exerciseStore.exerciseQuiz4 === '4' && selectedQuiz === '4' ? 'flex' : 'hidden'
+                "
               >
                 Mulai Tes
               </button>
@@ -197,7 +201,18 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
               <button
                 @click="startQuizHandler(type.typeQuiz)"
                 class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                :class="exerciseQuiz5 === '5' && selectedQuiz === '5' ? 'flex' : 'hidden'"
+                :class="
+                  exerciseStore.exerciseQuiz5 === '5' && selectedQuiz === '5' ? 'flex' : 'hidden'
+                "
+              >
+                Mulai Tes
+              </button>
+
+              <!-- Quiz 6 Button -->
+              <button
+                @click="startQuizHandler(type.typeQuiz)"
+                class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+                :class="selectedQuiz === '6' ? 'flex' : 'hidden'"
               >
                 Mulai Tes
               </button>
