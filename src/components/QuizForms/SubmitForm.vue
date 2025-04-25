@@ -57,6 +57,7 @@ const backToQuizForm = () => {
   quizStore.isComplete = false
 }
 
+
 // const setLocalStorageExercise = (typeOfQuiz: number) => {
 //   switch (typeOfQuiz) {
 //     case 1:
@@ -76,8 +77,7 @@ const backToQuizForm = () => {
 //       return
 //     case 6:
 //       localStorage.setItem('exerciseQuiz6', JSON.stringify(typeOfQuiz))
-//       return
-
+//       retur
 //     default:
 //       break
 //   }
