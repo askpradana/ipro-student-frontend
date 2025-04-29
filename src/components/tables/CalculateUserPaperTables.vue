@@ -152,7 +152,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div class="bg-teal-50 p-4 rounded-lg shadow">
           <span class="flex justify-between items-center">
-            <h3 class="font-bold text-teal-600">Sistematik Kerja</h3>
+            <h3 class="font-bold text-teal-600">Sistematika Kerja</h3>
             <div class="flex justify-end gap-1 items-center">
               <div v-for="star in 5" :key="star">
                 <span v-if="star <= userData?.sistematik_kerja.skor!">

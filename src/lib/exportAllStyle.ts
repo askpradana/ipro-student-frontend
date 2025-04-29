@@ -52,7 +52,7 @@ export const page2Content = [
     style: 'subtitle',
   },
   {
-    text: 'Pastikan untuk selalu cek validitas hasil tes ini secara berkala. Hal ini akan memberikan gambaran individu yang lebih obyektif mengikuti perubahan yang terjadi dalam kehidupannya.',
+    text: 'Pastikan untuk selalu cek validitas hasil tes ini secara berkala. Hal ini akan memberikan gambaran siswa yang lebih obyektif mengikuti perubahan yang terjadi dalam kehidupannya.',
     style: 'paragraph',
   },
   {
