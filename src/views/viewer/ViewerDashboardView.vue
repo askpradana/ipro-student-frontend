@@ -41,7 +41,10 @@
           </router-link>
         </div> -->
 
-        <ExportAll />
+        <div class="flex justify-end items-center gap-2">
+          <ExportAll />
+          <ExportRiasec />
+        </div>
 
         <!-- Pagination Controls -->
         <PaginationControls
@@ -110,6 +113,7 @@ import EditUserModal from '@/components/modals/ModalEditUser.vue'
 import LogoutErrorModal from '@/components/modals/ModalLogoutError.vue'
 import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue'
 import ExportAll from '@/components/exports/ExportAll.vue'
+import ExportRiasec from '@/components/exports/ExportRiasec.vue'
 
 const adminStore = useAdminStore()
 const authStore = useAuthStore()
@@ -266,6 +270,7 @@ const submitResetPassword = async (newPassword: string) => {
     }
   } catch (error) {
     notify('Failed to reset password', 'error')
+    console.log(error)
   }
 }
 
