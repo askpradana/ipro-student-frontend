@@ -7,7 +7,7 @@ import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { page2RiasecContent } from '@/lib/exportAllStyle'
 import logoIradat from '/assets/iradat-konsultan.png'
-import highschoolImg from '/assets/highschool.png'
+import riasecImg from '/assets/riasec-cover.png'
 // import {
 //   aspekKemampuanBerpikirEmoji,
 //   aspekKepribadianEmoji,
@@ -15,7 +15,7 @@ import highschoolImg from '/assets/highschool.png'
 // } from './exportAspekEmoji'
 import Kerahasiaan from '/assets/instruction-header/kerahasiaan.png'
 import CetakHasilTes from '/assets/instruction-header/cetak-hasil-tes.png'
-import PotensiPrestasi from '/assets/instruction-header/potensi-vs-prestasi.png'
+// import PotensiPrestasi from '/assets/instruction-header/potensi-vs-prestasi.png'
 import Tujuan from '/assets/instruction-header/tujuan.png'
 import OptimalkanInformasi from '/assets/instruction-header/optimalkan-informasi.png'
 
@@ -43,47 +43,69 @@ const exportToPDF = async () => {
         format: 'a4',
       })
 
+      // Ukuran halaman A4 dan margin
+      const pageWidth = 210 // Lebar A4 dalam mm
+      const pageHeight = 297 // Tinggi A4 dalam mm
+      const margin = 20 // Margin di setiap sisi
+      const availableWidth = pageWidth - 2 * margin // 170 mm
+      const availableHeight = pageHeight - 2 * margin // 257 mm
+
       // === PAGE 1 - Cover ===
+      // Tambahkan garis tepi di dalam margin
+      doc.setLineWidth(0.5)
+      doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
+      doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
+
       doc.setFontSize(32)
       doc.setFont('helvetica', 'bold')
-      doc.addImage(logoIradat, 'PNG', 150, 20, 35, 15)
+      doc.addImage(logoIradat, 'PNG', 150, 26, 35, 15)
       doc.text('Profil Minat Siswa', 105, 70, { align: 'center' })
 
       // Center the image horizontally (A4 width is 210mm, image width is 120mm)
-      doc.addImage(highschoolImg, 'PNG', (210 - 120) / 2, 85, 120, 100)
+      doc.addImage(riasecImg, 'PNG', (210 - 100) / 2, 85, 100, 100)
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
-      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 210, { align: 'center' })
-      doc.text(`KELAS ${student?.grade || '-'}`, 105, 230, { align: 'center' })
+      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
+      doc.text(`KELAS ${student?.grade || '-'}`, 105, 210, { align: 'center' })
       // doc.text(`${student..toUpperCase()}`, 105, 220, { align: 'center' })
-      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 240, { align: 'center' })
+      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 230, { align: 'center' })
       // doc.text(` ${student?.phone_number || '-'}`, 105, 120, { align: 'center' })
       // doc.text(`${student?.email || '-'}`, 105, 130, { align: 'center' })
 
       // === PAGE 2 - Cara Menguakan ===
       doc.addPage()
-      let yPosition = 20 // Posisi Y awal
+      doc.addImage(logoIradat, 'PNG', 16, 5, 30, 12)
+      // Tambahkan garis tepi di dalam margin
+      doc.setLineWidth(0.5)
+      doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
+      doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
+
+      let yPosition = 24 // Posisi Y awal
 
       page2RiasecContent.forEach((content) => {
         if (content.style == 'title') {
           doc.setFont('helvetica', 'bold')
           doc.setFontSize(16)
-          doc.text(content.text, 210 / 2, 27, { align: 'center' })
-          yPosition += 28
+          doc.text(content.text, 210 / 2, 33, { align: 'center' })
+          yPosition += 24
         } else if (content.style == 'subtitle') {
           doc.setFont('helvetica', 'bold')
           doc.setFontSize(14)
           let header = ''
           if (content.text.includes('KERAHASIAAN')) header = Kerahasiaan
           if (content.text.includes('MENYELURUH')) header = Tujuan
-          if (content.text.includes('POTENSI')) header = PotensiPrestasi
+          // if (content.text.includes('POTENSI')) header = PotensiPrestasi
           if (content.text.includes('OPTIMALKAN')) header = OptimalkanInformasi
           if (content.text.includes('HASIL')) header = CetakHasilTes
 
-          doc.addImage(header, 'PNG', 210 / 2 - 34, yPosition - 5, 64, 12)
+          if (content.text.includes('OPTIMALKAN')) {
+            doc.addImage(header, 'PNG', 210 / 2 - 34, yPosition - 8, 64, 12)
+          } else {
+            doc.addImage(header, 'PNG', 210 / 2 - 34, yPosition - 5, 64, 12)
+          }
           // doc.text(content.text, 210 / 2, yPosition, { align: 'center' })
-          yPosition += 14
+          yPosition += 18
         } else if (content.style == 'disclaimer') {
           doc.setFontSize(10)
           doc.setFont('helvetica', 'bold')
@@ -114,7 +136,7 @@ const exportToPDF = async () => {
             yPosition += 6 // yPosition untuk setiap baris, sesuaikan ukuran ini sesuai kebutuhan
           })
 
-          yPosition += textLines.length + 5 // +5 untuk jarak ekstra
+          yPosition += textLines.length + 7 // +5 untuk jarak ekstra
         }
       })
 
@@ -136,15 +158,19 @@ const exportToPDF = async () => {
         })
         return splitText.length * lineHeight // Mengembalikan tinggi total teks untuk posisi berikutnya
       }
-      const margin = 20
-      const pageWidth = 210 // Lebar A4 dalam mm
+
       const maxWidth = pageWidth - margin * 2
 
       doc.addPage()
+
+      doc.setLineWidth(0.5)
+      doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
+      doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
+
       doc.setFontSize(28)
       doc.setFont('helvetica', 'bold')
-      doc.addImage(logoIradat, 'PNG', 150, 20, 35, 15)
-      doc.text('Profil Minat Siswa', 105, 55, { align: 'center' })
+      doc.addImage(logoIradat, 'PNG', 16, 5, 30, 12)
+      doc.text('Profil Minat Siswa', 105, 40, { align: 'center' })
 
       // GRAFIK
       // Data dari grafik
@@ -177,12 +203,9 @@ const exportToPDF = async () => {
       const maxValue = 10 // Nilai maksimum pada sumbu Y
       const chartWidth = barWidth * categories.length // Lebar grafik: 120 mm
 
-      // Ukuran halaman A4 dan margin
-      const availableWidth = pageWidth - 2 * margin // 170 mm
-
       // Hitung posisi tengah
       const startX = margin + (availableWidth - chartWidth) / 2 // 45 mm
-      const startY = 70 // Sekitar 78.5 mm, kita gunakan 80
+      const startY = 60 // Sekitar 78.5 mm, kita gunakan 80
 
       // Gambar sumbu
       doc.setLineWidth(0.5)
@@ -222,13 +245,13 @@ const exportToPDF = async () => {
 
       //CONTENT
       doc.setFontSize(20)
-      doc.text(`TIPE : ${student.result.top_three.toUpperCase()}`, 105, 145, { align: 'center' })
+      doc.text(`TIPE : ${student.result.top_three.toUpperCase()}`, 105, 135, { align: 'center' })
 
       // Gambaran Kepribadian
       doc.setFontSize(16)
       doc.setFont('helvetica', 'bold')
-      doc.text('GAMBARAN KEPRIBADIAN', 20, 160, { align: 'left' })
-      yPosition = 170
+      doc.text('GAMBARAN KEPRIBADIAN', 20, 150, { align: 'left' })
+      yPosition = 160
 
       yPosition += addWrappedText(
         doc,
@@ -236,7 +259,7 @@ const exportToPDF = async () => {
         margin,
         yPosition,
         maxWidth,
-        14,
+        12,
         7,
       )
 
@@ -245,7 +268,7 @@ const exportToPDF = async () => {
       doc.setFont('helvetica', 'bold')
       doc.text('BIDANG KARIER YANG COCOK', 20, yPosition + 5, { align: 'left' })
       yPosition += 15 // Tambah jarak untuk judul dan teks
-      yPosition += addWrappedText(doc, student.result.karir, margin, yPosition, maxWidth, 14, 7)
+      yPosition += addWrappedText(doc, student.result.karir, margin, yPosition, maxWidth, 12, 7)
 
       // Jurusan Pendidikan
       doc.setFontSize(16)
@@ -258,7 +281,7 @@ const exportToPDF = async () => {
         margin,
         yPosition,
         maxWidth,
-        14,
+        12,
         7,
       )
 
@@ -267,7 +290,7 @@ const exportToPDF = async () => {
       doc.setFont('helvetica', 'bold')
       doc.text('SARAN PENGEMBANGAN POTENSI SISWA', 20, yPosition + 5, { align: 'left' })
       yPosition += 15
-      addWrappedText(doc, student.result.potensi, margin, yPosition, maxWidth, 14, 7)
+      addWrappedText(doc, student.result.potensi, margin, yPosition, maxWidth, 12, 7)
 
       const pdfBlob = doc.output('blob')
       const filename = `Riasec-${student.name?.replace(/\s+/g, '_') || 'Siswa'}.pdf`
