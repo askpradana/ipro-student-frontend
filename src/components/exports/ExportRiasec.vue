@@ -8,14 +8,8 @@ import { saveAs } from 'file-saver'
 import { page2RiasecContent } from '@/lib/exportAllStyle'
 import logoIradat from '/assets/iradat-konsultan.png'
 import riasecImg from '/assets/riasec-cover.png'
-// import {
-//   aspekKemampuanBerpikirEmoji,
-//   aspekKepribadianEmoji,
-//   aspekSikapKerjaEmoji,
-// } from './exportAspekEmoji'
 import Kerahasiaan from '/assets/instruction-header/kerahasiaan.png'
 import CetakHasilTes from '/assets/instruction-header/cetak-hasil-tes.png'
-// import PotensiPrestasi from '/assets/instruction-header/potensi-vs-prestasi.png'
 import Tujuan from '/assets/instruction-header/tujuan.png'
 import OptimalkanInformasi from '/assets/instruction-header/optimalkan-informasi.png'
 
@@ -174,10 +168,18 @@ const exportToPDF = async () => {
 
       // GRAFIK
       // Data dari grafik
-
       const categories = Object.entries(student.result.scores)
         .sort((a, b) => b[1] - a[1]) // urutkan berdasarkan nilai, dari terbesar ke terkecil
         .map((entry) => entry[0])
+
+      const colorObject = {
+        realistic: [255, 165, 0],
+        artistic: [0, 128, 0],
+        social: [255, 0, 0],
+        enterprising: [0, 191, 255],
+        investigative: [255, 215, 0],
+        conventional: [128, 0, 128],
+      }
 
       const values = [
         student.result.scores.artistic,
@@ -188,23 +190,28 @@ const exportToPDF = async () => {
         student.result.scores.social,
       ].sort((a, b) => b - a)
 
-      const colors = [
-        [255, 165, 0], // Orange untuk Realistic
-        [0, 128, 0], // Green untuk II
-        [255, 0, 0], // Red untuk A
-        [0, 191, 255], // Blue untuk S
-        [255, 215, 0], // Yellow untuk E
-        [128, 0, 128], // Purple untuk C
-      ]
+      const colors = categories.map(
+        (category) =>
+          colorObject[
+            category as
+              | 'realistic'
+              | 'artistic'
+              | 'social'
+              | 'enterprising'
+              | 'investigative'
+              | 'conventional'
+          ],
+      )
 
       // Parameter grafik
       const barWidth = 20
+      const gap = 5
       const maxHeight = 55 // Tinggi maksimum batang
       const maxValue = 10 // Nilai maksimum pada sumbu Y
-      const chartWidth = barWidth * categories.length // Lebar grafik: 120 mm
+      const chartWidth = barWidth * categories.length + gap * (categories.length - 1) // Lebar grafik: 120 mm
 
       // Hitung posisi tengah
-      const startX = margin + (availableWidth - chartWidth) / 2 // 45 mm
+      const startX = margin + (availableWidth - chartWidth) / 2 + gap // 45 mm
       const startY = 60 // Sekitar 78.5 mm, kita gunakan 80
 
       // Gambar sumbu
@@ -223,7 +230,7 @@ const exportToPDF = async () => {
 
       // Gambar batang dan label
       values.forEach((value, index) => {
-        const x = startX + index * barWidth
+        const x = startX + index * (barWidth + gap)
         const barHeight = (value / maxValue) * maxHeight
         const y = startY + maxHeight - barHeight
 
@@ -238,6 +245,7 @@ const exportToPDF = async () => {
         doc.text(`${value}`, x + barWidth / 2 - 2, y - 5)
 
         // Tambahkan label kategori di bawah sumbu X
+
         doc.text(categories[index], x + barWidth / 2, startY + maxHeight + 5, {
           align: 'center',
         })
