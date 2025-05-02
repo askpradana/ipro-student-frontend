@@ -29,6 +29,7 @@ export interface RiasecDataInterface {
   code: number
   status: string
   data: {
+    school: string
     person_data: PersonData[]
     skipped_users: string[]
   }

@@ -108,16 +108,16 @@ export const page2RiasecContent = [
     style: 'subtitle',
   },
   {
-    text: 'Pastikan untuk selalu mengecek validitas hasil tes ini secara berkala. Hal ini akan memberikan gambaran siswa yang lebih obyektif mengikuti perubahan yang terjadi dalam kehidupannya.  ',
+    text: 'Pastikan untuk selalu mengecek validitas hasil tes ini secara berkala. Hal ini akan memberikan gambaran siswa yang lebih obyektif mengikuti perubahan yang terjadi dalam kehidupannya.',
     style: 'paragraph',
   },
   {
     text: 'DISCLAIMER',
-    style: 'disclaimer',
+    style: '',
   },
   {
-    text: 'I-Pro Student ini ditujukan untuk siswa kelas 9 SLTP hingga 12 SLTA/sederajat\ndan membantu siswa mengenali potensi psikologi dan pengembangan diri.\nLaporan ini dihasilkan secara otomatis menggunakan komputer. Jika tidak ada pengawasan saat proses pengisian tes, \nkami tidak dapat menjamin kesesuaian identitas dari responden yang mengisi.',
-    style: 'paragraph-disclaimer',
+    text: 'Disclaimer: Tes ini bertujuan membantu siswa mengenali profil minatnya, namun bukan satu-satunya penentu untuk pemilihan jurusan atau pendidikan lanjutan. Laporan ini dihasilkan secara otomatis dan validitas hasil bergantung pada kejujuran siswa saat mengerjakan tes.',
+    style: 'paragraph',
   },
 ]
 

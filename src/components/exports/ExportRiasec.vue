@@ -39,21 +39,17 @@ const exportToPDF = async () => {
 
       // Ukuran halaman A4 dan margin
       const pageWidth = 210 // Lebar A4 dalam mm
-      const pageHeight = 297 // Tinggi A4 dalam mm
+      // const pageHeight = 297 // Tinggi A4 dalam mm
       const margin = 20 // Margin di setiap sisi
       const availableWidth = pageWidth - 2 * margin // 170 mm
-      const availableHeight = pageHeight - 2 * margin // 257 mm
+      // const availableHeight = pageHeight - 2 * margin // 257 mm
 
       // === PAGE 1 - Cover ===
-      // Tambahkan garis tepi di dalam margin
-      doc.setLineWidth(0.5)
-      doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
-      doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
-
       doc.setFontSize(32)
       doc.setFont('helvetica', 'bold')
-      doc.addImage(logoIradat, 'PNG', 150, 26, 35, 15)
-      doc.text('Profil Minat Siswa', 105, 70, { align: 'center' })
+      // doc.addImage(logoIradat, 'PNG', 150, 26, 35, 15)
+      doc.addImage(logoIradat, 'PNG', 20, 20, 35, 15)
+      doc.text('Profil Minat Siswa', 105, 65, { align: 'center' })
 
       // Center the image horizontally (A4 width is 210mm, image width is 120mm)
       doc.addImage(riasecImg, 'PNG', (210 - 100) / 2, 85, 100, 100)
@@ -61,27 +57,20 @@ const exportToPDF = async () => {
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
       doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
+      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 220, { align: 'center' })
       doc.text(`KELAS ${student?.grade || '-'}`, 105, 210, { align: 'center' })
-      // doc.text(`${student..toUpperCase()}`, 105, 220, { align: 'center' })
       doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 230, { align: 'center' })
-      // doc.text(` ${student?.phone_number || '-'}`, 105, 120, { align: 'center' })
-      // doc.text(`${student?.email || '-'}`, 105, 130, { align: 'center' })
 
       // === PAGE 2 - Cara Menguakan ===
       doc.addPage()
-      doc.addImage(logoIradat, 'PNG', 16, 5, 30, 12)
-      // Tambahkan garis tepi di dalam margin
-      doc.setLineWidth(0.5)
-      doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
-      doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
-
+      // doc.addImage(logoIradat, 'PNG', 16, 5, 30, 12)
       let yPosition = 24 // Posisi Y awal
 
       page2RiasecContent.forEach((content) => {
         if (content.style == 'title') {
           doc.setFont('helvetica', 'bold')
           doc.setFontSize(16)
-          doc.text(content.text, 210 / 2, 33, { align: 'center' })
+          doc.text(content.text, 210 / 2, 27, { align: 'center' })
           yPosition += 24
         } else if (content.style == 'subtitle') {
           doc.setFont('helvetica', 'bold')
@@ -156,15 +145,15 @@ const exportToPDF = async () => {
       const maxWidth = pageWidth - margin * 2
 
       doc.addPage()
-
-      doc.setLineWidth(0.5)
-      doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
-      doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
+      // tambah garis tepi
+      // doc.setLineWidth(0.5)
+      // doc.setDrawColor(0, 0, 0) // Warna garis tepi: hitam
+      // doc.rect(16, 20, availableWidth + 6, availableHeight, 'S') // Gambar persegi panjang sebagai garis tepi
 
       doc.setFontSize(28)
       doc.setFont('helvetica', 'bold')
-      doc.addImage(logoIradat, 'PNG', 16, 5, 30, 12)
-      doc.text('Profil Minat Siswa', 105, 40, { align: 'center' })
+      // doc.addImage(logoIradat, 'PNG', 16, 5, 30, 12)
+      doc.text('Profil Minat Siswa', 105, 33, { align: 'center' })
 
       // GRAFIK
       // Data dari grafik
@@ -213,6 +202,10 @@ const exportToPDF = async () => {
       // Hitung posisi tengah
       const startX = margin + (availableWidth - chartWidth) / 2 + gap // 45 mm
       const startY = 60 // Sekitar 78.5 mm, kita gunakan 80
+
+      // Judul grafik
+      doc.setFontSize(16)
+      doc.text('GRAFIK MINAT RIASEC', 70, 55)
 
       // Gambar sumbu
       doc.setLineWidth(0.5)
