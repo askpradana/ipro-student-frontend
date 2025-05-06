@@ -78,7 +78,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
         case 'quiz_ppi':
           return 60 * 15
         case 'quiz_riasec':
-          return 60 * 15
+          return 60 * 120
         default:
           break
       }
