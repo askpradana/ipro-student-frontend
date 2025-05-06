@@ -95,9 +95,28 @@ const exportToPDF = async () => {
           doc.text(content.text, 210 / 2, yPosition - 1, { align: 'center' })
           yPosition += 10
         } else if (content.style == 'paragraph-disclaimer') {
-          doc.setFontSize(9)
+          doc.setFontSize(10)
           doc.setFont('helvetica', 'italic')
-          doc.text(content.text, 210 / 2, yPosition - 1, { align: 'center' })
+
+          // Margin kiri dan kanan
+          const leftMargin = 20
+          const rightMargin = 20
+
+          // Lebar area teks yang digunakan
+          const pageWidth = 210 // A4 width in mm
+          const textWidth = pageWidth - leftMargin - rightMargin
+
+          // Split teks menjadi beberapa baris berdasarkan lebar halaman
+          const textLines = doc.splitTextToSize(content.text, textWidth)
+
+          // Loop untuk menambahkan setiap baris ke dokumen
+          textLines.forEach((line: string) => {
+            doc.text(line, pageWidth / 2, yPosition, { align: 'center' })
+            yPosition += 6 // yPosition untuk setiap baris, sesuaikan ukuran ini sesuai kebutuhan
+          })
+
+          yPosition += textLines.length + 7 // +5 untuk jarak ekstra
+          
         } else if (content.style == 'paragraph') {
           doc.setFont('helvetica', 'normal')
           doc.setFontSize(12)
@@ -157,40 +176,33 @@ const exportToPDF = async () => {
 
       // GRAFIK
       // Data dari grafik
-      const categories = Object.entries(student.result.scores)
-        .sort((a, b) => b[1] - a[1]) // urutkan berdasarkan nilai, dari terbesar ke terkecil
-        .map((entry) => entry[0])
-
-      const colorObject = {
-        realistic: [255, 165, 0],
-        artistic: [0, 128, 0],
-        social: [255, 0, 0],
-        enterprising: [0, 191, 255],
-        investigative: [255, 215, 0],
-        conventional: [128, 0, 128],
-      }
+      
+      const categories = [
+        'Realistic',
+        'Investigative',
+        'Artistic',
+        'Social',
+        'Enterprising',
+        'Conventional',
+      ]
 
       const values = [
-        student.result.scores.artistic,
-        student.result.scores.conventional,
-        student.result.scores.enterprising,
-        student.result.scores.investigative,
         student.result.scores.realistic,
+        student.result.scores.investigative,
+        student.result.scores.artistic,
         student.result.scores.social,
-      ].sort((a, b) => b - a)
+        student.result.scores.enterprising,
+        student.result.scores.conventional,
+      ]
 
-      const colors = categories.map(
-        (category) =>
-          colorObject[
-            category as
-              | 'realistic'
-              | 'artistic'
-              | 'social'
-              | 'enterprising'
-              | 'investigative'
-              | 'conventional'
-          ],
-      )
+      const colors = [
+        [255, 165, 0],
+        [255, 215, 0],
+        [0, 128, 0],
+        [255, 0, 0],
+        [0, 191, 255],
+        [128, 0, 128],
+      ]
 
       // Parameter grafik
       const barWidth = 20
@@ -233,9 +245,9 @@ const exportToPDF = async () => {
         doc.rect(x, y, barWidth - 2, barHeight, 'F') // Gambar batang
 
         // Tambahkan nilai di atas batang
-        // doc.setFontSize(10)
-        // doc.setTextColor(0, 0, 0)
-        // doc.text(`${value}`, x + barWidth / 2 - 2, y - 5)
+        doc.setFontSize(10)
+        doc.setTextColor(0, 0, 0)
+        doc.text(`${value}`, x + barWidth / 2 - 2, y - 5)
 
         // Tambahkan label kategori di bawah sumbu X
 
