@@ -113,11 +113,11 @@ export const page2RiasecContent = [
   },
   {
     text: 'DISCLAIMER',
-    style: '',
+    style: 'disclaimer',
   },
   {
-    text: 'Disclaimer: Tes ini bertujuan membantu siswa mengenali profil minatnya, namun bukan satu-satunya penentu untuk pemilihan jurusan atau pendidikan lanjutan. Laporan ini dihasilkan secara otomatis dan validitas hasil bergantung pada kejujuran siswa saat mengerjakan tes.',
-    style: 'paragraph',
+    text: 'Tes ini bertujuan membantu siswa mengenali profil minatnya,namun bukan satu-satunya penentu untuk pemilihan jurusan atau pendidikan lanjutan. Laporan ini dihasilkan secara otomatis dan validitas hasil bergantung pada kejujuran siswa saat mengerjakan tes.',
+    style: 'paragraph-disclaimer',
   },
 ]
 

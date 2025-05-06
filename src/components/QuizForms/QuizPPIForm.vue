@@ -91,7 +91,7 @@
     </div>
 
     <!-- Navigation Buttons -->
-    <div class="flex justify-between mt-8">
+    <div class="flex flex-col sm:flex-row gap-2 justify-between mt-8">
       <button
         @click="handlePrevious"
         :disabled="store.currentQuestionIndex === 0"
