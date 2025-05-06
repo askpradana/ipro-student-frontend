@@ -196,7 +196,7 @@ const exportToPDF = async () => {
       const barWidth = 20
       const gap = 5
       const maxHeight = 55 // Tinggi maksimum batang
-      const maxValue = 10 // Nilai maksimum pada sumbu Y
+      const maxValue = 50 // Nilai maksimum pada sumbu Y
       const chartWidth = barWidth * categories.length + gap * (categories.length - 1) // Lebar grafik: 120 mm
 
       // Hitung posisi tengah
@@ -213,13 +213,13 @@ const exportToPDF = async () => {
       doc.line(startX, startY + maxHeight, startX + chartWidth, startY + maxHeight) // Sumbu X
 
       // Gambar skala pada sumbu Y
-      for (let i = 0; i <= maxValue; i += 2) {
+      for (let i = 0; i <= maxValue; i += 5) {
         const y = startY + maxHeight - (i / maxValue) * maxHeight
         doc.line(startX - 3, y, startX, y) // Tanda skala
         doc.setFontSize(10)
-        doc.text(`${i}`, startX - 15, y + 3)
+        doc.text(`${i}`, startX - 10, y + 1)
       }
-      doc.text('Skor 1-10', startX - 15, startY - 5)
+      // doc.text('Skor 1-10', startX - 15, startY - 5)
 
       // Gambar batang dan label
       values.forEach((value, index) => {
@@ -233,9 +233,9 @@ const exportToPDF = async () => {
         doc.rect(x, y, barWidth - 2, barHeight, 'F') // Gambar batang
 
         // Tambahkan nilai di atas batang
-        doc.setFontSize(10)
-        doc.setTextColor(0, 0, 0)
-        doc.text(`${value}`, x + barWidth / 2 - 2, y - 5)
+        // doc.setFontSize(10)
+        // doc.setTextColor(0, 0, 0)
+        // doc.text(`${value}`, x + barWidth / 2 - 2, y - 5)
 
         // Tambahkan label kategori di bawah sumbu X
 

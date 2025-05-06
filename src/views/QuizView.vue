@@ -216,15 +216,6 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
               >
                 Mulai Tes
               </button>
-
-              <!-- Quiz 6 Button -->
-              <button
-                @click="startQuizHandler(type.typeQuiz)"
-                class="w-full p-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-semibold hover:from-teal-700 hover:to-emerald-700 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-                :class="selectedQuiz === '6' ? 'flex' : 'hidden'"
-              >
-                Mulai Tes
-              </button>
             </div>
           </div>
         </template>
