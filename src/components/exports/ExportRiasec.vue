@@ -116,6 +116,7 @@ const exportToPDF = async () => {
           })
 
           yPosition += textLines.length + 7 // +5 untuk jarak ekstra
+          
         } else if (content.style == 'paragraph') {
           doc.setFont('helvetica', 'normal')
           doc.setFontSize(12)
@@ -175,6 +176,7 @@ const exportToPDF = async () => {
 
       // GRAFIK
       // Data dari grafik
+      
       const categories = [
         'Realistic',
         'Investigative',
