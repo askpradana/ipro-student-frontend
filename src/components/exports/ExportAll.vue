@@ -493,9 +493,9 @@ const exportToPDF = async () => {
 <template>
   <button
     @click="exportToPDF"
-    class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white py-2 px-4 rounded-md mb-4 block ml-auto"
+    class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white py-2 px-4 rounded-md mb-4 block"
     :disabled="isLoading"
   >
-    {{ isLoading ? 'Membuat PDF...' : 'Export Data' }}
+    {{ isLoading ? 'Membuat PDF...' : 'Export Psikogram' }}
   </button>
 </template>

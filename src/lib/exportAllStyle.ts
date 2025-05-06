@@ -65,6 +65,62 @@ export const page2Content = [
   },
 ]
 
+export const page2RiasecContent = [
+  {
+    text: 'CARA MENGGUNAKAN LAPORAN',
+    style: 'title',
+    pageBreak: 'after',
+  },
+  {
+    text: 'JAGA KERAHASIAAN',
+    style: 'subtitle',
+  },
+  {
+    text: 'Mohon untuk menjaga kerahasiaan laporan ini. Pemberian laporan ditujukan bagi pihak yang memiliki tanggung jawab untuk pengambilan keputusan.',
+    style: 'paragraph',
+  },
+  {
+    text: 'TINJAUAN MENYELURUH',
+    style: 'subtitle',
+  },
+  {
+    text: 'Hindari untuk fokus pada salah satu kelebihan atau kekurangan yang tampil dalam laporan profil minat siswa. Pertimbangkan kesesuaian antara gambaran profil minat dengan gambaran potensi  psikologis siswa (intelektual, sikap kerja, kepribadian) dan prestasi akademik atau keterampilan lain yang dimiliki siswa  yang dapat memengaruhi ketepatan pemilihan jurusan pendidikan.',
+    style: 'paragraph',
+  },
+  // {
+  //   text: 'POTENSI VS PRESTASI SEKOLAH',
+  //   style: 'subtitle',
+  // },
+  // {
+  //   text: 'Padukan berbagai sumber informasi lainnya dengan laporan profil minat siswa, agar diperoleh gambaran yang lebih utuh untuk mendukung pengambilan keputusan pemilihan jurusan dan pengembangan diri yang lebih optimal.',
+  //   style: 'paragraph',
+  // },
+  {
+    text: 'OPTIMALKAN SUMBER INFORMASI LAIN',
+    style: 'subtitle',
+  },
+  {
+    text: 'Padukan berbagai sumber informasi lainnya dengan laporan profil minat siswa, agar diperoleh gambaran yang lebih utuh untuk mendukung pengambilan keputusan pemilihan jurusan dan pengembangan diri yang lebih optimal.',
+    style: 'paragraph',
+  },
+  {
+    text: 'CEK HASIL BERKALA',
+    style: 'subtitle',
+  },
+  {
+    text: 'Pastikan untuk selalu mengecek validitas hasil tes ini secara berkala. Hal ini akan memberikan gambaran siswa yang lebih obyektif mengikuti perubahan yang terjadi dalam kehidupannya.',
+    style: 'paragraph',
+  },
+  {
+    text: 'DISCLAIMER',
+    style: '',
+  },
+  {
+    text: 'Disclaimer: Tes ini bertujuan membantu siswa mengenali profil minatnya, namun bukan satu-satunya penentu untuk pemilihan jurusan atau pendidikan lanjutan. Laporan ini dihasilkan secara otomatis dan validitas hasil bergantung pada kejujuran siswa saat mengerjakan tes.',
+    style: 'paragraph',
+  },
+]
+
 export const getXPosValue = (skor: number) => {
   let xPos = 0
   if (skor == 1) {

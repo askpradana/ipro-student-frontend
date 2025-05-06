@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { handleApiResponse, type ApiResponse, type AuthModel } from '@/utils/apiInterceptor'
+import { useExerciseStore } from './exerciseStore'
 
 // Add custom error class and improved interfaces
 class AuthError extends Error {
@@ -90,6 +91,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
+      const exerciseStore = useExerciseStore()
       try {
         if (!this.user?.token) {
           this.clearAuthState()
@@ -114,12 +116,7 @@ export const useAuthStore = defineStore('auth', {
           // Clear localStorage
           localStorage.removeItem('user')
           localStorage.removeItem('isAuthenticated')
-          localStorage.removeItem('exerciseQuiz1')
-          localStorage.removeItem('exerciseQuiz2')
-          localStorage.removeItem('exerciseQuiz3')
-          localStorage.removeItem('exerciseQuiz4')
-          localStorage.removeItem('exerciseQuiz5')
-          localStorage.removeItem('exerciseQuiz6')
+          exerciseStore.updateExercise(0)
 
           // Return true to indicate successful logout
           return true

@@ -13,6 +13,7 @@
       </h2>
     </div>
 
+    <!-- list button nomor soal -->
     <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
       <span
         v-for="(question, index) of store.questions"
@@ -35,63 +36,108 @@
       Tentukan apakah peryataan di bawah sesuai dengan minat anda.
     </p>
 
-    <p class="text-black text-lg my-8 text-center mt-12">
+    <p
+      class="text-sm font-semibold text-center -mt-4 md:mt-4 text-red-500"
+      :class="(store?.currentQuestion?.soalID as number) < 216 ? 'hidden' : ''"
+    >
+      Untuk soal nomor 217–228, berikan nilai dari 1 sampai 7 untuk setiap pernyataan berikut,
+      sesuai dengan seberapa cocok pernyataan tersebut dengan diri Anda. (1 = Sangat tidak sesuai, 7
+      = Sangat sesuai)
+    </p>
+
+    <p class="text-black md:text-lg my-8 text-center md:mt-12">
       {{ store.currentQuestion?.pilihan[0] }}
     </p>
 
     <!-- Answer Options -->
-    <div class="flex flex-col md:flex-row justify-center items-center gap-4 w-full">
-      <label
-        class="w-full flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
-        :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === 1 }"
+    <div>
+      <span
+        class="flex flex-col md:flex-row justify-center items-center gap-4 w-full"
+        :class="(store?.currentQuestion?.soalID as number) > 216 ? 'hidden' : ''"
       >
-        <input
-          type="radio"
-          :name="'question'"
-          :value="1"
-          v-model="selectedAnswer"
-          @change="handleChangeAnswer"
-          class="hidden"
-        />
-        <span
-          class="w-5 h-5 border rounded-full flex items-center justify-center mr-3"
-          :class="{ 'border-teal-600': selectedAnswer === 1 }"
+        <label
+          class="w-full flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+          :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === 1 }"
         >
+          <input
+            type="radio"
+            :name="'question'"
+            :value="1"
+            v-model="selectedAnswer"
+            @change="handleChangeAnswer"
+            class="hidden"
+          />
           <span
-            v-if="selectedAnswer === 1"
-            class="w-3 h-3 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full"
-          ></span>
-        </span>
-        <span class="text-slate-700">Ya</span>
-      </label>
+            class="w-5 h-5 border rounded-full flex items-center justify-center mr-3"
+            :class="{ 'border-teal-600': selectedAnswer === 1 }"
+          >
+            <span
+              v-if="selectedAnswer === 1"
+              class="w-3 h-3 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full"
+            ></span>
+          </span>
+          <span class="text-slate-700">Ya</span>
+        </label>
 
-      <label
-        class="w-full flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
-        :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === 0 }"
-      >
-        <input
-          type="radio"
-          :name="'question'"
-          :value="0"
-          v-model="selectedAnswer"
-          @change="handleChangeAnswer"
-          class="hidden"
-        />
-        <span
-          class="w-5 h-5 border rounded-full flex items-center justify-center mr-3"
-          :class="{ 'border-teal-600': selectedAnswer === 0 }"
+        <label
+          class="w-full flex items-center p-2 md:p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+          :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === 0 }"
         >
+          <input
+            type="radio"
+            :name="'question'"
+            :value="0"
+            v-model="selectedAnswer"
+            @change="handleChangeAnswer"
+            class="hidden"
+          />
           <span
-            v-if="selectedAnswer === 0"
-            class="w-3 h-3 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full"
-          ></span>
-        </span>
-        <span class="text-slate-700">Tidak</span>
-      </label>
+            class="w-5 h-5 border rounded-full flex items-center justify-center mr-3"
+            :class="{ 'border-teal-600': selectedAnswer === 0 }"
+          >
+            <span
+              v-if="selectedAnswer === 0"
+              class="w-3 h-3 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full"
+            ></span>
+          </span>
+          <span class="text-slate-700">Tidak</span>
+        </label>
+      </span>
+
+      <div
+        class="radio-answer w-full flex justify-center flex-wrap gap-4 mb-12"
+        :class="(store?.currentQuestion?.soalID as number) > 216 ? '' : 'hidden'"
+      >
+        <label
+          v-for="value in [1, 2, 3, 4, 5, 6, 7]"
+          :key="value"
+          class="flex flex-col items-center p-2 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-teal-600 hover:scale-[1.01] transition-all duration-300"
+          :class="{ 'border-teal-600 bg-teal-50/50': selectedAnswer === value }"
+        >
+          <span class="text-slate-700 font-semibold mb-2 text-sm">{{ value }}</span>
+          <input
+            type="radio"
+            :name="'scale-question'"
+            :value="value"
+            v-model="selectedAnswer"
+            @change="handleChangeAnswer"
+            class="hidden"
+          />
+          <span
+            class="w-5 h-5 border rounded-full flex items-center justify-center"
+            :class="{ 'border-teal-600': selectedAnswer === value }"
+          >
+            <span
+              v-if="selectedAnswer === value"
+              class="w-3 h-3 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full"
+            ></span>
+          </span>
+        </label>
+      </div>
     </div>
 
     <!-- Navigation Buttons -->
-    <div class="flex justify-between mt-8">
+    <div class="flex flex-col sm:flex-row gap-2 justify-between mt-8">
       <button
         @click="handlePrevious"
         :disabled="store.currentQuestionIndex === 0"
