@@ -40,8 +40,9 @@
       class="text-sm font-semibold text-center -mt-4 md:mt-4 text-red-500"
       :class="(store?.currentQuestion?.soalID as number) < 216 ? 'hidden' : ''"
     >
-      Untuk soal nomor 217 - 228, silahkan beri nilai dari 1 - 7 berdasarkan kesesuaian dengan diri
-      anda.
+      Untuk soal nomor 217–228, berikan nilai dari 1 sampai 7 untuk setiap pernyataan berikut,
+      sesuai dengan seberapa cocok pernyataan tersebut dengan diri Anda. (1 = Sangat tidak sesuai, 7
+      = Sangat sesuai)
     </p>
 
     <p class="text-black md:text-lg my-8 text-center md:mt-12">
