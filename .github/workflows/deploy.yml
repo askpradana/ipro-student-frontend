@@ -1,0 +1,42 @@
+name: Deploy to iradatkonsultan
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository
+      - uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Build the project
+      - name: Build
+        run: npm run build
+
+      # Step 5: Deploy the built files to the VPS
+      - name: Deploy to iradatkonsultan server
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_DEPLOY_PATH: ${{ secrets.VPS_DEPLOY_PATH }}
+        run: |
+          set -x # Print commands and their arguments as they are executed
+
+          mkdir -p ~/.ssh
+          echo "$VPS_SSH_KEY" > ~/.ssh/id_rsa
+          chmod -c 0600 ~/.ssh/id_rsa
+          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+          scp -r dist/* $VPS_USERNAME@$VPS_HOST:$VPS_DEPLOY_PATH || { echo "Failed to copy files"; exit 1; }
