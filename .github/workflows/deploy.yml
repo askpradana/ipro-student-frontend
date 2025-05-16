@@ -23,6 +23,8 @@ jobs:
 
       # Step 4: Build the project
       - name: Build
+        env:
+          VITE_BASE_URL: ${{ secrets.ENVIRONMENT }}
         run: bun run build
 
       # Step 5: Deploy the built files to the VPS
