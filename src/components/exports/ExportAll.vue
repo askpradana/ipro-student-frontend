@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
+import autoTable, { type jsPDFDocument } from 'jspdf-autotable'
 import { type PsikogramExportDataInterface } from '@/types/calculateTypes'
 import { getExportAll } from '@/api/getExportAll'
 import JSZip from 'jszip'
@@ -49,7 +49,7 @@ const exportToPDF = async () => {
           orientation: 'portrait',
           unit: 'mm',
           format: 'a4',
-        })
+        }) as jsPDFDocument
 
         // === PAGE 1 - Cover ===
         doc.setFontSize(20)
@@ -184,7 +184,7 @@ const exportToPDF = async () => {
           doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
         })
 
-        startY = (doc as any).lastAutoTable.finalY + 4
+        startY = doc.lastAutoTable.finalY + 4
 
         autoTable(doc, {
           head: [['No', '   Sikap Kerja    ', '1', '2', '3', '4', '5']],
@@ -224,7 +224,7 @@ const exportToPDF = async () => {
           doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
         })
 
-        startY = (doc as any).lastAutoTable.finalY + 4
+        startY = doc.lastAutoTable.finalY + 4
 
         autoTable(doc, {
           head: [['No', 'Kepribadian', '1', '2', '3', '4', '5']],
