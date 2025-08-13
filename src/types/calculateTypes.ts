@@ -45,15 +45,17 @@ export interface PsikogramExportDataInterface {
   code: number
   status: string
   data: {
-    school: string
-    person_data: {
-      email: string
-      name: string
-      grade: string
-      phone_number: string
-      quiz_period: string
-      jurusan: string
-      result: AssessmentAspect[]
+    results: {
+      school: string
+      person_data: {
+        email: string
+        name: string
+        grade: string
+        phone_number: string
+        quiz_period: string | null
+        jurusan: string
+        result: AssessmentAspect[]
+      }[]
     }[]
   }
 }
