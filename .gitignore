@@ -57,3 +57,5 @@ coverage
 # Bun
 bun.lockb
 .bun
+
+.claude/
