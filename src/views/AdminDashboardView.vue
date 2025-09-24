@@ -131,6 +131,12 @@
                       Edit
                     </button>
                     <button
+                      @click="handleResetPassword(user.id)"
+                      class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
+                    >
+                      Reset Password
+                    </button>
+                    <button
                       @click="handleDeleteUser(user.id)"
                       class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
                     >
@@ -297,6 +303,41 @@
             class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
             Proceed to Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div
+      v-if="showResetPasswordModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg p-6 w-96">
+        <h2 class="text-xl font-bold mb-4">Reset Password</h2>
+        <div class="mb-4">
+          <p class="text-gray-600 mb-2">Reset password untuk:</p>
+          <p class="font-medium">{{ resetPasswordEmail }}</p>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+          <input
+            type="password"
+            v-model="newPassword"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Masukan password baru"
+          />
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button @click="closeResetPasswordModal" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+            Batal
+          </button>
+          <button
+            @click="submitResetPassword"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+            :disabled="!newPassword"
+          >
+            Reset Password
           </button>
         </div>
       </div>
@@ -497,6 +538,10 @@ watch([itemsPerPage, searchQuery], () => {
 const showLogoutErrorModal = ref(false)
 const logoutErrorMessage = ref('')
 
+const showResetPasswordModal = ref(false)
+const resetPasswordEmail = ref('')
+const newPassword = ref('')
+
 // Replace the existing handleLogout function
 const handleLogout = async () => {
   try {
@@ -518,6 +563,52 @@ const forceLogout = () => {
   authStore.$reset()
   // Redirect to login page
   router.push('/login')
+}
+
+const handleResetPassword = async (userId: string) => {
+  const user = adminStore.users.find((u) => u.id === userId)
+  if (user) {
+    resetPasswordEmail.value = user.email
+    showResetPasswordModal.value = true
+  }
+}
+
+const closeResetPasswordModal = () => {
+  showResetPasswordModal.value = false
+  resetPasswordEmail.value = ''
+  newPassword.value = ''
+}
+
+const submitResetPassword = async () => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/users/reset-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authStore.getToken}`,
+      },
+      body: JSON.stringify({
+        email: resetPasswordEmail.value,
+        new_password: newPassword.value,
+      }),
+    })
+
+    if (response.ok) {
+      modalStore.typeOfModal('success')
+      modalStore.message = 'Password berhasil direset!'
+      modalStore.openModal()
+      closeResetPasswordModal()
+    } else {
+      modalStore.typeOfModal('error')
+      modalStore.message = 'Gagal mereset password'
+      modalStore.openModal()
+    }
+  } catch (error) {
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Gagal mereset password'
+    modalStore.openModal()
+    console.log(error)
+  }
 }
 
 const fetchData = async () => {

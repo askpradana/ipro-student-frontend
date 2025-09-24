@@ -60,7 +60,6 @@
           :users="paginatedUsers"
           :tableHeaders="tableHeaders"
           @edit="openEditModal"
-          @reset-password="handleResetPassword"
           @delete="handleDeleteUser"
           @calculate="HandleCalculateUser"
         />
@@ -86,13 +85,6 @@
       @force-logout="forceLogout"
     />
 
-    <!-- Reset Password Modal -->
-    <ResetPasswordModal
-      :show="showResetPasswordModal"
-      :email="resetPasswordEmail"
-      @close="closeResetPasswordModal"
-      @submit="submitResetPassword"
-    />
   </div>
 </template>
 
@@ -111,7 +103,6 @@ import UserTable from '@/components/tables/UserTables.vue'
 import Pagination from '@/components/paginations/PaginationTableUser.vue'
 import EditUserModal from '@/components/modals/ModalEditUser.vue'
 import LogoutErrorModal from '@/components/modals/ModalLogoutError.vue'
-import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue'
 import ExportAll from '@/components/exports/ExportAll.vue'
 import ExportRiasec from '@/components/exports/ExportRiasec.vue'
 
@@ -167,8 +158,6 @@ const error = ref<string | null>(null)
 const showLogoutErrorModal = ref(false)
 const logoutErrorMessage = ref('')
 
-const showResetPasswordModal = ref(false)
-const resetPasswordEmail = ref('')
 
 const openEditModal = (user: User): void => {
   editingUser.value = {
@@ -235,44 +224,6 @@ const handleDeleteUser = async (userId: string) => {
   }
 }
 
-const handleResetPassword = async (userId: string) => {
-  const user = adminStore.users.find((u) => u.id === userId)
-  if (user) {
-    resetPasswordEmail.value = user.email
-    showResetPasswordModal.value = true
-  }
-}
-
-const closeResetPasswordModal = () => {
-  showResetPasswordModal.value = false
-  resetPasswordEmail.value = ''
-}
-
-const submitResetPassword = async (newPassword: string) => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/reset-password`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authStore.getToken}`,
-      },
-      body: JSON.stringify({
-        email: resetPasswordEmail.value,
-        new_password: newPassword,
-      }),
-    })
-
-    if (response.ok) {
-      notify('Password has been reset successfully!', 'success')
-      closeResetPasswordModal()
-    } else {
-      notify('Failed to reset password', 'error')
-    }
-  } catch (error) {
-    notify('Failed to reset password', 'error')
-    console.log(error)
-  }
-}
 
 // Computed properties for filtering and pagination
 const filteredUsers = computed(() => {
