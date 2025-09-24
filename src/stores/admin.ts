@@ -108,6 +108,12 @@ export const useAdminStore = defineStore('admin', () => {
       })
       const apiResponse: ApiResponse<{ data: UserData[] }> = await handleApiResponse(response)
 
+      // Handle case where data is null (empty result set)
+      if (apiResponse.data?.data === null) {
+        users.value = []
+        return
+      }
+
       if (!apiResponse.data?.data || !Array.isArray(apiResponse.data.data)) {
         throw new Error('Invalid response format: expected array of users')
       }
