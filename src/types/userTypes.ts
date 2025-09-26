@@ -7,6 +7,7 @@ export interface UserProfileData {
     Time: string
     Valid: boolean
   }
+  completed_quizzes?: string[]
   quiz_tiga: boolean
   quiz_lima: boolean
   quiz_enam: boolean
