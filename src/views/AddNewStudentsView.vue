@@ -130,69 +130,6 @@
         </div>
       </div>
 
-      <!-- Viewers Section -->
-      <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold">Viewer <span class="text-red-500">*</span></h2>
-
-          <button
-            @click="addViewer"
-            class="px-4 py-2 text-sm text-white rounded-lg"
-            :class="
-              submitLoading ? 'bg-teal-200 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700'
-            "
-            :disabled="submitLoading"
-          >
-            Tambah Viewer
-          </button>
-        </div>
-
-        <div
-          v-for="(viewer, index) in newUsersData.viewers"
-          :key="index"
-          class="mb-4 p-4 border rounded-lg"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-              <input
-                v-model="viewer.name"
-                type="text"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                placeholder="Nama Viewer"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                v-model="viewer.email"
-                type="email"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                placeholder="viewer@email.com"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
-              <input
-                v-model="viewer.phoneNumber"
-                type="tel"
-                class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                placeholder="+1234567890"
-              />
-            </div>
-            <div class="flex items-end">
-              <button
-                @click="removeViewer(index)"
-                class="px-4 py-2 text-sm text-red-600 rounded-lg"
-                :class="submitLoading ? 'bg-slate-200 cursor-not-allowed' : 'hover:bg-red-50'"
-                :disabled="submitLoading"
-              >
-                Hapus
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Action Buttons -->
       <div class="flex justify-end space-x-4">
@@ -223,6 +160,7 @@
         v-if="modalStore.typeModal === 'success' || modalStore.typeModal === 'error'"
         :title-modal="modalStore.typeModal === 'success' ? 'Success' : 'Error'"
         :message="modalStore.message"
+        :type="modalStore.typeModal"
       />
     </ModalContainer>
   </div>
@@ -239,7 +177,7 @@ import ModalContainer from '@/components/modals/ModalContainer.vue'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
 import LoadingSpinner from '@/components/skeletons/LoadingSpinner.vue'
 import { notify } from '@/lib/notify'
-import type { NewUser, NewViewer } from '@/types/formNewUserTypes'
+import type { NewUser } from '@/types/formNewUserTypes'
 import { postNewStudents } from '@/api/postMultipleStudents'
 
 const router = useRouter()
@@ -266,7 +204,6 @@ const newUsersData = ref({
   school: '',
   testPeriod: new Date(),
   users: [{ name: '', email: '', grade: '', phoneNumber: '', jurusan: '' }] as NewUser[],
-  viewers: [] as NewViewer[],
 })
 
 const formatDate = (date: Date) => {
@@ -285,13 +222,6 @@ const removeStudent = (index: number) => {
   newUsersData.value.users.splice(index, 1)
 }
 
-const addViewer = () => {
-  newUsersData.value.viewers.push({ name: '', email: '', phoneNumber: '' })
-}
-
-const removeViewer = (index: number) => {
-  newUsersData.value.viewers.splice(index, 1)
-}
 
 const isFormValid = computed(() => {
   const hasSchool = !!newUsersData.value.school.trim()
@@ -306,13 +236,8 @@ const isFormValid = computed(() => {
         user.phoneNumber.trim() &&
         user.jurusan.trim(),
     )
-  const hasValidViewers =
-    newUsersData.value.viewers.length > 0 &&
-    newUsersData.value.viewers.every(
-      (viewer) => viewer.name.trim() && viewer.email.trim() && viewer.phoneNumber.trim(),
-    )
 
-  return hasSchool && hasPeriod && hasValidUsers && hasValidViewers
+  return hasSchool && hasPeriod && hasValidUsers
 })
 
 // Add validation messages
@@ -343,16 +268,6 @@ const validationMessages = computed(() => {
     }
   }
 
-  if (newUsersData.value.viewers.length === 0) {
-    messages.push('At least one viewer is required')
-  } else {
-    const invalidViewers = newUsersData.value.viewers.filter(
-      (viewer) => !viewer.name.trim() || !viewer.email.trim() || !viewer.phoneNumber.trim(),
-    )
-    if (invalidViewers.length > 0) {
-      messages.push('All viewer fields (name, email, phone number) are required')
-    }
-  }
 
   return messages
 })
@@ -377,7 +292,6 @@ const saveNewStudents = async () => {
     const newData = {
       school: newUsersData.value.school,
       users: users,
-      viewer: newUsersData.value.viewers,
     }
 
     await postNewStudents(newData)

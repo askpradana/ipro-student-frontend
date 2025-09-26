@@ -29,16 +29,11 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Periode Tes</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Sekolah</label>
           <input
-            v-model="localUser.testPeriod"
-            type="datetime-local"
-            :class="[
-              'w-full rounded-lg border px-4 py-2 focus:ring-1 focus:ring-teal-500',
-              isValidDate ? 'border-gray-300 focus:border-teal-500' : 'border-red-500',
-            ]"
-            :min="new Date().toISOString().split('.')[0]"
-            @input="validateDate"
+            v-model="localUser.school"
+            type="text"
+            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
           />
         </div>
       </div>
@@ -70,13 +65,12 @@ const props = defineProps<{
   grades: readonly string[]
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'close'): void
   (e: 'save', user: EditingUser): void
 }>()
 
 const localUser = ref<EditingUser>({ ...props.user })
-const isValidDate = ref(true)
 
 watch(
   () => props.user,
@@ -94,9 +88,4 @@ watch(
     }
   },
 )
-
-const validateDate = () => {
-  const selectedDate = new Date(localUser.value.testPeriod)
-  isValidDate.value = selectedDate > new Date()
-}
 </script>

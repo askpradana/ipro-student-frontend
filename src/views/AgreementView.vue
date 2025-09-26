@@ -187,12 +187,12 @@ const handleLogout = async () => {
   try {
     await authStore.logout()
     router.push('/login')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logout failed:', error)
     // Show the error modal with the message from the API
     logoutErrorMessage.value =
-      error.response?.data?.message || 'Failed to logout. Please try again.'
-    alert(error.response?.data?.message || 'Failed to logout. Please try again.')
+      (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to logout. Please try again.'
+    alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to logout. Please try again.')
   } finally {
     isLoading.value = false
   }

@@ -27,9 +27,6 @@ export const useAuthStore = defineStore('auth', {
     isAdmin(): boolean {
       return this.user?.role === 'admin'
     },
-    isViewer(): boolean {
-      return this.user?.role === 'VIEWER'
-    },
     getToken(): string | null {
       return this.user?.token || null
     },

@@ -13,14 +13,13 @@ export interface UserData {
   grade: string
   school: string
   jurusan?: string
-  quiz_period: string
-  quiz_completed_at: string
-  quiz_status: {
-    tiga: boolean
-    lima: boolean
-    enam: boolean
-    tujuh: boolean
-    ppi: boolean
+  quiz_status?: {
+    QUIZ3: boolean
+    QUIZ5: boolean
+    QUIZ6: boolean
+    QUIZ7: boolean
+    PPI: boolean
+    RIASEC: boolean
   }
 }
 

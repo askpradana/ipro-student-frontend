@@ -1,10 +1,9 @@
 import { useAuthStore } from '@/stores/auth'
-import type { NewUser, NewViewer } from '@/types/formNewUserTypes'
+import type { NewUser } from '@/types/formNewUserTypes'
 
 interface BodyDataInterface {
   school: string
   users: NewUser[]
-  viewer: NewViewer[]
 }
 
 interface APIResponse {
@@ -20,7 +19,6 @@ export const postNewStudents = async (dataProps: BodyDataInterface) => {
   const bodyData: BodyDataInterface = {
     school: dataProps.school,
     users: dataProps.users,
-    viewer: dataProps.viewer,
   }
 
   try {

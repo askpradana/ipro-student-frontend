@@ -10,7 +10,7 @@ export const getExportAll = async () => {
       throw new Error('No user token found')
     }
 
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/viewer/export`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/export`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,

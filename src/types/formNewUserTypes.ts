@@ -6,8 +6,3 @@ export interface NewUser {
   jurusan: string
 }
 
-export interface NewViewer {
-  name: string
-  email: string
-  phoneNumber: string
-}

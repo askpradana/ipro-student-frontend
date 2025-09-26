@@ -5,8 +5,6 @@ import SampleChartView from '@/views/SampleChartView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import AddNewUsersView from '@/views/AddNewUsersView.vue'
 import AddNewStudentsView from '@/views/AddNewStudentsView.vue'
-import ViewerDashboardView from '@/views/viewer/ViewerDashboardView.vue'
-import CalculateView from '@/views/viewer/CalculateView.vue'
 import AgreementView from '@/views/AgreementView.vue'
 
 // Define custom meta type
@@ -43,9 +41,6 @@ const routes: RouteRecordRaw[] = [
           case 'ADMIN':
             next({ name: 'AdminDashboard' })
             break
-          case 'VIEWER':
-            next({ name: 'viewer-dashboard' })
-            break
           default:
             next()
         }
@@ -58,7 +53,7 @@ const routes: RouteRecordRaw[] = [
     path: '/chart',
     name: 'chart',
     component: SampleChartView,
-    meta: { requiresAuth: true, requiresRole: ['ADMIN', 'VIEWER'] }, // Use array for multiple roles
+    meta: { requiresAuth: true, requiresRole: ['ADMIN'] },
   },
   {
     path: '/dashboard',
@@ -108,18 +103,6 @@ const routes: RouteRecordRaw[] = [
     component: AddNewStudentsView,
     meta: { requiresAuth: true, requiresRole: ['ADMIN'] }, // Use array for multiple roles
   },
-  {
-    path: '/viewer/dashboard',
-    name: 'viewer-dashboard',
-    component: ViewerDashboardView,
-    meta: { requiresAuth: true, requiresRole: ['VIEWER'] },
-  },
-  {
-    path: '/user/calculate/:userId',
-    name: 'user-calculate',
-    component: CalculateView,
-    meta: { requiresAuth: true, requiresRole: ['ADMIN', 'VIEWER'] }, // Use array for multiple roles
-  },
 ]
 
 const router = createRouter({
@@ -149,9 +132,6 @@ router.beforeEach((to, from, next) => {
         break
       case 'ADMIN':
         next({ name: 'AdminDashboard' })
-        break
-      case 'VIEWER':
-        next({ name: 'viewer-dashboard' })
         break
       default:
         next({ name: 'login' }) // Fallback to login if role is not recognized

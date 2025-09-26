@@ -201,7 +201,7 @@ onMounted(() => {
 
 onBeforeMount(() => {
   if (authStore.user?.role !== 'USER') {
-    router.push('/viewer/dashboard')
+    router.push('/login')
   }
 })
 

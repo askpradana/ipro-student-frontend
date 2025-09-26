@@ -3,12 +3,22 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { handleApiResponse, type ApiResponse, type UserData } from '@/utils/apiInterceptor'
 import { useAuthStore } from '@/stores/auth'
+import { postExportQuiz, type ExportQuizResponse } from '@/api/postExportQuiz'
+import { postExportRiasec, type ExportRiasecResponse } from '@/api/postExportRiasec'
 
-export interface EditingUser extends Omit<User, 'testPeriod' | 'lastLogin' | 'createdAt'> {
-  testPeriod: string
+export interface EditingUser extends Omit<User, 'lastLogin' | 'createdAt'> {
   lastLogin: string | null
   createdAt: string
   name: string
+}
+
+export interface QuizStatus {
+  QUIZ3: boolean
+  QUIZ5: boolean
+  QUIZ6: boolean
+  QUIZ7: boolean
+  PPI: boolean
+  RIASEC: boolean
 }
 
 export interface User {
@@ -20,17 +30,10 @@ export interface User {
   jurusan?: string
   lastLogin: Date | null
   attemptLogin: number
-  testPeriod: Date | null
   createdAt: Date
   createdBy: string
   phoneNumber?: string
-  quizStatus: {
-    tiga: boolean
-    lima: boolean
-    enam: boolean
-    tujuh: boolean
-    ppi: boolean
-  }
+  quizStatus: QuizStatus
 }
 
 export const useAdminStore = defineStore('admin', () => {
@@ -44,15 +47,9 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  interface NewViewer {
-    email: string
-    name: string
-    phoneNumber: string
-  }
 
   const addMultipleUsers = async (
     newUsers: Partial<User>[],
-    viewers: NewViewer[],
   ): Promise<void> => {
     try {
       const requestBody = {
@@ -64,11 +61,6 @@ export const useAdminStore = defineStore('admin', () => {
           grade: user.grade,
           jurusan: user.jurusan,
           phoneNumber: user.phoneNumber || '',
-        })),
-        viewer: viewers.map((viewer) => ({
-          email: viewer.email,
-          name: viewer.name,
-          phoneNumber: viewer.phoneNumber || '',
         })),
       }
 
@@ -106,19 +98,19 @@ export const useAdminStore = defineStore('admin', () => {
           Authorization: `Bearer ${authStore.user?.token}`,
         },
       })
-      const apiResponse: ApiResponse<{ data: UserData[] }> = await handleApiResponse(response)
+      const apiResponse: ApiResponse<UserData[]> = await handleApiResponse(response)
 
       // Handle case where data is null (empty result set)
-      if (apiResponse.data?.data === null) {
+      if (apiResponse.data === null) {
         users.value = []
         return
       }
 
-      if (!apiResponse.data?.data || !Array.isArray(apiResponse.data.data)) {
+      if (!apiResponse.data || !Array.isArray(apiResponse.data)) {
         throw new Error('Invalid response format: expected array of users')
       }
 
-      users.value = apiResponse.data.data.map(
+      users.value = apiResponse.data.map(
         (apiUser: UserData): User => ({
           id: apiUser.user_id,
           name: apiUser.name || ' - ',
@@ -129,12 +121,17 @@ export const useAdminStore = defineStore('admin', () => {
           lastLogin:
             apiUser.last_login !== '0001-01-01T00:00:00Z' ? new Date(apiUser.last_login) : null,
           attemptLogin: apiUser.attempt_login,
-          testPeriod:
-            apiUser.quiz_period !== '0001-01-01T00:00:00Z' ? new Date(apiUser.quiz_period) : null,
           createdAt: new Date(apiUser.created_at),
           createdBy: apiUser.created_by,
           phoneNumber: apiUser.phone_number,
-          quizStatus: apiUser.quiz_status,
+          quizStatus: {
+            QUIZ3: apiUser.quiz_status?.QUIZ3 || false,
+            QUIZ5: apiUser.quiz_status?.QUIZ5 || false,
+            QUIZ6: apiUser.quiz_status?.QUIZ6 || false,
+            QUIZ7: apiUser.quiz_status?.QUIZ7 || false,
+            PPI: apiUser.quiz_status?.PPI || false,
+            RIASEC: apiUser.quiz_status?.RIASEC || false,
+          },
         }),
       )
     } catch (error) {
@@ -156,12 +153,29 @@ export const useAdminStore = defineStore('admin', () => {
           name: user.name,
           email: user.email,
           grade: user.grade,
-          quiz_period: user.testPeriod,
         }),
       })
 
       return await handleApiResponse(response)
     } catch (error) {
+      throw error
+    }
+  }
+
+  const exportQuizData = async (userIDs: string[]): Promise<ExportQuizResponse> => {
+    try {
+      return await postExportQuiz(userIDs)
+    } catch (error) {
+      console.error('Error exporting quiz data:', error)
+      throw error
+    }
+  }
+
+  const exportRiasecData = async (userIDs: string[]): Promise<ExportRiasecResponse> => {
+    try {
+      return await postExportRiasec(userIDs)
+    } catch (error) {
+      console.error('Error exporting RIASEC data:', error)
       throw error
     }
   }
@@ -172,5 +186,7 @@ export const useAdminStore = defineStore('admin', () => {
     addMultipleUsers,
     fetchUsers,
     updateUserApi,
+    exportQuizData,
+    exportRiasecData,
   }
 })

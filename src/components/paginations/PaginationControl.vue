@@ -29,6 +29,7 @@ const props = defineProps<{
   totalItems: number
 }>()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits<{
   (e: 'update:itemsPerPage', value: number): void
 }>()

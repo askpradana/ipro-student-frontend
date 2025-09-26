@@ -244,7 +244,7 @@ const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false)
       </ModalContainer>
 
       <ModalContainer v-if="modalStore.typeModal == 'show-alert'">
-        <ModalAlert title-modal="Alert" message="Please fill in all answers!" />
+        <ModalAlert title-modal="Alert" message="Please fill in all answers!" type="error" />
       </ModalContainer>
 
       <ModalContainer v-if="modalStore.typeModal == 'violation-warning'">
