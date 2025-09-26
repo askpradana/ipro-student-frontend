@@ -1,6 +1,6 @@
 <template>
   <button
-    @click="handleLogout"
+    @click="onLogoutClick"
     class="w-14 h-14 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-100 hover:bg-white hover:scale-110 hover:border-teal-500 active:scale-90 transition-all duration-300 ease-out flex items-center justify-center group"
   >
     <svg
@@ -23,6 +23,12 @@
 const { handleLogout } = defineProps<{
   handleLogout: () => void
 }>()
+
+const onLogoutClick = () => {
+  console.log('LogoutUserButton clicked')
+  console.log('handleLogout function:', handleLogout)
+  handleLogout()
+}
 </script>
 
 <style scoped></style>

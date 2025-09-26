@@ -170,6 +170,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div
+      v-if="showLogoutConfirmModal"
+      class="fixed inset-0 z-50 flex items-center justify-center"
+    >
+      <!-- Overlay -->
+      <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" @click="cancelLogout"></div>
+
+      <!-- Modal Content -->
+      <div class="relative z-50 transform px-4">
+        <LogoutConfirmModal
+          @confirm="confirmLogout"
+          @cancel="cancelLogout"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -182,6 +199,8 @@ import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 import HelpUserButton from '@/components/buttons/helpUserButton.vue'
 import { useUserStores } from '@/stores/userStores'
 import UserDashboardSkeleton from '@/components/skeletons/UserDashboardSkeleton.vue'
+import { checkDisclaimerStatus } from '@/api/getDisclaimerAgreement'
+import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
 
 const userStore = useUserStores()
 const router = useRouter()
@@ -189,14 +208,28 @@ const authStore = useAuthStore()
 
 const showLogoutErrorModal = ref(false)
 const showComingSoonModal = ref(false)
+const showLogoutConfirmModal = ref(false)
 const logoutErrorMessage = ref('')
+const disclaimerStatusCache = ref<boolean | null>(null)
 
-onMounted(() => {
-  userStore.initializeQuiz().then(() => {
-    if (!userStore.discalaimerAgreement) {
+onMounted(async () => {
+  // Initialize user data first
+  await userStore.initializeQuiz()
+
+  // Check disclaimer status using dedicated API to avoid data inconsistency
+  try {
+    const disclaimerResponse = await checkDisclaimerStatus()
+    disclaimerStatusCache.value = disclaimerResponse?.data ?? true
+    if (disclaimerResponse?.data === false) {
+      // User hasn't agreed to disclaimer, redirect to agreement
       router.push('/agreement')
     }
-  })
+    // If data is true or API fails, allow access to dashboard
+  } catch (error) {
+    console.error('Error checking disclaimer status:', error)
+    disclaimerStatusCache.value = true
+    // On error, allow access to dashboard to prevent blocking users
+  }
 })
 
 onBeforeMount(() => {
@@ -213,7 +246,11 @@ const handleTakeQuiz = (selectedTypeQuiz: number) => {
     return
   }
 
-  if (!userStore.discalaimerAgreement) {
+  // Use cached disclaimer status to avoid unnecessary API call
+  // If cache is null, fall back to userStore data
+  const hasAgreed = disclaimerStatusCache.value ?? userStore.discalaimerAgreement
+
+  if (!hasAgreed) {
     router.push('/agreement')
   } else {
     localStorage.setItem('type-quiz', JSON.stringify(selectedTypeQuiz))
@@ -237,7 +274,15 @@ interface LogoutErrorResponse {
   status: string
 }
 
-const handleLogout = async () => {
+const handleLogout = () => {
+  console.log('handleLogout called - showing confirmation modal')
+  console.log('showLogoutConfirmModal before:', showLogoutConfirmModal.value)
+  showLogoutConfirmModal.value = true
+  console.log('showLogoutConfirmModal after:', showLogoutConfirmModal.value)
+}
+
+const confirmLogout = async () => {
+  showLogoutConfirmModal.value = false
   try {
     await authStore.logout()
     router.push('/')
@@ -254,6 +299,10 @@ const handleLogout = async () => {
     logoutErrorMessage.value = errorData?.message || 'Failed to logout. Please try again.'
     showLogoutErrorModal.value = true
   }
+}
+
+const cancelLogout = () => {
+  showLogoutConfirmModal.value = false
 }
 </script>
 

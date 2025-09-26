@@ -532,6 +532,17 @@
       :user-ids="Array.from(selectedUsers)"
       @export-complete="handleExportComplete"
     />
+
+    <!-- Logout Confirmation Modal -->
+    <div
+      v-if="showLogoutConfirmModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <LogoutConfirmModal
+        @confirm="confirmLogout"
+        @cancel="cancelLogout"
+      />
+    </div>
   </div>
 </template>
 
@@ -545,6 +556,7 @@ import ModalContainer from '@/components/modals/ModalContainer.vue'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
 import QuizStatusBadges from '@/components/ui/QuizStatusBadges.vue'
 import ExportQuizRiasec from '@/components/exports/ExportQuizRiasec.vue'
+import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
 
 const adminStore = useAdminStore()
 const authStore = useAuthStore()
@@ -700,6 +712,7 @@ watch([itemsPerPage, searchQuery], () => {
 
 // Add these refs
 const showLogoutErrorModal = ref(false)
+const showLogoutConfirmModal = ref(false)
 const logoutErrorMessage = ref('')
 
 const showResetPasswordModal = ref(false)
@@ -823,7 +836,12 @@ const handleExportRiasec = async () => {
 }
 
 // Replace the existing handleLogout function
-const handleLogout = async () => {
+const handleLogout = () => {
+  showLogoutConfirmModal.value = true
+}
+
+const confirmLogout = async () => {
+  showLogoutConfirmModal.value = false
   try {
     await authStore.logout()
     router.push('/login')
@@ -834,6 +852,10 @@ const handleLogout = async () => {
       (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to logout. Please try again.'
     showLogoutErrorModal.value = true
   }
+}
+
+const cancelLogout = () => {
+  showLogoutConfirmModal.value = false
 }
 
 // Add this new function to handle forced logout

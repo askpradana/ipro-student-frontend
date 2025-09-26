@@ -20,6 +20,25 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('../views/LandingView.vue'),
+    beforeEnter: (to, from, next) => {
+      const authStore = useAuthStore()
+      if (authStore.isAuthenticated) {
+        // Redirect authenticated users to their role-specific dashboard
+        switch (authStore.user?.role) {
+          case 'USER':
+            next({ name: 'dashboard' })
+            break
+          case 'ADMIN':
+            next({ name: 'AdminDashboard' })
+            break
+          default:
+            next()
+        }
+      } else {
+        // Allow unauthenticated users to access landing page
+        next()
+      }
+    },
   },
   {
     path: '/about',
@@ -116,6 +135,22 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.user?.role as string
 
+  // Check if authenticated user is trying to access root/landing page
+  if (to.name === 'home' && isAuthenticated) {
+    // Redirect authenticated users to their role-specific dashboard
+    switch (userRole) {
+      case 'USER':
+        next({ name: 'dashboard' })
+        break
+      case 'ADMIN':
+        next({ name: 'AdminDashboard' })
+        break
+      default:
+        next({ name: 'login' }) // Fallback to login if role is not recognized
+    }
+    return
+  }
+
   // Check if route requires authentication
   if (to.meta.requiresAuth && !isAuthenticated) {
     // Redirect to login if not authenticated
@@ -124,7 +159,7 @@ router.beforeEach((to, from, next) => {
   }
 
   // Check if route requires specific role
-  if (to.meta.requiresRole && !to.meta.requiresRole.includes(userRole)) {
+  if (to.meta.requiresRole && isAuthenticated && !to.meta.requiresRole.includes(userRole)) {
     // Redirect to role-specific dashboard if role is not allowed
     switch (userRole) {
       case 'USER':

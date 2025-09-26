@@ -32,12 +32,36 @@ export const useUserStores = defineStore('user', {
         this.quiz_tujuh = userProfile.quiz_tujuh
         this.quiz_ppi = userProfile.quiz_ppi
         this.quiz_riasec = userProfile.quiz_riasec
-        this.dateAgreement = userProfile.agreeDisclaimer.Time
-        this.discalaimerAgreement = userProfile.agreeDisclaimer.Valid
+        // Handle case where agreeDisclaimer might be a string instead of object
+        if (typeof userProfile.agreeDisclaimer === 'string') {
+          this.dateAgreement = ''
+          this.discalaimerAgreement = false
+        } else {
+          this.dateAgreement = userProfile.agreeDisclaimer.Time
+          this.discalaimerAgreement = userProfile.agreeDisclaimer.Valid
+        }
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'Failed to load questions'
       } finally {
         this.loading = false
+      }
+    },
+
+    updateDisclaimerAgreement(agreed: boolean) {
+      this.discalaimerAgreement = agreed
+      if (this.dataUser) {
+        // Handle case where agreeDisclaimer might be a string instead of object
+        if (typeof this.dataUser.agreeDisclaimer === 'string') {
+          // Initialize as proper object structure
+          this.dataUser.agreeDisclaimer = {
+            Time: new Date().toISOString(),
+            Valid: agreed
+          }
+        } else {
+          // Update existing object
+          this.dataUser.agreeDisclaimer.Valid = agreed
+          this.dataUser.agreeDisclaimer.Time = new Date().toISOString()
+        }
       }
     },
   },
