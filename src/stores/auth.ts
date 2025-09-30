@@ -87,6 +87,57 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async loginExternal(token: string) {
+      this.isLoading = true
+      try {
+        // Input validation
+        if (!token) {
+          throw new AuthError('External token is required')
+        }
+
+        // Make API call to external login endpoint
+        const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login/external`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        })
+
+        const data: ApiResponse<AuthModel> = await handleApiResponse(response)
+
+        if (data.status === 'error') {
+          throw new AuthError(data.message)
+        }
+
+        if (data.data) {
+          const userData: AuthModel = {
+            role: data.data.role,
+            token: data.data.token,
+          }
+
+          // Update authentication state
+          this.user = userData
+          this.isAuthenticated = true
+
+          // Store auth state in localStorage
+          localStorage.setItem('user', JSON.stringify(userData))
+          localStorage.setItem('isAuthenticated', 'true')
+
+          // Return role for redirect handling
+          return data.data.role
+        }
+
+        throw new AuthError('Invalid response format')
+      } catch (error) {
+        console.error('External login error:', error)
+        this.clearAuthState()
+        throw error instanceof Error ? new AuthError(error.message) : error
+      } finally {
+        this.isLoading = false
+      }
+    },
+
     async logout() {
       const exerciseStore = useExerciseStore()
       try {

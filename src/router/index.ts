@@ -130,10 +130,54 @@ const router = createRouter({
 })
 
 // Global navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.user?.role as string
+
+  // Check for JWT parameter and handle external authentication
+  const jwtToken = to.query.jwt as string
+  if (jwtToken && !isAuthenticated) {
+    try {
+      // Remove JWT from URL immediately to clean up
+      const cleanQuery = { ...to.query }
+      delete cleanQuery.jwt
+
+      // Attempt external login
+      await authStore.loginExternal(jwtToken)
+
+      // Redirect to dashboard on successful authentication
+      next({
+        name: 'dashboard',
+        query: cleanQuery,
+        replace: true
+      })
+      return
+    } catch (error) {
+      console.error('External authentication failed:', error)
+      // Redirect to login on failure, removing JWT from URL
+      const cleanQuery = { ...to.query }
+      delete cleanQuery.jwt
+      next({
+        name: 'login',
+        query: cleanQuery,
+        replace: true
+      })
+      return
+    }
+  }
+
+  // If JWT parameter exists but user is already authenticated, clean URL
+  if (jwtToken && isAuthenticated) {
+    const cleanQuery = { ...to.query }
+    delete cleanQuery.jwt
+    next({
+      path: to.path,
+      query: cleanQuery,
+      replace: true
+    })
+    return
+  }
 
   // Check if authenticated user is trying to access root/landing page
   if (to.name === 'home' && isAuthenticated) {
