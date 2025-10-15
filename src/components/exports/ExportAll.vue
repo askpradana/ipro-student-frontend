@@ -152,7 +152,7 @@ const exportToPDF = async () => {
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(255, 255, 255)
       // Build header info dynamically, excluding empty fields
-      let headerParts = [`${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'}`]
+      const headerParts = [`${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'}`]
       headerParts.push(`Kelas ${student?.grade || 'N/A'}`)
 
       // Only add school if it's not empty or '-'

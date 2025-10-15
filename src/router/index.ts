@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useUserStores } from '@/stores/userStores'
+import { isProfileComplete } from '@/utils/profileUtils'
 import SampleChartView from '@/views/SampleChartView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import AddNewUsersView from '@/views/AddNewUsersView.vue'
@@ -105,6 +107,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, requiresRole: ['USER'] },
   },
   {
+    path: '/profile/complete',
+    name: 'profile-completion',
+    component: () => import('../views/ProfileCompletionView.vue'),
+    meta: { requiresAuth: true, requiresRole: ['USER'] },
+  },
+  {
     path: '/admin/dashboard',
     name: 'AdminDashboard',
     component: () => import('@/views/AdminDashboardView.vue'),
@@ -146,7 +154,22 @@ router.beforeEach(async (to, from, next) => {
       // Attempt external login
       await authStore.loginExternal(jwtToken)
 
-      // Redirect to dashboard on successful authentication
+      // Initialize user store to check profile completeness
+      const userStore = useUserStores()
+      await userStore.initializeQuiz()
+
+      // Check if profile is complete
+      if (!isProfileComplete(userStore.dataUser)) {
+        // Redirect to profile completion if incomplete
+        next({
+          name: 'profile-completion',
+          query: cleanQuery,
+          replace: true
+        })
+        return
+      }
+
+      // Redirect to dashboard on successful authentication and complete profile
       next({
         name: 'dashboard',
         query: cleanQuery,
@@ -181,16 +204,36 @@ router.beforeEach(async (to, from, next) => {
 
   // Check if authenticated user is trying to access root/landing page
   if (to.name === 'home' && isAuthenticated) {
-    // Redirect authenticated users to their role-specific dashboard
-    switch (userRole) {
-      case 'USER':
-        next({ name: 'dashboard' })
-        break
-      case 'ADMIN':
-        next({ name: 'AdminDashboard' })
-        break
-      default:
-        next({ name: 'login' }) // Fallback to login if role is not recognized
+    // For USER role, check profile completeness before redirecting
+    if (userRole === 'USER') {
+      const userStore = useUserStores()
+      // Initialize user data if not already loaded
+      if (!userStore.dataUser) {
+        try {
+          await userStore.initializeQuiz()
+        } catch (error) {
+          console.error('Failed to load user profile:', error)
+          next({ name: 'login' })
+          return
+        }
+      }
+
+      // Check if profile is complete
+      if (!isProfileComplete(userStore.dataUser)) {
+        next({ name: 'profile-completion' })
+        return
+      }
+
+      next({ name: 'dashboard' })
+    } else {
+      // Redirect authenticated users to their role-specific dashboard
+      switch (userRole) {
+        case 'ADMIN':
+          next({ name: 'AdminDashboard' })
+          break
+        default:
+          next({ name: 'login' }) // Fallback to login if role is not recognized
+      }
     }
     return
   }
@@ -200,6 +243,27 @@ router.beforeEach(async (to, from, next) => {
     // Redirect to login if not authenticated
     next({ name: 'login' })
     return
+  }
+
+  // Check profile completeness for USER role accessing protected routes
+  if (isAuthenticated && userRole === 'USER' && to.meta.requiresRole?.includes('USER') && to.name !== 'profile-completion') {
+    const userStore = useUserStores()
+    // Initialize user data if not already loaded
+    if (!userStore.dataUser) {
+      try {
+        await userStore.initializeQuiz()
+      } catch (error) {
+        console.error('Failed to load user profile:', error)
+        next({ name: 'login' })
+        return
+      }
+    }
+
+    // Check if profile is complete
+    if (!isProfileComplete(userStore.dataUser)) {
+      next({ name: 'profile-completion' })
+      return
+    }
   }
 
   // Check if route requires specific role

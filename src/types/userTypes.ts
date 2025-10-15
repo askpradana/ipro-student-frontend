@@ -3,11 +3,13 @@ export interface UserProfileData {
   email: string
   grade: string
   school: string
+  jurusan?: string
   agreeDisclaimer: {
     Time: string
     Valid: boolean
   }
   completed_quizzes?: string[]
+  quiz_privileges: 'none' | 'quiz' | 'riasec' | 'full'
   quiz_tiga: boolean
   quiz_lima: boolean
   quiz_enam: boolean

@@ -20,19 +20,6 @@
               </option>
             </select>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Periode Tes</label>
-            <Datepicker
-              v-model="newUsersData.testPeriod"
-              class="w-full"
-              :enable-time-picker="false"
-              :format="formatDate"
-              placeholder="Pilih Periode Tes"
-              :min-date="new Date()"
-              autoApply
-              textInput
-            />
-          </div>
         </div>
       </div>
 
@@ -171,8 +158,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useModalStore } from '@/stores/modalStore'
 import { getListSchool } from '@/api/getListSchools'
-import Datepicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import ModalContainer from '@/components/modals/ModalContainer.vue'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
 import LoadingSpinner from '@/components/skeletons/LoadingSpinner.vue'
@@ -202,17 +187,9 @@ onMounted(() => {
 
 const newUsersData = ref({
   school: '',
-  testPeriod: new Date(),
   users: [{ name: '', email: '', grade: '', phoneNumber: '', jurusan: '' }] as NewUser[],
 })
 
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
 
 const addStudent = () => {
   newUsersData.value.users.push({ name: '', email: '', grade: '', phoneNumber: '', jurusan: '' })
@@ -225,7 +202,6 @@ const removeStudent = (index: number) => {
 
 const isFormValid = computed(() => {
   const hasSchool = !!newUsersData.value.school.trim()
-  const hasPeriod = !!newUsersData.value.testPeriod
   const hasValidUsers =
     newUsersData.value.users.length > 0 &&
     newUsersData.value.users.every(
@@ -237,7 +213,7 @@ const isFormValid = computed(() => {
         user.jurusan.trim(),
     )
 
-  return hasSchool && hasPeriod && hasValidUsers
+  return hasSchool && hasValidUsers
 })
 
 // Add validation messages
@@ -248,9 +224,6 @@ const validationMessages = computed(() => {
     messages.push('School name is required')
   }
 
-  if (!newUsersData.value.testPeriod) {
-    messages.push('Test period is required')
-  }
 
   if (newUsersData.value.users.length === 0) {
     messages.push('At least one student is required')
@@ -286,7 +259,6 @@ const saveNewStudents = async () => {
     const users = newUsersData.value.users.map((user) => ({
       ...user,
       school: newUsersData.value.school,
-      testPeriod: newUsersData.value.testPeriod,
     }))
 
     const newData = {

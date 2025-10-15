@@ -2,13 +2,11 @@
 import { ref } from 'vue'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import { type PsikogramExportDataInterface } from '@/types/calculateTypes'
-import { type ExportRiasecResponse } from '@/api/postExportRiasec'
 import { postExportQuiz } from '@/api/postExportQuiz'
 import { postExportRiasec } from '@/api/postExportRiasec'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { getXPosValue, page2Content, getEmotResult, getEmoticon } from '@/lib/exportAllStyle'
+import { getXPosValue, page2Content, getEmoticon } from '@/lib/exportAllStyle'
 import { page2RiasecContent } from '@/lib/exportAllStyle'
 import sadEmot from '/assets/emoji/sad.png'
 import netralEmot from '/assets/emoji/netral.png'
@@ -18,11 +16,6 @@ import starEmot from '/assets/emoji/star.png'
 import logoIradat from '/assets/iradat-konsultan.png'
 import highschoolImg from '/assets/highschool.png'
 import riasecImg from '/assets/riasec-cover.png'
-import {
-  aspekKemampuanBerpikirEmoji,
-  aspekKepribadianEmoji,
-  aspekSikapKerjaEmoji,
-} from './exportAspekEmoji'
 import Kerahasiaan from '/assets/instruction-header/kerahasiaan.png'
 import CetakHasilTes from '/assets/instruction-header/cetak-hasil-tes.png'
 import PotensiPrestasi from '/assets/instruction-header/potensi-vs-prestasi.png'
@@ -107,7 +100,18 @@ const exportRiasecToPDF = async () => {
   }
 }
 
-const generatePsychogramPDF = async (student: any, school: string, zip: JSZip) => {
+interface StudentData {
+  name?: string
+  grade?: string
+  jurusan?: string
+  phone_number?: string
+  result: Array<{
+    aspek: string
+    skor: number
+  }>
+}
+
+const generatePsychogramPDF = async (student: StudentData, school: string, zip: JSZip) => {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -208,7 +212,7 @@ const generatePsychogramPDF = async (student: any, school: string, zip: JSZip) =
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(255, 255, 255)
   // Build header info dynamically, excluding empty fields
-  let headerParts = [`${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'}`]
+  const headerParts = [`${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'}`]
   headerParts.push(`Kelas ${student?.grade || 'N/A'}`)
 
   // Only add school if it's not empty or '-'
@@ -371,7 +375,28 @@ const generatePsychogramPDF = async (student: any, school: string, zip: JSZip) =
   zip.file(filename, pdfBlob)
 }
 
-const generateRiasecPDF = async (student: any, school: string, zip: JSZip) => {
+interface RiasecStudentData {
+  name?: string
+  grade?: string
+  jurusan?: string
+  result: {
+    scores: {
+      realistic: number
+      investigative: number
+      artistic: number
+      social: number
+      enterprising: number
+      conventional: number
+    }
+    top_three: string
+    kepribadian: string
+    karir: string
+    pendidikan: string
+    potensi: string
+  }
+}
+
+const generateRiasecPDF = async (student: RiasecStudentData, school: string, zip: JSZip) => {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',

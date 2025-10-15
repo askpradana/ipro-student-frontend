@@ -13,6 +13,7 @@ export interface UserData {
   grade: string
   school: string
   jurusan?: string
+  quiz_privileges: 'none' | 'quiz' | 'riasec' | 'full'
   quiz_status?: {
     QUIZ3: boolean
     QUIZ5: boolean

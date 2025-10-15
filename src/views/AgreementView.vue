@@ -190,9 +190,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStores } from '@/stores/userStores'
-import { checkDisclaimerStatus, setDisclaimerAgreement } from '@/api/getDisclaimerAgreement'
+import { setDisclaimerAgreement } from '@/api/getDisclaimerAgreement'
 import { notify } from '@/lib/notify'
-import ModalContainer from '@/components/modals/ModalContainer.vue'
 import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
 
 const router = useRouter()

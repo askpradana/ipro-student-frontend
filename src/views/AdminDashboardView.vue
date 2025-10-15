@@ -62,11 +62,31 @@
             Tambah Murid
           </router-link>
 
-          <!-- Selection mode: Show export buttons and selection info -->
+          <!-- Selection mode: Show privilege controls, export buttons and selection info -->
           <div v-else class="flex items-center gap-3">
             <span class="text-sm text-gray-600 font-medium">
               {{ selectedCount }} user{{ selectedCount > 1 ? 's' : '' }} selected
             </span>
+            <!-- Privilege controls -->
+            <div class="flex items-center gap-2">
+              <select
+                v-model="selectedPrivilege"
+                class="rounded-lg border border-gray-300 px-3 py-2 focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+              >
+                <option value="">Select Privilege</option>
+                <option value="none">None</option>
+                <option value="quiz">Quiz (3-7 + PPI)</option>
+                <option value="riasec">RIASEC</option>
+                <option value="full">Full Access</option>
+              </select>
+              <button
+                @click="handleUpdatePrivileges"
+                :disabled="!selectedPrivilege || updatingPrivileges"
+                class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {{ updatingPrivileges ? 'Updating...' : 'Update Privileges' }}
+              </button>
+            </div>
             <button
               @click="handleExportQuiz"
               :disabled="exportingQuiz"
@@ -85,7 +105,7 @@
               @click="clearSelection"
               class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
             >
-              Clear All
+              Cancel
             </button>
           </div>
         </div>
@@ -160,7 +180,7 @@
                     :class="[
                       selectedUsers.has(user.id)
                         ? 'bg-teal-600 border-teal-600 hover:bg-teal-700'
-                        : 'border-gray-300 hover:border-teal-400 hover:bg-teal-50'
+                        : 'border-gray-300 hover:border-teal-400 hover:bg-teal-50',
                     ]"
                     :aria-label="`Select ${user.name} for export`"
                     :aria-checked="selectedUsers.has(user.id)"
@@ -173,24 +193,41 @@
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                      <path
+                        fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"
+                      />
                     </svg>
                   </button>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-left">
                   {{ user.name }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-left">
                   {{ user.email }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                   {{ user.grade }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-left">
                   {{ user.school }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
                   {{ user.jurusan }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    :class="{
+                      'bg-gray-100 text-gray-800': user.quizPrivileges === 'none',
+                      'bg-blue-100 text-blue-800': user.quizPrivileges === 'quiz',
+                      'bg-purple-100 text-purple-800': user.quizPrivileges === 'riasec',
+                      'bg-green-100 text-green-800': user.quizPrivileges === 'full',
+                    }"
+                  >
+                    {{ user.quizPrivileges }}
+                  </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
                   <QuizStatusBadges :quiz-status="user.quizStatus" />
@@ -220,6 +257,12 @@
                       class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
                     >
                       Reset Password
+                    </button>
+                    <button
+                      @click="handleResetQuizProgress(user)"
+                      class="bg-orange-100 text-orange-600 px-3 py-1 rounded hover:bg-orange-200"
+                    >
+                      Reset Quiz
                     </button>
                     <button
                       @click="handleDeleteUser(user.id)"
@@ -533,15 +576,24 @@
       @export-complete="handleExportComplete"
     />
 
+    <!-- Quiz Reset Confirmation Modal -->
+    <div
+      v-if="showQuizResetModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <QuizResetConfirmModal
+        :user-name="resetQuizUserName"
+        @confirm="confirmResetQuiz"
+        @cancel="cancelResetQuiz"
+      />
+    </div>
+
     <!-- Logout Confirmation Modal -->
     <div
       v-if="showLogoutConfirmModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
-      <LogoutConfirmModal
-        @confirm="confirmLogout"
-        @cancel="cancelLogout"
-      />
+      <LogoutConfirmModal @confirm="confirmLogout" @cancel="cancelLogout" />
     </div>
   </div>
 </template>
@@ -557,6 +609,7 @@ import ModalAlert from '@/components/modals/ModalAlert.vue'
 import QuizStatusBadges from '@/components/ui/QuizStatusBadges.vue'
 import ExportQuizRiasec from '@/components/exports/ExportQuizRiasec.vue'
 import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
+import QuizResetConfirmModal from '@/components/modals/QuizResetConfirmModal.vue'
 
 const adminStore = useAdminStore()
 const authStore = useAuthStore()
@@ -571,10 +624,21 @@ const editingUser = ref<EditingUser>({
   email: '',
   grade: '',
   school: '',
+  jurusan: '',
   lastLogin: null,
   attemptLogin: 0,
   createdAt: '',
   createdBy: '',
+  phoneNumber: '',
+  quizPrivileges: 'none',
+  quizStatus: {
+    QUIZ3: false,
+    QUIZ5: false,
+    QUIZ6: false,
+    QUIZ7: false,
+    PPI: false,
+    RIASEC: false,
+  },
 })
 
 const tableHeaders = [
@@ -584,10 +648,12 @@ const tableHeaders = [
   'Kelas',
   'Sekolah',
   'Jurusan',
+  'Quiz Privileges',
   'Quiz Completed',
   'Terakhir Login',
   'Percobaan Login',
   'Dibuat Pada',
+  'Dibuat oleh',
   'Aksi',
 ] as const
 
@@ -626,10 +692,14 @@ const openEditModal = (user: User): void => {
     email: user.email,
     grade: user.grade,
     school: user.school,
+    jurusan: user.jurusan || '',
     lastLogin: formatDate(user.lastLogin),
     attemptLogin: user.attemptLogin,
     createdAt: formatDate(user.createdAt),
     createdBy: user.createdBy,
+    phoneNumber: user.phoneNumber || '',
+    quizPrivileges: user.quizPrivileges,
+    quizStatus: user.quizStatus,
   }
   showEditModal.value = true
 }
@@ -642,10 +712,21 @@ const closeEditModal = (): void => {
     email: '',
     grade: '',
     school: '',
+    jurusan: '',
     lastLogin: null,
     attemptLogin: 0,
     createdAt: '',
     createdBy: '',
+    phoneNumber: '',
+    quizPrivileges: 'none',
+    quizStatus: {
+      QUIZ3: false,
+      QUIZ5: false,
+      QUIZ6: false,
+      QUIZ7: false,
+      PPI: false,
+      RIASEC: false,
+    },
   }
 }
 
@@ -722,9 +803,18 @@ const confirmPassword = ref('')
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
+// Quiz reset modal state
+const showQuizResetModal = ref(false)
+const resetQuizUserId = ref('')
+const resetQuizUserName = ref('')
+
 // Export loading states
 const exportingQuiz = ref(false)
 const exportingRiasec = ref(false)
+
+// Privilege update states
+const selectedPrivilege = ref<'none' | 'quiz' | 'riasec' | 'full' | ''>('')
+const updatingPrivileges = ref(false)
 
 // Export component ref
 const exportQuizRiasecRef = ref<InstanceType<typeof ExportQuizRiasec> | null>(null)
@@ -747,10 +837,11 @@ const toggleSelection = (userId: string) => {
 
 const clearSelection = () => {
   selectedUsers.value.clear()
+  selectedPrivilege.value = ''
 }
 
 const selectAll = () => {
-  filteredUsers.value.forEach(user => {
+  filteredUsers.value.forEach((user) => {
     selectedUsers.value.add(user.id)
   })
   selectedUsers.value = new Set(selectedUsers.value)
@@ -774,15 +865,13 @@ const handleExportQuiz = async () => {
 
   exportingQuiz.value = true
   try {
-    const userIDs = Array.from(selectedUsers.value)
-
     // Use the PDF export component for quiz only
     await exportQuizRiasecRef.value.exportQuizToPDF()
-
   } catch (error) {
     console.error('Error exporting quiz data:', error)
     modalStore.typeOfModal('error')
-    modalStore.message = (error as Error)?.message || 'Failed to export quiz data. Please try again.'
+    modalStore.message =
+      (error as Error)?.message || 'Failed to export quiz data. Please try again.'
     modalStore.openModal()
   } finally {
     exportingQuiz.value = false
@@ -803,6 +892,51 @@ const handleExportComplete = (success: boolean, message: string) => {
   exportingRiasec.value = false
 }
 
+const handleUpdatePrivileges = async () => {
+  if (selectedUsers.value.size === 0 || !selectedPrivilege.value) {
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Please select users and privilege level.'
+    modalStore.openModal()
+    return
+  }
+
+  updatingPrivileges.value = true
+  try {
+    // Get emails of selected users
+    const selectedUserEmails = Array.from(selectedUsers.value)
+      .map((userId) => {
+        const user = adminStore.users.find((u) => u.id === userId)
+        return user?.email
+      })
+      .filter((email): email is string => Boolean(email))
+
+    if (selectedUserEmails.length === 0) {
+      throw new Error('No valid user emails found')
+    }
+
+    await adminStore.updateUserPrivileges(
+      selectedUserEmails,
+      selectedPrivilege.value as 'none' | 'quiz' | 'riasec' | 'full'
+    )
+
+    modalStore.typeOfModal('success')
+    modalStore.message = `Successfully updated privileges for ${selectedUserEmails.length} user(s)`
+    modalStore.openModal()
+
+    // Refresh the user list and clear selection
+    await fetchData()
+    clearSelection()
+  } catch (error) {
+    console.error('Error updating privileges:', error)
+    modalStore.typeOfModal('error')
+    modalStore.message =
+      (error as Error)?.message || 'Failed to update privileges. Please try again.'
+    modalStore.openModal()
+  } finally {
+    updatingPrivileges.value = false
+  }
+}
+
 const handleExportRiasec = async () => {
   if (selectedUsers.value.size === 0) {
     modalStore.typeOfModal('error')
@@ -820,15 +954,13 @@ const handleExportRiasec = async () => {
 
   exportingRiasec.value = true
   try {
-    const userIDs = Array.from(selectedUsers.value)
-
     // Use the PDF export component for RIASEC only
     await exportQuizRiasecRef.value.exportRiasecToPDF()
-
   } catch (error) {
     console.error('Error exporting RIASEC data:', error)
     modalStore.typeOfModal('error')
-    modalStore.message = (error as Error)?.message || 'Failed to export RIASEC data. Please try again.'
+    modalStore.message =
+      (error as Error)?.message || 'Failed to export RIASEC data. Please try again.'
     modalStore.openModal()
   } finally {
     exportingRiasec.value = false
@@ -849,7 +981,8 @@ const confirmLogout = async () => {
     console.error('Logout failed:', error)
     // Show the error modal with the message from the API
     logoutErrorMessage.value =
-      (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to logout. Please try again.'
+      (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+      'Failed to logout. Please try again.'
     showLogoutErrorModal.value = true
   }
 }
@@ -924,6 +1057,56 @@ const submitResetPassword = async () => {
     modalStore.openModal()
     console.log(error)
   }
+}
+
+// Quiz reset functions
+const handleResetQuizProgress = (user: User) => {
+  resetQuizUserId.value = user.id
+  resetQuizUserName.value = user.name
+  showQuizResetModal.value = true
+}
+
+const confirmResetQuiz = async () => {
+  showQuizResetModal.value = false
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/quizzes/reset`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authStore.getToken}`,
+      },
+      body: JSON.stringify({
+        userID: resetQuizUserId.value,
+      }),
+    })
+
+    if (response.ok) {
+      modalStore.typeOfModal('success')
+      modalStore.message = `Progress quiz untuk ${resetQuizUserName.value} berhasil direset!`
+      modalStore.openModal()
+      fetchData() // Refresh the user list
+    } else {
+      const errorData = await response.json()
+      modalStore.typeOfModal('error')
+      modalStore.message = errorData.message || 'Gagal mereset progress quiz'
+      modalStore.openModal()
+    }
+  } catch (error) {
+    modalStore.typeOfModal('error')
+    modalStore.message = 'Gagal mereset progress quiz. Silakan coba lagi.'
+    modalStore.openModal()
+    console.error('Error resetting quiz progress:', error)
+  } finally {
+    resetQuizUserId.value = ''
+    resetQuizUserName.value = ''
+  }
+}
+
+const cancelResetQuiz = () => {
+  showQuizResetModal.value = false
+  resetQuizUserId.value = ''
+  resetQuizUserName.value = ''
 }
 
 const fetchData = async () => {

@@ -33,6 +33,7 @@ export interface User {
   createdAt: Date
   createdBy: string
   phoneNumber?: string
+  quizPrivileges: 'none' | 'quiz' | 'riasec' | 'full'
   quizStatus: QuizStatus
 }
 
@@ -47,14 +48,10 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-
-  const addMultipleUsers = async (
-    newUsers: Partial<User>[],
-  ): Promise<void> => {
+  const addMultipleUsers = async (newUsers: Partial<User>[]): Promise<void> => {
     try {
       const requestBody = {
         school: newUsers[0].school,
-        period: newUsers[0].testPeriod,
         users: newUsers.map((user) => ({
           email: user.email,
           name: user.name,
@@ -124,6 +121,7 @@ export const useAdminStore = defineStore('admin', () => {
           createdAt: new Date(apiUser.created_at),
           createdBy: apiUser.created_by,
           phoneNumber: apiUser.phone_number,
+          quizPrivileges: apiUser.quiz_privileges || 'none',
           quizStatus: {
             QUIZ3: apiUser.quiz_status?.QUIZ3 || false,
             QUIZ5: apiUser.quiz_status?.QUIZ5 || false,
@@ -180,6 +178,35 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  const updateUserPrivileges = async (
+    emails: string[],
+    quizPrivileges: 'none' | 'quiz' | 'riasec' | 'full',
+  ) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/privileges`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${authStore.user?.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emails: emails,
+          quiz_privileges: quizPrivileges,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to update user privileges')
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error updating user privileges:', error)
+      throw error
+    }
+  }
+
   return {
     users,
     deleteUser,
@@ -188,5 +215,6 @@ export const useAdminStore = defineStore('admin', () => {
     updateUserApi,
     exportQuizData,
     exportRiasecData,
+    updateUserPrivileges,
   }
 })

@@ -6,17 +6,18 @@ export const useGetUserProfileApi = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
-  const mapCompletedQuizzesToBooleans = (data: any): UserProfileData => {
+  const mapCompletedQuizzesToBooleans = (data: ResponseGetAPIUser['data']): UserProfileData => {
     const completedQuizzes = data.completed_quizzes || []
 
     return {
       ...data,
+      quiz_privileges: data.quiz_privileges || 'none',
       quiz_tiga: data.quiz_tiga !== undefined ? data.quiz_tiga : completedQuizzes.includes('QUIZ3'),
       quiz_lima: data.quiz_lima !== undefined ? data.quiz_lima : completedQuizzes.includes('QUIZ5'),
       quiz_enam: data.quiz_enam !== undefined ? data.quiz_enam : completedQuizzes.includes('QUIZ6'),
       quiz_tujuh: data.quiz_tujuh !== undefined ? data.quiz_tujuh : completedQuizzes.includes('QUIZ7'),
-      quiz_ppi: data.quiz_ppi !== undefined ? data.quiz_ppi : completedQuizzes.includes('QUIZ_PPI'),
-      quiz_riasec: data.quiz_riasec !== undefined ? data.quiz_riasec : completedQuizzes.includes('QUIZ_RIASEC'),
+      quiz_ppi: data.quiz_ppi !== undefined ? data.quiz_ppi : completedQuizzes.includes('PPI'),
+      quiz_riasec: data.quiz_riasec !== undefined ? data.quiz_riasec : completedQuizzes.includes('RIASEC'),
     }
   }
 

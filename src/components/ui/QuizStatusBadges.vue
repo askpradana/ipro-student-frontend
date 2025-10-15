@@ -27,8 +27,8 @@ const quizDisplayNames = {
 
 const getCompletedQuizList = computed(() => {
   const completed = Object.entries(props.quizStatus)
-    .filter(([_, isCompleted]) => isCompleted)
-    .map(([quiz, _]) => quizDisplayNames[quiz as keyof QuizStatus])
+    .filter(([, isCompleted]) => isCompleted)
+    .map(([quiz]) => quizDisplayNames[quiz as keyof QuizStatus])
 
   if (completed.length === 0) {
     return 'Not started yet'
