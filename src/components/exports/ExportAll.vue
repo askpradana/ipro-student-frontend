@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
+import autoTable, { type jsPDFDocument } from 'jspdf-autotable'
 import { type PsikogramExportDataInterface } from '@/types/calculateTypes'
 import { getExportAll } from '@/api/getExportAll'
 import JSZip from 'jszip'
@@ -35,7 +35,7 @@ const exportToPDF = async () => {
     const response = await getExportAll()
     dataNilaiSiswa.value = response
 
-    if (!dataNilaiSiswa.value?.data?.person_data.length) {
+    if (!dataNilaiSiswa.value?.data?.results?.length) {
       alert('Tidak ada data untuk diexport')
       return
     }
@@ -348,161 +348,386 @@ const exportToPDF = async () => {
               height: data.cell.height,
             }
           }
-        },
-      })
+        })
 
-      // Place emojis using dynamic row data
-      aspekKemampuanBerpikirEmoji.forEach((item, i) => {
-        const emoticon = item
-        const xPos = 34 // Fixed horizontal position
-        // Center the emoji vertically: row's y position + half the row height - half the emoji height
-        const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
-        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
-      })
+        // === PAGE 3 - Tabel Psikogram ===
+        doc.addPage()
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.setFillColor(51, 171, 161)
+        doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+        doc.text('Tabel Psikogram Murid', 22, 27)
 
-      student.result.slice(0, 5).forEach((item, i) => {
-        const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 110 : 111
-        // Center the emoji vertically: row's y position + half the row height - half the emoji height
-        const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
-        doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
-      })
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'normal')
+        doc.setTextColor(255, 255, 255)
+        doc.text(
+          `${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'} - Kelas ${student?.grade || 'N/A'} - ${student?.jurusan || '-'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
+          22,
+          33,
+        )
 
-      // ==== HALAMAN 5 TABEL HASIL ASPEK SIKAP KERJA ====
-      doc.addPage()
-      doc.setFontSize(14)
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(255, 255, 255)
-      doc.setFillColor(51, 171, 161)
-      doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
-      doc.text('Tabel Sikap Kerja', 210 / 2, 28, { align: 'center' })
-      startY = 32
+        let startY = 40
 
-      autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
-        body: student.result
-          .slice(5, 8)
-          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
-        startY,
-        margin: { vertical: 20, horizontal: 20 },
-        theme: 'striped',
-        headStyles: {
-          fillColor: '#05DF72',
-          textColor: '#fff',
-          fontStyle: 'bold',
-          halign: 'center',
-          valign: 'middle',
-          lineColor: '#000',
-        },
-        styles: {
-          fontSize: 12,
-          cellPadding: 2,
-          textColor: '#000',
-          valign: 'middle',
-          lineColor: '#000',
-        },
-        columnStyles: {
-          0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
-          2: { textColor: '#000', cellWidth: 30 },
-          3: { textColor: '#000', fontSize: 11, valign: 'top' },
-        },
-        didDrawCell: (data) => {
-          // Store row position and height for body rows
-          if (data.section === 'body' && data.column.index === 0) {
-            rowData[data.row.index] = {
-              y: data.cell.y,
-              height: data.cell.height,
+        autoTable(doc, {
+          head: [['No', 'Kemampuan Berpikir', '1', '2', '3', '4', '5']],
+          body: student.result
+            .slice(0, 5)
+            .map((item, i) => [i + 1, item.aspek, '', '', '', '', '', '']),
+          startY,
+          margin: { vertical: 20, horizontal: 20 },
+          theme: 'grid',
+          headStyles: {
+            fillColor: '#51A2FF',
+            textColor: '#fff',
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            lineColor: '#000',
+            lineWidth: 0.1,
+          },
+          styles: {
+            fontSize: 12,
+            cellPadding: 2,
+            textColor: '#000',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          columnStyles: {
+            0: { halign: 'center', cellWidth: 20 },
+            1: { textColor: '#000', cellWidth: 70 },
+          },
+        })
+
+        student.result.slice(0, 5).forEach((item, i) => {
+          const emoticon = getEmoticon(item.skor)
+          const xPos = getXPosValue(item.skor)
+          const rowHeight = 9
+          const yPos = startY + (i + 1.1) * rowHeight
+          doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
+        })
+
+        startY = doc.lastAutoTable.finalY + 4
+
+        autoTable(doc, {
+          head: [['No', '   Sikap Kerja    ', '1', '2', '3', '4', '5']],
+          body: student.result
+            .slice(5, 8)
+            .map((item, i) => [i + 1, item.aspek, '', '', '', '', '']),
+          startY,
+          margin: { vertical: 20, horizontal: 20 },
+          theme: 'grid',
+          headStyles: {
+            fillColor: '#05DF72',
+            textColor: '#fff',
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            lineColor: '#000',
+            lineWidth: 0.1,
+          },
+          styles: {
+            fontSize: 12,
+            cellPadding: 2,
+            textColor: '#000',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          columnStyles: {
+            0: { halign: 'center', cellWidth: 20 },
+            1: { textColor: '#000', cellWidth: 70 },
+          },
+        })
+
+        student.result.slice(5, 8).forEach((item, i) => {
+          const emoticon = getEmoticon(item.skor)
+          const xPos = getXPosValue(item.skor)
+          const rowHeight = 9
+          const yPos = startY + (i + 1.1) * rowHeight
+          doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
+        })
+
+        startY = doc.lastAutoTable.finalY + 4
+
+        autoTable(doc, {
+          head: [['No', 'Kepribadian', '1', '2', '3', '4', '5']],
+          body: student.result
+            .slice(8, 12)
+            .map((item, i) => [i + 1, item.aspek, '', '', '', '', '']),
+          startY,
+          margin: { vertical: 20, horizontal: 20 },
+          theme: 'grid',
+          headStyles: {
+            fillColor: '#FF8904',
+            textColor: '#fff',
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            lineColor: '#000',
+            lineWidth: 0.1,
+          },
+          styles: {
+            fontSize: 12,
+            cellPadding: 2,
+            textColor: '#000',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          columnStyles: {
+            0: { halign: 'center', cellWidth: 20 },
+            1: { textColor: '#000', cellWidth: 70 },
+          },
+        })
+
+        student.result.slice(8, 12).forEach((item, i) => {
+          const emoticon = getEmoticon(item.skor)
+          const xPos = getXPosValue(item.skor)
+          const rowHeight = 9
+          const yPos = startY + (i + 1.1) * rowHeight
+          doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
+        })
+
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor('#000')
+
+        doc.addImage(sadEmot, 'PNG', 26, 200, 9, 9)
+        doc.text('Perlu Penguatan', 40, 206)
+        doc.addImage(netralEmot, 'PNG', 26, 210, 9, 9)
+        doc.text('Perlu Perhatian', 40, 216)
+        doc.addImage(smileEmot, 'PNG', 26, 220, 9, 9)
+        doc.text('Cukup Berkembang', 40, 226)
+        doc.addImage(shyEmot, 'PNG', 26, 230, 9, 9)
+        doc.text('Unggul', 40, 236)
+        doc.addImage(starEmot, 'PNG', 26, 240, 9, 9)
+        doc.text('Sangat Unggul', 40, 246)
+
+        // ==== HALAMAN 4 TABEL HASIL ASPEK KEMAMPUAN BERPIKIR ====
+        doc.addPage()
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.setFillColor(51, 171, 161)
+        doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+        doc.text('Tabel Kemampuan Berpikir', 210 / 2, 28, { align: 'center' })
+        startY = 32
+
+        const rowData: { y: number; height: number }[] = []
+        autoTable(doc, {
+          head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
+          body: student.result
+            .slice(0, 5)
+            .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
+          startY,
+          margin: { vertical: 20, horizontal: 20 },
+          theme: 'striped',
+          headStyles: {
+            fillColor: '#51A2FF',
+            textColor: '#fff',
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          styles: {
+            fontSize: 12,
+            cellPadding: 2,
+            textColor: '#000',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          columnStyles: {
+            0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+            1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+            2: { textColor: '#000', cellWidth: 30 },
+            3: { textColor: '#000', fontSize: 11, valign: 'top' },
+          },
+          didDrawCell: (data) => {
+            // Store row position and height for body rows
+            if (data.section === 'body' && data.column.index === 0) {
+              rowData[data.row.index] = {
+                y: data.cell.y,
+                height: data.cell.height,
+              }
             }
-          }
-        },
-      })
+          },
+        })
 
-      aspekSikapKerjaEmoji.forEach((item, i) => {
-        const emoticon = item
-        const xPos = 34 // Fixed horizontal position
-        // Center the emoji vertically: row's y position + half the row height - half the emoji height
-        const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
-        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
-      })
+        // Place emojis using dynamic row data
+        aspekKemampuanBerpikirEmoji.forEach((item, i) => {
+          const emoticon = item
+          const xPos = 34 // Fixed horizontal position
+          // Center the emoji vertically: row's y position + half the row height - half the emoji height
+          const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
+          doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
+        })
 
-      student.result.slice(5, 8).forEach((item, i) => {
-        const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 110 : 111
-        // Center the emoji vertically: row's y position + half the row height - half the emoji height
-        const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
-        doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
-      })
+        student.result.slice(0, 5).forEach((item, i) => {
+          const emoticon = getEmotResult(item.skor)
+          const xPos = item.skor > 1 ? 110 : 111
+          // Center the emoji vertically: row's y position + half the row height - half the emoji height
+          const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
+          doc.addImage(
+            emoticon,
+            'PNG',
+            xPos,
+            yPos,
+            item.skor > 1 ? 15 : 12,
+            item.skor > 1 ? 15 : 12,
+          )
+        })
 
-      // ==== HALAMAN 6 TABEL HASIL ASPEK KEPRIBADIAN ====
-      doc.addPage()
-      doc.setFontSize(14)
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(255, 255, 255)
-      doc.setFillColor(51, 171, 161)
-      doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
-      doc.text('Tabel Kepribadian', 210 / 2, 28, { align: 'center' })
-      startY = 32
+        // ==== HALAMAN 5 TABEL HASIL ASPEK SIKAP KERJA ====
+        doc.addPage()
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.setFillColor(51, 171, 161)
+        doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+        doc.text('Tabel Sikap Kerja', 210 / 2, 28, { align: 'center' })
+        startY = 32
 
-      autoTable(doc, {
-        head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
-        body: student.result
-          .slice(8, 12)
-          .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
-        startY,
-        margin: { vertical: 20, horizontal: 20 },
-        theme: 'striped',
-        headStyles: {
-          fillColor: '#FF8904',
-          textColor: '#fff',
-          fontStyle: 'bold',
-          halign: 'center',
-          valign: 'middle',
-          lineColor: '#000',
-        },
-        styles: {
-          fontSize: 12,
-          cellPadding: 2,
-          textColor: '#000',
-          valign: 'middle',
-          lineColor: '#000',
-        },
-        columnStyles: {
-          0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
-          1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
-          2: { textColor: '#000', cellWidth: 30 },
-          3: { textColor: '#000', fontSize: 11, valign: 'top' },
-        },
-        didDrawCell: (data) => {
-          // Store row position and height for body rows
-          if (data.section === 'body' && data.column.index === 0) {
-            rowData[data.row.index] = {
-              y: data.cell.y,
-              height: data.cell.height,
+        autoTable(doc, {
+          head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
+          body: student.result
+            .slice(5, 8)
+            .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
+          startY,
+          margin: { vertical: 20, horizontal: 20 },
+          theme: 'striped',
+          headStyles: {
+            fillColor: '#05DF72',
+            textColor: '#fff',
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          styles: {
+            fontSize: 12,
+            cellPadding: 2,
+            textColor: '#000',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          columnStyles: {
+            0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+            1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+            2: { textColor: '#000', cellWidth: 30 },
+            3: { textColor: '#000', fontSize: 11, valign: 'top' },
+          },
+          didDrawCell: (data) => {
+            // Store row position and height for body rows
+            if (data.section === 'body' && data.column.index === 0) {
+              rowData[data.row.index] = {
+                y: data.cell.y,
+                height: data.cell.height,
+              }
             }
-          }
-        },
-      })
+          },
+        })
 
-      aspekKepribadianEmoji.forEach((item, i) => {
-        const emoticon = item
-        const xPos = 34 // Fixed horizontal position
-        // Center the emoji vertically: row's y position + half the row height - half the emoji height
-        const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
-        doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
-      })
+        aspekSikapKerjaEmoji.forEach((item, i) => {
+          const emoticon = item
+          const xPos = 34 // Fixed horizontal position
+          // Center the emoji vertically: row's y position + half the row height - half the emoji height
+          const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
+          doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
+        })
 
-      student.result.slice(8, 12).forEach((item, i) => {
-        const emoticon = getEmotResult(item.skor)
-        const xPos = item.skor > 1 ? 110 : 111
-        // Center the emoji vertically: row's y position + half the row height - half the emoji height
-        const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
-        doc.addImage(emoticon, 'PNG', xPos, yPos, item.skor > 1 ? 15 : 12, item.skor > 1 ? 15 : 12)
-      })
+        student.result.slice(5, 8).forEach((item, i) => {
+          const emoticon = getEmotResult(item.skor)
+          const xPos = item.skor > 1 ? 110 : 111
+          // Center the emoji vertically: row's y position + half the row height - half the emoji height
+          const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
+          doc.addImage(
+            emoticon,
+            'PNG',
+            xPos,
+            yPos,
+            item.skor > 1 ? 15 : 12,
+            item.skor > 1 ? 15 : 12,
+          )
+        })
 
-      const pdfBlob = doc.output('blob')
-      const filename = `Psikogram-${student.name?.replace(/\s+/g, '_') || 'Siswa'}.pdf`
-      zip.file(filename, pdfBlob)
+        // ==== HALAMAN 6 TABEL HASIL ASPEK KEPRIBADIAN ====
+        doc.addPage()
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.setTextColor(255, 255, 255)
+        doc.setFillColor(51, 171, 161)
+        doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+        doc.text('Tabel Kepribadian', 210 / 2, 28, { align: 'center' })
+        startY = 32
+
+        autoTable(doc, {
+          head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
+          body: student.result
+            .slice(8, 12)
+            .map((item) => [item.aspek, item.definisi_aspek, '', item.hasil]),
+          startY,
+          margin: { vertical: 20, horizontal: 20 },
+          theme: 'striped',
+          headStyles: {
+            fillColor: '#FF8904',
+            textColor: '#fff',
+            fontStyle: 'bold',
+            halign: 'center',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          styles: {
+            fontSize: 12,
+            cellPadding: 2,
+            textColor: '#000',
+            valign: 'middle',
+            lineColor: '#000',
+          },
+          columnStyles: {
+            0: { halign: 'center', valign: 'middle', fontStyle: 'bold', cellWidth: 32 },
+            1: { textColor: '#000', fontSize: 11, cellWidth: 50, valign: 'top' },
+            2: { textColor: '#000', cellWidth: 30 },
+            3: { textColor: '#000', fontSize: 11, valign: 'top' },
+          },
+          didDrawCell: (data) => {
+            // Store row position and height for body rows
+            if (data.section === 'body' && data.column.index === 0) {
+              rowData[data.row.index] = {
+                y: data.cell.y,
+                height: data.cell.height,
+              }
+            }
+          },
+        })
+
+        aspekKepribadianEmoji.forEach((item, i) => {
+          const emoticon = item
+          const xPos = 34 // Fixed horizontal position
+          // Center the emoji vertically: row's y position + half the row height - half the emoji height
+          const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
+          doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
+        })
+
+        student.result.slice(8, 12).forEach((item, i) => {
+          const emoticon = getEmotResult(item.skor)
+          const xPos = item.skor > 1 ? 110 : 111
+          // Center the emoji vertically: row's y position + half the row height - half the emoji height
+          const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
+          doc.addImage(
+            emoticon,
+            'PNG',
+            xPos,
+            yPos,
+            item.skor > 1 ? 15 : 12,
+            item.skor > 1 ? 15 : 12,
+          )
+        })
+
+        const pdfBlob = doc.output('blob')
+        const filename = `Psikogram-${student.name?.replace(/\s+/g, '_') || 'Siswa'}.pdf`
+        zip.file(filename, pdfBlob)
+      }
     }
 
     zip.generateAsync({ type: 'blob' }).then((content) => {
