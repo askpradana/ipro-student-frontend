@@ -18,70 +18,79 @@
     >
       SELAMAT DATANG {{ userStore.dataUser?.name }}
     </h1>
-    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-4">
-      <!-- Quiz Button -->
-      <button
-        v-for="type in TypeListData"
-        :key="type.id"
-        @click="handleTakeQuiz(type.typeQuiz)"
-        class="w-full p-8 backdrop-blur-sm rounded-2xl border border-slate-200 transition-all duration-300 ease-out text-left group relative"
-        :class="[
-          userStore.dataUser?.[
-            type.quiz as
-              | 'quiz_tiga'
-              | 'quiz_lima'
-              | 'quiz_enam'
-              | 'quiz_tujuh'
-              | 'quiz_ppi'
-              | 'quiz_riasec'
-          ]
-            ? 'bg-slate-100 hover:cursor-not-allowed'
-            : type.disabled
-              ? 'bg-slate-100/50 hover:cursor-not-allowed'
-              : 'bg-white/80 hover:bg-white hover:scale-[1.02] hover:border-teal-500 active:scale-[0.98]',
-        ]"
-        v-bind:disabled="
-          userStore.dataUser?.[
-            type.quiz as
-              | 'quiz_tiga'
-              | 'quiz_lima'
-              | 'quiz_enam'
-              | 'quiz_tujuh'
-              | 'quiz_ppi'
-              | 'quiz_riasec'
-          ] || type.disabled
-        "
+    <div class="max-w-4xl mx-auto">
+      <!-- No Access Message for users with 'none' privileges -->
+      <div
+        v-if="userStore.dataUser?.quiz_privileges === 'none' || filteredQuizzes.length === 0"
+        class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-8 text-center"
       >
-        <div class="flex justify-between !items-center">
-          <h2
-            class="text-xl font-bold transition-transform duration-300"
-            :class="[
-              userStore.dataUser?.[
-                type.quiz as
-                  | 'quiz_tiga'
-                  | 'quiz_lima'
-                  | 'quiz_enam'
-                  | 'quiz_tujuh'
-                  | 'quiz_ppi'
-                  | 'quiz_riasec'
-              ]
-                ? 'text-slate-600'
-                : type.disabled
-                  ? 'text-slate-400'
-                  : 'text-teal-600 group-hover:translate-x-1',
-            ]"
+        <div class="mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-16 w-16 text-blue-500 mx-auto"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            {{ type.title }}
-          </h2>
-          <div class="flex items-center gap-2">
-            <p
-              v-if="type.disabled"
-              class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-slate-400"
-            >
-              Coming Soon
-            </p>
-            <p
-              v-else-if="
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-blue-900 mb-2">Akses Quiz Belum Tersedia</h3>
+        <p class="text-blue-700 mb-4">
+          Anda belum memiliki akses untuk mengisi quiz. Silahkan hubungi admin untuk mendapatkan akses mengisi quiz.
+        </p>
+        <div class="text-sm text-blue-600">
+          <p>Untuk bantuan lebih lanjut, silahkan menghubungi admin sistem.</p>
+        </div>
+      </div>
+
+      <!-- Quiz Buttons Grid (only shown when user has privileges) -->
+      <div
+        v-else
+        class="grid md:grid-cols-2 gap-4"
+      >
+        <!-- Quiz Button -->
+        <button
+          v-for="type in filteredQuizzes"
+          :key="type.id"
+          @click="handleTakeQuiz(type.typeQuiz)"
+          class="w-full p-8 backdrop-blur-sm rounded-2xl border border-slate-200 transition-all duration-300 ease-out text-left group relative"
+          :class="[
+            userStore.dataUser?.[
+              type.quiz as
+                | 'quiz_tiga'
+                | 'quiz_lima'
+                | 'quiz_enam'
+                | 'quiz_tujuh'
+                | 'quiz_ppi'
+                | 'quiz_riasec'
+            ]
+              ? 'bg-slate-100 hover:cursor-not-allowed'
+              : type.disabled
+                ? 'bg-slate-100/50 hover:cursor-not-allowed'
+                : 'bg-white/80 hover:bg-white hover:scale-[1.02] hover:border-teal-500 active:scale-[0.98]',
+          ]"
+          v-bind:disabled="
+            userStore.dataUser?.[
+              type.quiz as
+                | 'quiz_tiga'
+                | 'quiz_lima'
+                | 'quiz_enam'
+                | 'quiz_tujuh'
+                | 'quiz_ppi'
+                | 'quiz_riasec'
+            ] || type.disabled
+          "
+        >
+          <div class="flex justify-between !items-center">
+            <h2
+              class="text-xl font-bold transition-transform duration-300"
+              :class="[
                 userStore.dataUser?.[
                   type.quiz as
                     | 'quiz_tiga'
@@ -91,14 +100,41 @@
                     | 'quiz_ppi'
                     | 'quiz_riasec'
                 ]
-              "
-              class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
+                  ? 'text-slate-600'
+                  : type.disabled
+                    ? 'text-slate-400'
+                    : 'text-teal-600 group-hover:translate-x-1',
+              ]"
             >
-              Selesai
-            </p>
+              {{ type.title }}
+            </h2>
+            <div class="flex items-center gap-2">
+              <p
+                v-if="type.disabled"
+                class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-slate-400"
+              >
+                Coming Soon
+              </p>
+              <p
+                v-else-if="
+                  userStore.dataUser?.[
+                    type.quiz as
+                      | 'quiz_tiga'
+                      | 'quiz_lima'
+                      | 'quiz_enam'
+                      | 'quiz_tujuh'
+                      | 'quiz_ppi'
+                      | 'quiz_riasec'
+                  ]
+                "
+                class="-mt-1 text-xs py-1 px-2 border rounded-md bg-slate-100 border-slate-200 font-semibold text-red-400"
+              >
+                Selesai
+              </p>
+            </div>
           </div>
-        </div>
-      </button>
+        </button>
+      </div>
     </div>
 
     <div
@@ -170,18 +206,38 @@
         </div>
       </div>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div
+      v-if="showLogoutConfirmModal"
+      class="fixed inset-0 z-50 flex items-center justify-center"
+    >
+      <!-- Overlay -->
+      <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" @click="cancelLogout"></div>
+
+      <!-- Modal Content -->
+      <div class="relative z-50 transform px-4">
+        <LogoutConfirmModal
+          @confirm="confirmLogout"
+          @cancel="cancelLogout"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { ref, onMounted, onBeforeMount } from 'vue'
+import { ref, onMounted, onBeforeMount, computed } from 'vue'
 import TypeListData from '@/data/type-quiz.json'
 import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 import HelpUserButton from '@/components/buttons/helpUserButton.vue'
 import { useUserStores } from '@/stores/userStores'
 import UserDashboardSkeleton from '@/components/skeletons/UserDashboardSkeleton.vue'
+import { checkDisclaimerStatus } from '@/api/getDisclaimerAgreement'
+import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
+import { filterQuizzesByPrivileges } from '@/utils/quizPrivileges'
 
 const userStore = useUserStores()
 const router = useRouter()
@@ -189,19 +245,38 @@ const authStore = useAuthStore()
 
 const showLogoutErrorModal = ref(false)
 const showComingSoonModal = ref(false)
+const showLogoutConfirmModal = ref(false)
 const logoutErrorMessage = ref('')
+const disclaimerStatusCache = ref<boolean | null>(null)
 
-onMounted(() => {
-  userStore.initializeQuiz().then(() => {
-    if (!userStore.discalaimerAgreement) {
+const filteredQuizzes = computed(() => {
+  const userPrivileges = userStore.dataUser?.quiz_privileges || 'none'
+  return filterQuizzesByPrivileges(TypeListData, userPrivileges)
+})
+
+onMounted(async () => {
+  // Initialize user data first
+  await userStore.initializeQuiz()
+
+  // Check disclaimer status using dedicated API to avoid data inconsistency
+  try {
+    const disclaimerResponse = await checkDisclaimerStatus()
+    disclaimerStatusCache.value = disclaimerResponse?.data ?? true
+    if (disclaimerResponse?.data === false) {
+      // User hasn't agreed to disclaimer, redirect to agreement
       router.push('/agreement')
     }
-  })
+    // If data is true or API fails, allow access to dashboard
+  } catch (error) {
+    console.error('Error checking disclaimer status:', error)
+    disclaimerStatusCache.value = true
+    // On error, allow access to dashboard to prevent blocking users
+  }
 })
 
 onBeforeMount(() => {
   if (authStore.user?.role !== 'USER') {
-    router.push('/viewer/dashboard')
+    router.push('/login')
   }
 })
 
@@ -213,7 +288,11 @@ const handleTakeQuiz = (selectedTypeQuiz: number) => {
     return
   }
 
-  if (!userStore.discalaimerAgreement) {
+  // Use cached disclaimer status to avoid unnecessary API call
+  // If cache is null, fall back to userStore data
+  const hasAgreed = disclaimerStatusCache.value ?? userStore.discalaimerAgreement
+
+  if (!hasAgreed) {
     router.push('/agreement')
   } else {
     localStorage.setItem('type-quiz', JSON.stringify(selectedTypeQuiz))
@@ -237,7 +316,15 @@ interface LogoutErrorResponse {
   status: string
 }
 
-const handleLogout = async () => {
+const handleLogout = () => {
+  console.log('handleLogout called - showing confirmation modal')
+  console.log('showLogoutConfirmModal before:', showLogoutConfirmModal.value)
+  showLogoutConfirmModal.value = true
+  console.log('showLogoutConfirmModal after:', showLogoutConfirmModal.value)
+}
+
+const confirmLogout = async () => {
+  showLogoutConfirmModal.value = false
   try {
     await authStore.logout()
     router.push('/')
@@ -254,6 +341,10 @@ const handleLogout = async () => {
     logoutErrorMessage.value = errorData?.message || 'Failed to logout. Please try again.'
     showLogoutErrorModal.value = true
   }
+}
+
+const cancelLogout = () => {
+  showLogoutConfirmModal.value = false
 }
 </script>
 

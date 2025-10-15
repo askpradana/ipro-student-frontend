@@ -174,18 +174,18 @@ export const useQuizStore = defineStore('quiz', {
     getQuizCompletionStatus:
       () =>
       (status: {
-        tiga: boolean
-        lima: boolean
-        enam: boolean
-        tujuh: boolean
-        ppi: boolean
+        QUIZ3: boolean
+        QUIZ5: boolean
+        QUIZ6: boolean
+        QUIZ7: boolean
+        PPI: boolean
       }): string => {
         const completedQuizzes = Object.entries(status)
           .filter(([, completed]) => completed)
-          .map(([quiz]) => quiz.toUpperCase())
+          .map(([quiz]) => quiz)
 
         if (completedQuizzes.length === 0) return 'Not started yet'
-        if (completedQuizzes.length === 5) return 'All quizzes completed'
+        if (completedQuizzes.length === 5) return 'All tests completed'
         return `Completed: ${completedQuizzes.join(', ')}`
       },
   },

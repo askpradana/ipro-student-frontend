@@ -56,10 +56,25 @@ const exportToPDF = async () => {
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'normal')
-      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, 200, { align: 'center' })
-      doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, 220, { align: 'center' })
-      doc.text(`KELAS ${student?.grade || '-'}`, 105, 210, { align: 'center' })
-      doc.text(`JURUSAN ${student?.jurusan?.toUpperCase() || '-'}`, 105, 230, { align: 'center' })
+
+      // Build student info dynamically, excluding empty fields
+      let yPos = 200
+      doc.text(`${student?.name.toUpperCase() || '-'}`, 105, yPos, { align: 'center' })
+      yPos += 10
+
+      doc.text(`KELAS ${student?.grade || '-'}`, 105, yPos, { align: 'center' })
+      yPos += 10
+
+      // Only show school if it's not empty or '-'
+      if (dataNilaiSiswa.value.data.school && dataNilaiSiswa.value.data.school !== '-') {
+        doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, yPos, { align: 'center' })
+        yPos += 10
+      }
+
+      // Only show jurusan if it's not empty or '-'
+      if (student?.jurusan && student.jurusan !== '-') {
+        doc.text(`JURUSAN ${student.jurusan.toUpperCase()}`, 105, yPos, { align: 'center' })
+      }
 
       // === PAGE 2 - Cara Menguakan ===
       doc.addPage()

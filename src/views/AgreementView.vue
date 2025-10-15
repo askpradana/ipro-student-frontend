@@ -1,5 +1,11 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+  <div v-if="isLoading && !showAgreementForm" class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+      <p class="text-slate-600">Memeriksa status persetujuan...</p>
+    </div>
+  </div>
+  <div v-else-if="showAgreementForm" class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
     <!-- Logo area -->
     <div class="mb-12 animate-fade-in flex justify-between items-center">
       <img
@@ -165,51 +171,85 @@
         {{ isAlert }}
       </p>
     </article>
+
+    <!-- Logout Confirmation Modal -->
+    <div
+      v-if="showLogoutConfirmModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <LogoutConfirmModal
+        @confirm="confirmLogout"
+        @cancel="cancelLogout"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { getDisclaimerAgreement } from '@/api/getDisclaimerAgreement'
+import { useUserStores } from '@/stores/userStores'
+import { setDisclaimerAgreement } from '@/api/getDisclaimerAgreement'
 import { notify } from '@/lib/notify'
+import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const userStore = useUserStores()
 const isCheck = ref(false)
 const isLoading = ref(false)
 const isAlert = ref('')
 const logoutErrorMessage = ref('')
+const showAgreementForm = ref(false)
+const showLogoutConfirmModal = ref(false)
 
-const handleLogout = async () => {
+const handleLogout = () => {
+  showLogoutConfirmModal.value = true
+}
+
+const confirmLogout = async () => {
+  showLogoutConfirmModal.value = false
   isLoading.value = true
   try {
     await authStore.logout()
     router.push('/login')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logout failed:', error)
     // Show the error modal with the message from the API
     logoutErrorMessage.value =
-      error.response?.data?.message || 'Failed to logout. Please try again.'
-    alert(error.response?.data?.message || 'Failed to logout. Please try again.')
+      (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to logout. Please try again.'
+    alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to logout. Please try again.')
   } finally {
     isLoading.value = false
   }
 }
 
+const cancelLogout = () => {
+  showLogoutConfirmModal.value = false
+}
+
+onMounted(() => {
+  // Show agreement form immediately since user was redirected here
+  // DashboardView already checked disclaimer status before redirecting
+  showAgreementForm.value = true
+  isLoading.value = false
+})
+
 const dislaimerAgreementPost = () => {
   if (isCheck.value) {
     isLoading.value = true
-    getDisclaimerAgreement()
+    setDisclaimerAgreement()
       .then((res) => {
         notify(res?.message as string, 'success')
+        // Update local state immediately after successful API call
+        userStore.updateDisclaimerAgreement(true)
         setTimeout(() => {
           router.push('/dashboard')
         }, 1500)
       })
       .catch((err) => {
-        notify(err as string, 'success')
+        notify(err as string, 'error')
         console.error(err)
         isAlert.value = err
       })

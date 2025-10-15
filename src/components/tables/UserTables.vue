@@ -35,9 +35,6 @@
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ formatDate(user.testPeriod) }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
             {{ formatDate(user.lastLogin) }}
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -70,12 +67,6 @@
                 Reset Login
               </button>
               <button
-                @click="$emit('resetPassword', user.id)"
-                class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-200"
-              >
-                Reset Password
-              </button>
-              <button
                 @click="$emit('delete', user.id)"
                 class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200"
               >
@@ -101,7 +92,6 @@ defineProps<{
 defineEmits<{
   (e: 'edit', user: User): void
   (e: 'resetAttempts', userId: string): void
-  (e: 'resetPassword', userId: string): void
   (e: 'delete', userId: string): void
   (e: 'calculate', userId: string): void
 }>()

@@ -34,6 +34,7 @@
               @click="togglePassword"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 focus:outline-none transition-transform duration-300 ease-in-out"
               :class="{ 'rotate-180': showPassword }"
+              tabindex="-1"
             >
               <div class="relative w-5 h-5">
                 <svg
@@ -155,8 +156,6 @@ const handleLogin = async () => {
       router.push('/admin/dashboard')
     } else if (role === 'USER') {
       router.push('/dashboard')
-    } else if (role === 'VIEWER') {
-      router.push('/viewer/dashboard')
     } else {
       console.error('Unknown role:', role)
     }

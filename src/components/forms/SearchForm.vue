@@ -15,7 +15,7 @@
       <option value="name">Nama</option>
       <option value="email">Email</option>
       <option value="school">Sekolah</option>
-      <option value="createdBy">Dibuat oleh</option>
+      <!-- <option value="createdBy">Dibuat oleh</option> -->
     </select>
   </div>
 </template>
