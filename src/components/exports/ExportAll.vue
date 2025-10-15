@@ -42,7 +42,7 @@ const exportToPDF = async () => {
 
     const zip = new JSZip()
 
-    for (const student of dataNilaiSiswa.value.data.person_data) {
+    for (const student of dataNilaiSiswa.value.data.results[0].person_data) {
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -67,8 +67,8 @@ const exportToPDF = async () => {
       yPos += 10
 
       // Only show school if it's not empty or '-'
-      if (dataNilaiSiswa.value.data.school && dataNilaiSiswa.value.data.school !== '-') {
-        doc.text(`${dataNilaiSiswa.value.data.school.toUpperCase()}`, 105, yPos, { align: 'center' })
+      if (dataNilaiSiswa.value.data.results[0].school && dataNilaiSiswa.value.data.results[0].school !== '-') {
+        doc.text(`${dataNilaiSiswa.value.data.results[0].school.toUpperCase()}`, 105, yPos, { align: 'center' })
         yPos += 10
       }
 
@@ -156,8 +156,8 @@ const exportToPDF = async () => {
       headerParts.push(`Kelas ${student?.grade || 'N/A'}`)
 
       // Only add school if it's not empty or '-'
-      if (dataNilaiSiswa.value.data.school && dataNilaiSiswa.value.data.school !== '-') {
-        headerParts.push(dataNilaiSiswa.value.data.school.toUpperCase())
+      if (dataNilaiSiswa.value.data.results[0].school && dataNilaiSiswa.value.data.results[0].school !== '-') {
+        headerParts.push(dataNilaiSiswa.value.data.results[0].school.toUpperCase())
       }
 
       // Only add jurusan if it's not empty or '-'
@@ -348,27 +348,28 @@ const exportToPDF = async () => {
               height: data.cell.height,
             }
           }
-        })
+        },
+      })
 
-        // === PAGE 3 - Tabel Psikogram ===
-        doc.addPage()
-        doc.setFontSize(14)
-        doc.setFont('helvetica', 'bold')
-        doc.setTextColor(255, 255, 255)
-        doc.setFillColor(51, 171, 161)
-        doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
-        doc.text('Tabel Psikogram Murid', 22, 27)
+      // === PAGE 3 - Tabel Psikogram ===
+      doc.addPage()
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(255, 255, 255)
+      doc.setFillColor(51, 171, 161)
+      doc.rect(20, 20, doc.internal.pageSize.getWidth() - 40, 17, 'F')
+      doc.text('Tabel Psikogram Murid', 22, 27)
 
-        doc.setFontSize(10)
-        doc.setFont('helvetica', 'normal')
-        doc.setTextColor(255, 255, 255)
-        doc.text(
-          `${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'} - Kelas ${student?.grade || 'N/A'} - ${student?.jurusan || '-'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
-          22,
-          33,
-        )
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(255, 255, 255)
+      doc.text(
+        `${student?.name?.toUpperCase() || 'NAMA TIDAK TERSEDIA'} - Kelas ${student?.grade || 'N/A'} - ${student?.jurusan || '-'} - ${student?.phone_number || 'No. Telp Tidak Tersedia'}`,
+        22,
+        33,
+      )
 
-        let startY = 40
+      startY = 40
 
         autoTable(doc, {
           head: [['No', 'Kemampuan Berpikir', '1', '2', '3', '4', '5']],
@@ -408,7 +409,7 @@ const exportToPDF = async () => {
           doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
         })
 
-        startY = doc.lastAutoTable.finalY + 4
+        startY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 4
 
         autoTable(doc, {
           head: [['No', '   Sikap Kerja    ', '1', '2', '3', '4', '5']],
@@ -448,7 +449,7 @@ const exportToPDF = async () => {
           doc.addImage(emoticon, 'PNG', xPos as number, yPos, 6, 6)
         })
 
-        startY = doc.lastAutoTable.finalY + 4
+        startY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 4
 
         autoTable(doc, {
           head: [['No', 'Kepribadian', '1', '2', '3', '4', '5']],
@@ -513,7 +514,7 @@ const exportToPDF = async () => {
         doc.text('Tabel Kemampuan Berpikir', 210 / 2, 28, { align: 'center' })
         startY = 32
 
-        const rowData: { y: number; height: number }[] = []
+        const rowData2: { y: number; height: number }[] = []
         autoTable(doc, {
           head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
           body: student.result
@@ -546,7 +547,7 @@ const exportToPDF = async () => {
           didDrawCell: (data) => {
             // Store row position and height for body rows
             if (data.section === 'body' && data.column.index === 0) {
-              rowData[data.row.index] = {
+              rowData2[data.row.index] = {
                 y: data.cell.y,
                 height: data.cell.height,
               }
@@ -559,7 +560,7 @@ const exportToPDF = async () => {
           const emoticon = item
           const xPos = 34 // Fixed horizontal position
           // Center the emoji vertically: row's y position + half the row height - half the emoji height
-          const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
+          const yPos = rowData2[i].y + rowData2[i].height / 2 - 14 // Emoji height is 6, so half is 3
           doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
         })
 
@@ -567,7 +568,7 @@ const exportToPDF = async () => {
           const emoticon = getEmotResult(item.skor)
           const xPos = item.skor > 1 ? 110 : 111
           // Center the emoji vertically: row's y position + half the row height - half the emoji height
-          const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
+          const yPos = rowData2[i].y + rowData2[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
           doc.addImage(
             emoticon,
             'PNG',
@@ -588,6 +589,7 @@ const exportToPDF = async () => {
         doc.text('Tabel Sikap Kerja', 210 / 2, 28, { align: 'center' })
         startY = 32
 
+        const rowData3: { y: number; height: number }[] = []
         autoTable(doc, {
           head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
           body: student.result
@@ -620,7 +622,7 @@ const exportToPDF = async () => {
           didDrawCell: (data) => {
             // Store row position and height for body rows
             if (data.section === 'body' && data.column.index === 0) {
-              rowData[data.row.index] = {
+              rowData3[data.row.index] = {
                 y: data.cell.y,
                 height: data.cell.height,
               }
@@ -632,7 +634,7 @@ const exportToPDF = async () => {
           const emoticon = item
           const xPos = 34 // Fixed horizontal position
           // Center the emoji vertically: row's y position + half the row height - half the emoji height
-          const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
+          const yPos = rowData3[i].y + rowData3[i].height / 2 - 14 // Emoji height is 6, so half is 3
           doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
         })
 
@@ -640,7 +642,7 @@ const exportToPDF = async () => {
           const emoticon = getEmotResult(item.skor)
           const xPos = item.skor > 1 ? 110 : 111
           // Center the emoji vertically: row's y position + half the row height - half the emoji height
-          const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
+          const yPos = rowData3[i].y + rowData3[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
           doc.addImage(
             emoticon,
             'PNG',
@@ -661,6 +663,7 @@ const exportToPDF = async () => {
         doc.text('Tabel Kepribadian', 210 / 2, 28, { align: 'center' })
         startY = 32
 
+        const rowData4: { y: number; height: number }[] = []
         autoTable(doc, {
           head: [['Aspek', 'Definisi Aspek', 'Nilai', 'Deskripsi Nilai']],
           body: student.result
@@ -693,7 +696,7 @@ const exportToPDF = async () => {
           didDrawCell: (data) => {
             // Store row position and height for body rows
             if (data.section === 'body' && data.column.index === 0) {
-              rowData[data.row.index] = {
+              rowData4[data.row.index] = {
                 y: data.cell.y,
                 height: data.cell.height,
               }
@@ -705,7 +708,7 @@ const exportToPDF = async () => {
           const emoticon = item
           const xPos = 34 // Fixed horizontal position
           // Center the emoji vertically: row's y position + half the row height - half the emoji height
-          const yPos = rowData[i].y + rowData[i].height / 2 - 14 // Emoji height is 6, so half is 3
+          const yPos = rowData4[i].y + rowData4[i].height / 2 - 14 // Emoji height is 6, so half is 3
           doc.addImage(emoticon, 'PNG', xPos, yPos, 6, 6)
         })
 
@@ -713,7 +716,7 @@ const exportToPDF = async () => {
           const emoticon = getEmotResult(item.skor)
           const xPos = item.skor > 1 ? 110 : 111
           // Center the emoji vertically: row's y position + half the row height - half the emoji height
-          const yPos = rowData[i].y + rowData[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
+          const yPos = rowData4[i].y + rowData4[i].height / 2 - (item.skor > 1 ? 7.5 : 6) // Emoji height is 15 or 12
           doc.addImage(
             emoticon,
             'PNG',
@@ -728,17 +731,16 @@ const exportToPDF = async () => {
         const filename = `Psikogram-${student.name?.replace(/\s+/g, '_') || 'Siswa'}.pdf`
         zip.file(filename, pdfBlob)
       }
-    }
 
-    zip.generateAsync({ type: 'blob' }).then((content) => {
-      saveAs(content, 'Laporan-Psikogram-Siswa.zip')
-    })
-  } catch (err) {
-    console.error(err)
-    alert('Gagal export PDF!')
-  } finally {
-    isLoading.value = false
-  }
+      zip.generateAsync({ type: 'blob' }).then((content) => {
+        saveAs(content, 'Laporan-Psikogram-Siswa.zip')
+      })
+    } catch (err) {
+      console.error(err)
+      alert('Gagal export PDF!')
+    } finally {
+      isLoading.value = false
+    }
 }
 </script>
 
