@@ -1,7 +1,8 @@
 import { useAuthStore } from '@/stores/auth'
 import { type PsikogramExportDataInterface } from '@/types/calculateTypes'
+import { handleApiResponse, type ApiResponse, type UserData } from '@/utils/apiInterceptor'
 
-export const getExportAll = async () => {
+export const getExportAll = async (): Promise<PsikogramExportDataInterface> => {
   const authStore = useAuthStore()
   const token = authStore.user?.token
 
@@ -16,6 +17,9 @@ export const getExportAll = async () => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        userIDs: userIDs,
+      }),
     })
 
     if (!response.ok) {
@@ -26,5 +30,6 @@ export const getExportAll = async () => {
     return data
   } catch (err) {
     console.error(err)
+    throw err
   }
 }
