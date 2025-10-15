@@ -916,7 +916,7 @@ const handleUpdatePrivileges = async () => {
 
     await adminStore.updateUserPrivileges(
       selectedUserEmails,
-      selectedPrivilege.value as 'none' | 'quiz' | 'riasec' | 'full'
+      selectedPrivilege.value as 'none' | 'quiz' | 'riasec' | 'full',
     )
 
     modalStore.typeOfModal('success')
@@ -1026,20 +1026,17 @@ const submitResetPassword = async () => {
   }
 
   try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_URL}/api/v1/admin/users/reset-password`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authStore.getToken}`,
-        },
-        body: JSON.stringify({
-          email: resetPasswordEmail.value,
-          new_password: newPassword.value,
-        }),
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/users/reset-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authStore.getToken}`,
       },
-    )
+      body: JSON.stringify({
+        email: resetPasswordEmail.value,
+        new_password: newPassword.value,
+      }),
+    })
 
     if (response.ok) {
       modalStore.typeOfModal('success')
@@ -1070,7 +1067,7 @@ const confirmResetQuiz = async () => {
   showQuizResetModal.value = false
 
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/v1/admin/quizzes/reset`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/quizzes/reset`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
