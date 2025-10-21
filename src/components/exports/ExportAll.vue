@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import jsPDF from 'jspdf'
-import autoTable, { type jsPDFDocument } from 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 import { type PsikogramExportDataInterface } from '@/types/calculateTypes'
 import { getExportAll } from '@/api/getExportAll'
 import JSZip from 'jszip'
