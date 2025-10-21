@@ -87,27 +87,42 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async loginExternal(token: string) {
+    async loginExternal(token: string, retryCount: number = 0): Promise<string> {
       this.isLoading = true
       try {
         // Input validation
-        if (!token) {
-          throw new AuthError('External token is required')
+        if (!token || token.trim() === '') {
+          throw new AuthError('External token is required and cannot be empty')
         }
 
-        // Make API call to external login endpoint
+        // Validate token format (basic check)
+        if (token.length < 10) {
+          throw new AuthError('Invalid token format')
+        }
+
+        // Make API call to external login endpoint with timeout
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
         const response: Response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login/external`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ token }),
+          signal: controller.signal
         })
+
+        clearTimeout(timeoutId)
 
         const data: ApiResponse<AuthModel> = await handleApiResponse(response)
 
         if (data.status === 'error') {
-          throw new AuthError(data.message)
+          // Handle specific error cases
+          if (data.message?.includes('token expired') || data.message?.includes('invalid token')) {
+            throw new AuthError('The external authentication token has expired or is invalid')
+          }
+          throw new AuthError(data.message || 'External authentication failed')
         }
 
         if (data.data) {
@@ -116,23 +131,54 @@ export const useAuthStore = defineStore('auth', {
             token: data.data.token,
           }
 
+          // Validate returned role
+          const validRoles = ['USER', 'ADMIN', 'VIEWER']
+          if (!validRoles.includes(userData.role)) {
+            throw new AuthError(`Invalid role received: ${userData.role}`)
+          }
+
           // Update authentication state
           this.user = userData
           this.isAuthenticated = true
 
-          // Store auth state in localStorage
-          localStorage.setItem('user', JSON.stringify(userData))
+          // Store auth state in localStorage with timestamp
+          const authData = {
+            ...userData,
+            authenticatedAt: new Date().toISOString(),
+            source: 'external'
+          }
+          localStorage.setItem('user', JSON.stringify(authData))
           localStorage.setItem('isAuthenticated', 'true')
 
           // Return role for redirect handling
           return data.data.role
         }
 
-        throw new AuthError('Invalid response format')
+        throw new AuthError('Invalid response format - no user data received')
       } catch (error) {
         console.error('External login error:', error)
+
+        // Handle network errors with retry logic
+        if (error instanceof Error &&
+            (error.name === 'AbortError' || error.message.includes('fetch')) &&
+            retryCount < 2) {
+          console.log(`Retrying external login (attempt ${retryCount + 1})`)
+          await new Promise(resolve => setTimeout(resolve, 1000)) // Wait 1 second before retry
+          return this.loginExternal(token, retryCount + 1)
+        }
+
+        // Clear any partial auth state on error
         this.clearAuthState()
-        throw error instanceof Error ? new AuthError(error.message) : error
+
+        // Re-throw with more specific error message
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            throw new AuthError('External authentication timed out. Please try again.')
+          }
+          throw new AuthError(error.message)
+        }
+
+        throw new AuthError('An unexpected error occurred during external authentication')
       } finally {
         this.isLoading = false
       }
