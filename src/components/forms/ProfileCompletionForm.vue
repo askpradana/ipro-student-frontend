@@ -1,5 +1,10 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-8">
+    <!-- Logout button in top right corner -->
+    <div class="fixed top-8 right-8">
+      <LogoutUserButton :handle-logout="handleLogout" />
+    </div>
+
     <div class="w-full max-w-md">
       <!-- Logo -->
       <div class="text-center mb-8">
@@ -133,6 +138,7 @@
         </div>
       </div>
 
+
       <!-- Confirmation Modal -->
       <div
         v-if="showConfirmModal"
@@ -159,10 +165,13 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUpdateProfileApi } from '@/api/useUpdateProfile'
 import { useUserStores } from '@/stores/userStores'
+import { useAuthStore } from '@/stores/auth'
 import ProfileUpdateConfirmModal from '@/components/modals/ProfileUpdateConfirmModal.vue'
+import LogoutUserButton from '@/components/buttons/LogoutUserButton.vue'
 
 const router = useRouter()
 const userStore = useUserStores()
+const authStore = useAuthStore()
 const { updateProfile, loading, error } = useUpdateProfileApi()
 
 const form = reactive({
@@ -282,5 +291,14 @@ const confirmSubmit = async () => {
 
 const cancelSubmit = () => {
   showConfirmModal.value = false
+}
+
+const handleLogout = async () => {
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout error:', error)
+  }
 }
 </script>

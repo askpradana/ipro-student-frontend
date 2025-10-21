@@ -1,8 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useUserStores } from '@/stores/userStores'
-import { isProfileComplete } from '@/utils/profileUtils'
+import { useExternalAuth } from '@/composables/useExternalAuth'
+import {
+  handleAuthRedirect,
+  handleRoleAccess,
+  handleLandingPageRedirect,
+  handleLoginPageAccess,
+  safeNavigate,
+} from '@/utils/routerUtils'
 import SampleChartView from '@/views/SampleChartView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import AddNewUsersView from '@/views/AddNewUsersView.vue'
@@ -22,22 +28,24 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('../views/LandingView.vue'),
-    beforeEnter: (to, from, next) => {
+    beforeEnter: async (to, from, next) => {
       const authStore = useAuthStore()
-      if (authStore.isAuthenticated) {
-        // Redirect authenticated users to their role-specific dashboard
-        switch (authStore.user?.role) {
-          case 'USER':
-            next({ name: 'dashboard' })
-            break
-          case 'ADMIN':
-            next({ name: 'AdminDashboard' })
-            break
-          default:
-            next()
+
+      // Skip redirect logic if there's a JWT token (handled by global guard)
+      if (to.query.jwt) {
+        next()
+        return
+      }
+
+      try {
+        const result = await handleLandingPageRedirect(authStore)
+        if (result.shouldNavigate && result.redirectTo) {
+          next({ path: result.redirectTo })
+        } else {
+          next()
         }
-      } else {
-        // Allow unauthenticated users to access landing page
+      } catch (error) {
+        console.error('Error in landing page redirect:', error)
         next()
       }
     },
@@ -53,19 +61,29 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/LoginView.vue'),
     beforeEnter: (to, from, next) => {
       const authStore = useAuthStore()
-      if (authStore.isAuthenticated) {
-        // Redirect to role-specific dashboard if authenticated
-        switch (authStore.user?.role) {
-          case 'USER':
-            next({ name: 'dashboard' })
-            break
-          case 'ADMIN':
-            next({ name: 'AdminDashboard' })
-            break
-          default:
-            next()
+      const { state: externalAuthState } = useExternalAuth()
+
+      // Allow access if external auth is in progress
+      if (externalAuthState.value.isProcessing) {
+        next()
+        return
+      }
+
+      // Skip redirect logic if there's a JWT token (handled by global guard)
+      if (to.query.jwt) {
+        next()
+        return
+      }
+
+      try {
+        const result = handleLoginPageAccess(authStore)
+        if (result.shouldNavigate && result.redirectTo) {
+          next({ path: result.redirectTo })
+        } else {
+          next()
         }
-      } else {
+      } catch (error) {
+        console.error('Error in login page access check:', error)
         next()
       }
     },
@@ -140,6 +158,7 @@ const router = createRouter({
 // Global navigation guard
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  const { processExternalJWT, cleanJWTFromURL } = useExternalAuth()
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.user?.role as string
 
@@ -147,44 +166,47 @@ router.beforeEach(async (to, from, next) => {
   const jwtToken = to.query.jwt as string
   if (jwtToken && !isAuthenticated) {
     try {
-      // Remove JWT from URL immediately to clean up
-      const cleanQuery = { ...to.query }
-      delete cleanQuery.jwt
+      console.log('Processing external JWT token')
 
-      // Attempt external login
-      await authStore.loginExternal(jwtToken)
+      const result = await processExternalJWT(jwtToken)
 
-      // Initialize user store to check profile completeness
-      const userStore = useUserStores()
-      await userStore.initializeQuiz()
+      if (result.success && result.redirectTo) {
+        // Clean JWT from URL and redirect to appropriate route
+        cleanJWTFromURL(router, to.query)
 
-      // Check if profile is complete
-      if (!isProfileComplete(userStore.dataUser)) {
-        // Redirect to profile completion if incomplete
-        next({
-          name: 'profile-completion',
+        const cleanQuery = { ...to.query }
+        delete cleanQuery.jwt
+
+        await safeNavigate(router, result.redirectTo, {
           query: cleanQuery,
-          replace: true
+          replace: true,
+        })
+        return
+      } else {
+        // External auth failed - clean URL and redirect to login
+        console.error('External authentication failed')
+        cleanJWTFromURL(router, to.query)
+
+        const cleanQuery = { ...to.query }
+        delete cleanQuery.jwt
+
+        await safeNavigate(router, '/login', {
+          query: cleanQuery,
+          replace: true,
         })
         return
       }
-
-      // Redirect to dashboard on successful authentication and complete profile
-      next({
-        name: 'dashboard',
-        query: cleanQuery,
-        replace: true
-      })
-      return
     } catch (error) {
-      console.error('External authentication failed:', error)
-      // Redirect to login on failure, removing JWT from URL
+      console.error('External authentication error:', error)
+      // Clean URL and redirect to login on any error
+      cleanJWTFromURL(router, to.query)
+
       const cleanQuery = { ...to.query }
       delete cleanQuery.jwt
-      next({
-        name: 'login',
+
+      await safeNavigate(router, '/login', {
         query: cleanQuery,
-        replace: true
+        replace: true,
       })
       return
     }
@@ -192,94 +214,47 @@ router.beforeEach(async (to, from, next) => {
 
   // If JWT parameter exists but user is already authenticated, clean URL
   if (jwtToken && isAuthenticated) {
-    const cleanQuery = { ...to.query }
-    delete cleanQuery.jwt
-    next({
-      path: to.path,
-      query: cleanQuery,
-      replace: true
-    })
-    return
-  }
-
-  // Check if authenticated user is trying to access root/landing page
-  if (to.name === 'home' && isAuthenticated) {
-    // For USER role, check profile completeness before redirecting
-    if (userRole === 'USER') {
-      const userStore = useUserStores()
-      // Initialize user data if not already loaded
-      if (!userStore.dataUser) {
-        try {
-          await userStore.initializeQuiz()
-        } catch (error) {
-          console.error('Failed to load user profile:', error)
-          next({ name: 'login' })
-          return
-        }
-      }
-
-      // Check if profile is complete
-      if (!isProfileComplete(userStore.dataUser)) {
-        next({ name: 'profile-completion' })
-        return
-      }
-
-      next({ name: 'dashboard' })
-    } else {
-      // Redirect authenticated users to their role-specific dashboard
-      switch (userRole) {
-        case 'ADMIN':
-          next({ name: 'AdminDashboard' })
-          break
-        default:
-          next({ name: 'login' }) // Fallback to login if role is not recognized
-      }
-    }
+    cleanJWTFromURL(router, to.query)
+    next()
     return
   }
 
   // Check if route requires authentication
   if (to.meta.requiresAuth && !isAuthenticated) {
-    // Redirect to login if not authenticated
-    next({ name: 'login' })
-    return
-  }
-
-  // Check profile completeness for USER role accessing protected routes
-  if (isAuthenticated && userRole === 'USER' && to.meta.requiresRole?.includes('USER') && to.name !== 'profile-completion') {
-    const userStore = useUserStores()
-    // Initialize user data if not already loaded
-    if (!userStore.dataUser) {
-      try {
-        await userStore.initializeQuiz()
-      } catch (error) {
-        console.error('Failed to load user profile:', error)
-        next({ name: 'login' })
-        return
-      }
-    }
-
-    // Check if profile is complete
-    if (!isProfileComplete(userStore.dataUser)) {
-      next({ name: 'profile-completion' })
+    const result = await handleAuthRedirect(to, authStore)
+    if (result.shouldNavigate && result.redirectTo) {
+      next({ path: result.redirectTo })
       return
     }
   }
 
   // Check if route requires specific role
-  if (to.meta.requiresRole && isAuthenticated && !to.meta.requiresRole.includes(userRole)) {
-    // Redirect to role-specific dashboard if role is not allowed
-    switch (userRole) {
-      case 'USER':
-        next({ name: 'dashboard' })
-        break
-      case 'ADMIN':
-        next({ name: 'AdminDashboard' })
-        break
-      default:
-        next({ name: 'login' }) // Fallback to login if role is not recognized
+  if (to.meta.requiresRole && isAuthenticated) {
+    const result = handleRoleAccess(to, userRole)
+    if (result.shouldNavigate && result.redirectTo) {
+      next({ path: result.redirectTo })
+      return
     }
-    return
+  }
+
+  // Additional check for profile completeness on USER role protected routes
+  if (
+    isAuthenticated &&
+    userRole === 'USER' &&
+    to.meta.requiresRole?.includes('USER') &&
+    to.name !== 'profile-completion'
+  ) {
+    try {
+      const authResult = await handleAuthRedirect(to, authStore)
+      if (authResult.shouldNavigate && authResult.redirectTo) {
+        next({ path: authResult.redirectTo })
+        return
+      }
+    } catch (error) {
+      console.error('Error checking profile completeness:', error)
+      next({ name: 'login' })
+      return
+    }
   }
 
   // Allow access to the route
