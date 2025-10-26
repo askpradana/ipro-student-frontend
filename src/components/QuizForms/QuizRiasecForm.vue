@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-col-reverse md:flex-row justify-between items-center">
-      <h2 class="text-xl font-bold text-slate-800">
-        Pertanyaan {{ store.questions[store.currentQuestionIndex]?.soalID }} dari
-        {{ store.questions.length }}
-      </h2>
+    <div class="flex justify-end items-center">
       <h2
         class="font-semibold text-lg"
         :class="timerStore.timer > 30 ? 'text-teal-600' : 'text-red-600'"
@@ -12,29 +8,6 @@
         Waktu: {{ timerStore.formattedTime }}s
       </h2>
     </div>
-
-    <!-- list button nomor soal -->
-    <div class="flex items-center flex-wrap gap-2 cursor-pointer mt-4">
-      <span
-        v-for="(question, index) of store.questions"
-        :key="question.soalID"
-        :class="
-          store.currentQuestionIndex === index
-            ? 'bg-teal-600 text-white'
-            : store.answers[index] !== null
-              ? 'bg-teal-400 text-white'
-              : ''
-        "
-        class="text-xs text-center rounded-sm w-6 py-1 border border-teal-600 hover:bg-teal-200"
-        @click="store.currentQuestionIndex = index"
-      >
-        {{ question.soalID }}
-      </span>
-    </div>
-
-    <p class="text-slate-800 my-8 mt-12 font-bold">
-      Tentukan apakah peryataan di bawah sesuai dengan minat anda.
-    </p>
 
     <p
       class="text-sm font-semibold text-center -mt-4 md:mt-4 text-red-500"
@@ -45,8 +18,8 @@
       = Sangat sesuai)
     </p>
 
-    <p class="text-black md:text-lg my-8 text-center md:mt-12">
-      {{ store.currentQuestion?.pilihan[0] }}
+    <p class="text-black md:text-lg my-8 text-center md:mt-12 font-bold">
+      {{ store.currentQuestion?.question }}
     </p>
 
     <!-- Answer Options -->
@@ -139,13 +112,6 @@
     <!-- Navigation Buttons -->
     <div class="flex flex-col sm:flex-row gap-2 justify-between mt-8">
       <button
-        @click="handlePrevious"
-        :disabled="store.currentQuestionIndex === 0"
-        class="px-6 py-2 rounded-lg font-semibold text-teal-600 hover:bg-teal-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-      >
-        Sebelumnya
-      </button>
-      <button
         @click="handleNext"
         :disabled="selectedAnswer === null"
         class="px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
@@ -220,10 +186,6 @@ const handleNext = () => {
 
     store.nextQuestion()
   }
-}
-
-const handlePrevious = () => {
-  store.previousQuestion()
 }
 </script>
 
