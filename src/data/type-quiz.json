@@ -42,11 +42,9 @@
   {
     "id": 6,
     "title": "Inventori Minat",
-    "description": "<b>Coming Soon</b>\n\nTes RIASEC (Realistic, Investigative, Artistic, Social, Enterprising, Conventional) adalah tes minat karir yang akan membantu Anda memahami preferensi dan minat Anda dalam berbagai bidang pekerjaan.\n\n<i>Fitur ini akan segera hadir. Mohon bersabar.</i>",
+    "description": "<b>Instruksi:</b>\n\nTes RIASEC (Realistic, Investigative, Artistic, Social, Enterprising, Conventional) adalah tes minat karir yang akan membantu Anda memahami preferensi dan minat Anda dalam berbagai bidang pekerjaan.\n\nTentukan apakah kegiatan yang tampil pada layar menarik minat Anda. Apabila ya, klik 'Ya'. Apabila tidak, klik 'Tidak'.",
     "typeQuiz": 6,
     "instructionImage": "/assets/instruksi-soal/instruksi_soal_riasec.webp",
-    "quiz": "quiz_riasec",
-    "disabled": false,
-    "notReady": true
+    "quiz": "quiz_riasec"
   }
 ]

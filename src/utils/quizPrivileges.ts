@@ -1,6 +1,6 @@
 type QuizPrivilege = 'none' | 'quiz' | 'riasec' | 'full'
 
-interface QuizType {
+export interface QuizType {
   id: number
   title: string
   description: string
