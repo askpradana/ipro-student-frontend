@@ -9,6 +9,7 @@ import QuizFormContainer from '@/components/QuizForms/QuizFormContainer.vue'
 import ModalContainer from '@/components/modals/ModalContainer.vue'
 import ModalExitQuiz from '@/components/modals/ModalExitQuiz.vue'
 import TypeQuizData from '@/data/type-quiz.json'
+import type { QuizType } from '@/utils/quizPrivileges'
 import SubmitForm from '@/components/QuizForms/SubmitForm.vue'
 import { getTypeQuizWithUnderscore } from '@/lib/getTypeQuiz'
 import ModalAlert from '@/components/modals/ModalAlert.vue'
@@ -54,7 +55,7 @@ const formattedDescription = (description: string) => {
 
 const startQuizHandler = (selectedTypeQuiz: number, isTraining: boolean = false) => {
   const getTypeOfQuiz = getTypeQuizWithUnderscore(selectedTypeQuiz.toString())
-  const quizType = TypeQuizData.find((q) => q.typeQuiz === selectedTypeQuiz)
+  const quizType = (TypeQuizData as QuizType[]).find((q) => q.typeQuiz === selectedTypeQuiz)
 
   if (quizType?.disabled) {
     modalStore.typeOfModal('show-alert')

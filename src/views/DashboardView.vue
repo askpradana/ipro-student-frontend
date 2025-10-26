@@ -237,7 +237,7 @@ import { useUserStores } from '@/stores/userStores'
 import UserDashboardSkeleton from '@/components/skeletons/UserDashboardSkeleton.vue'
 import { checkDisclaimerStatus } from '@/api/getDisclaimerAgreement'
 import LogoutConfirmModal from '@/components/modals/LogoutConfirmModal.vue'
-import { filterQuizzesByPrivileges } from '@/utils/quizPrivileges'
+import { filterQuizzesByPrivileges, type QuizType } from '@/utils/quizPrivileges'
 
 const userStore = useUserStores()
 const router = useRouter()
@@ -251,7 +251,7 @@ const disclaimerStatusCache = ref<boolean | null>(null)
 
 const filteredQuizzes = computed(() => {
   const userPrivileges = userStore.dataUser?.quiz_privileges || 'none'
-  return filterQuizzesByPrivileges(TypeListData, userPrivileges)
+  return filterQuizzesByPrivileges(TypeListData as QuizType[], userPrivileges)
 })
 
 onMounted(async () => {
@@ -281,7 +281,7 @@ onBeforeMount(() => {
 })
 
 const handleTakeQuiz = (selectedTypeQuiz: number) => {
-  const quizType = TypeListData.find((q) => q.typeQuiz === selectedTypeQuiz)
+  const quizType = (TypeListData as QuizType[]).find((q) => q.typeQuiz === selectedTypeQuiz)
 
   if (quizType?.disabled) {
     showComingSoonModal.value = true
