@@ -28,7 +28,21 @@ export const useGetUserProfileApi = () => {
     try {
       const authStore = useAuthStore()
 
-      // Use the getter instead of direct property access
+      // First verify token access is ready
+      if (!authStore.verifyTokenAccess()) {
+        console.log('Token not immediately available, waiting...')
+
+        // Wait for token to be available
+        const token = await authStore.waitForToken(5000)
+
+        if (!token) {
+          throw new Error('No user token found after waiting - user must be authenticated')
+        }
+
+        console.log('Token became available after waiting')
+      }
+
+      // Get token using the safe getter
       const token = authStore.getToken
 
       if (!token) {
