@@ -129,7 +129,7 @@ export const useAuthStore = defineStore('auth', {
 
         if (data.data) {
           const userData: AuthModel = {
-            role: data.data.role,
+            role: data.data.role.toUpperCase(),
             token: data.data.token,
           }
 
@@ -161,7 +161,7 @@ export const useAuthStore = defineStore('auth', {
           console.log('Token verification successful after external auth')
 
           // Return role for redirect handling
-          return data.data.role
+          return userData.role
         }
 
         throw new AuthError('Invalid response format - no user data received')
