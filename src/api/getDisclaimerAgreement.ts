@@ -10,7 +10,7 @@ export interface DisclaimerRespondInterface {
 // Check disclaimer agreement status
 export const checkDisclaimerStatus = async () => {
   const authStore = useAuthStore()
-  const token = authStore.user?.token
+  const token = authStore.getToken
 
   try {
     if (!token) {
@@ -39,7 +39,7 @@ export const checkDisclaimerStatus = async () => {
 // Set disclaimer agreement (when user clicks agree)
 export const setDisclaimerAgreement = async () => {
   const authStore = useAuthStore()
-  const token = authStore.user?.token
+  const token = authStore.getToken
 
   try {
     if (!token) {

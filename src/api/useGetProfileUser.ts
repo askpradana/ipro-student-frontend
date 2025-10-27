@@ -27,11 +27,15 @@ export const useGetUserProfileApi = () => {
 
     try {
       const authStore = useAuthStore()
-      const token = authStore.user?.token
+
+      // Use the getter instead of direct property access
+      const token = authStore.getToken
 
       if (!token) {
-        throw new Error('No user token found')
+        throw new Error('No user token found - user must be authenticated')
       }
+
+      console.log('Fetching user profile with token:', token.substring(0, 20) + '...')
 
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
         method: 'GET',
@@ -42,12 +46,20 @@ export const useGetUserProfileApi = () => {
       })
 
       if (!response.ok) {
+        if (response.status === 401) {
+          console.error('401 Unauthorized - token may be invalid or expired')
+          // Clear auth state if token is invalid
+          authStore.clearAuthState()
+          throw new Error('Authentication failed - please login again')
+        }
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const data: ResponseGetAPIUser = await response.json()
+      console.log('User profile fetched successfully')
       return mapCompletedQuizzesToBooleans(data.data)
     } catch (e) {
+      console.error('Error fetching user profile:', e)
       error.value = e instanceof Error ? e.message : 'An error occurred'
       throw error.value
     } finally {
