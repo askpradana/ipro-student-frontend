@@ -24,11 +24,15 @@ export const useUpdateProfileApi = () => {
 
     try {
       const authStore = useAuthStore()
-      const token = authStore.user?.token
+
+      // Use the getter instead of direct property access
+      const token = authStore.getToken
 
       if (!token) {
-        throw new Error('No user token found')
+        throw new Error('No user token found - user must be authenticated')
       }
+
+      console.log('Updating user profile with token:', token.substring(0, 20) + '...')
 
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/profile/update`, {
         method: 'PUT',
@@ -40,6 +44,12 @@ export const useUpdateProfileApi = () => {
       })
 
       if (!response.ok) {
+        if (response.status === 401) {
+          console.error('401 Unauthorized - token may be invalid or expired')
+          // Clear auth state if token is invalid
+          authStore.clearAuthState()
+          throw new Error('Authentication failed - please login again')
+        }
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
       }
@@ -50,6 +60,7 @@ export const useUpdateProfileApi = () => {
         throw new Error(data.message || 'Profile update failed')
       }
 
+      console.log('User profile updated successfully')
       return data
     } catch (e) {
       const errorMessage =

@@ -18,7 +18,7 @@ export const usePostAnswerApi = (answers: (string | number | string[] | null)[])
     error.value = null
 
     try {
-      const token = authStore.user?.token
+      const token = authStore.getToken
       if (!token) {
         throw new Error('No user token found')
       }

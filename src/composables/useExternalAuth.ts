@@ -56,23 +56,33 @@ export function useExternalAuth() {
       // Step 2: Initialize user data for profile checking (USER role only)
       if (role === 'USER') {
         try {
+          // Add a small delay to ensure token is fully propagated
+          await new Promise(resolve => setTimeout(resolve, 100))
+
+          console.log('Initializing user data after external auth...')
           await userStore.initializeQuiz()
+          console.log('User data initialized successfully')
         } catch (error) {
-          console.warn('Failed to initialize user data, but continuing with auth:', error)
-          // Don't fail the entire auth process if user data loading fails
-          // This will be handled by the profile completion check
-        }
-
-        // Step 3: Check profile completeness
-        const isComplete = isProfileComplete(userStore.dataUser)
-
-        if (!isComplete) {
+          console.warn('Failed to initialize user data after external auth:', error)
+          // If profile loading fails, redirect to profile completion to be safe
           return {
             success: true,
             redirectTo: '/profile/complete'
           }
         }
 
+        // Step 3: Check profile completeness
+        const isComplete = isProfileComplete(userStore.dataUser)
+
+        if (!isComplete) {
+          console.log('Profile incomplete, redirecting to profile completion')
+          return {
+            success: true,
+            redirectTo: '/profile/complete'
+          }
+        }
+
+        console.log('Profile complete, redirecting to dashboard')
         return {
           success: true,
           redirectTo: '/dashboard'

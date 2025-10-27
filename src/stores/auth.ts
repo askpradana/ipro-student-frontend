@@ -28,7 +28,23 @@ export const useAuthStore = defineStore('auth', {
       return this.user?.role === 'ADMIN'
     },
     getToken(): string | null {
-      return this.user?.token || null
+      // Always try to get the most up-to-date token
+      if (this.user?.token) {
+        return this.user.token
+      }
+
+      // Fallback to localStorage if store is not initialized
+      const storedUser = localStorage.getItem('user')
+      if (storedUser) {
+        try {
+          const userData = JSON.parse(storedUser)
+          return userData.token || null
+        } catch {
+          return null
+        }
+      }
+
+      return null
     },
   },
 
@@ -140,7 +156,14 @@ export const useAuthStore = defineStore('auth', {
             throw new AuthError(`Invalid role received: ${userData.role}`)
           }
 
-          // Update authentication state
+          // Validate token format
+          if (!userData.token || userData.token.trim() === '') {
+            throw new AuthError('Invalid token received from external authentication')
+          }
+
+          console.log('External auth success - storing new token:', userData.token.substring(0, 20) + '...')
+
+          // Update authentication state immediately
           this.user = userData
           this.isAuthenticated = true
 
@@ -152,6 +175,15 @@ export const useAuthStore = defineStore('auth', {
           }
           localStorage.setItem('user', JSON.stringify(authData))
           localStorage.setItem('isAuthenticated', 'true')
+
+          // Verify token is stored correctly
+          const verifyToken = this.getToken
+          if (!verifyToken || verifyToken !== userData.token) {
+            console.error('Token verification failed after storage')
+            throw new AuthError('Token storage verification failed')
+          }
+
+          console.log('Token verification successful after external auth')
 
           // Return role for redirect handling
           return data.data.role
@@ -279,7 +311,19 @@ export const useAuthStore = defineStore('auth', {
       if (storedUser && storedIsAuthenticated === 'true') {
         this.user = JSON.parse(storedUser)
         this.isAuthenticated = true
+        console.log('Auth initialized from localStorage with token:', this.user?.token?.substring(0, 20) + '...')
       }
+    },
+
+    // Debug method to check token status
+    debugTokenStatus() {
+      console.log('=== Token Debug Info ===')
+      console.log('Is authenticated:', this.isAuthenticated)
+      console.log('User object:', this.user)
+      console.log('Token from getter:', this.getToken?.substring(0, 20) + '...')
+      console.log('LocalStorage user:', localStorage.getItem('user'))
+      console.log('LocalStorage isAuthenticated:', localStorage.getItem('isAuthenticated'))
+      console.log('========================')
     },
   },
 })
