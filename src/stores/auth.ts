@@ -133,9 +133,9 @@ export const useAuthStore = defineStore('auth', {
             token: data.data.token,
           }
 
-          // Validate returned role
+          // Validate returned role (case-insensitive)
           const validRoles = ['USER', 'ADMIN', 'VIEWER']
-          if (!validRoles.includes(userData.role)) {
+          if (!validRoles.includes(userData.role.toUpperCase())) {
             throw new AuthError(`Invalid role received: ${userData.role}`)
           }
 
