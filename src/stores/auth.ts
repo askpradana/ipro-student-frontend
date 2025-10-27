@@ -157,6 +157,15 @@ export const useAuthStore = defineStore('auth', {
 
           console.log('Token verification successful after external auth')
 
+          // Verify token is stored correctly
+          const verifyToken = this.getToken
+          if (!verifyToken || verifyToken !== userData.token) {
+            console.error('Token verification failed after storage')
+            throw new AuthError('Token storage verification failed')
+          }
+
+          console.log('Token verification successful after external auth')
+
           // Return role for redirect handling
           return data.data.role
         }
@@ -344,6 +353,17 @@ export const useAuthStore = defineStore('auth', {
       console.log('User object:', this.user)
       console.log('Token from getter:', this.getToken?.substring(0, 20) + '...')
       console.log('Token verification:', this.verifyTokenAccess())
+      console.log('LocalStorage user:', localStorage.getItem('user'))
+      console.log('LocalStorage isAuthenticated:', localStorage.getItem('isAuthenticated'))
+      console.log('========================')
+    },
+
+    // Debug method to check token status
+    debugTokenStatus() {
+      console.log('=== Token Debug Info ===')
+      console.log('Is authenticated:', this.isAuthenticated)
+      console.log('User object:', this.user)
+      console.log('Token from getter:', this.getToken?.substring(0, 20) + '...')
       console.log('LocalStorage user:', localStorage.getItem('user'))
       console.log('LocalStorage isAuthenticated:', localStorage.getItem('isAuthenticated'))
       console.log('========================')
