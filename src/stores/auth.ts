@@ -28,22 +28,10 @@ export const useAuthStore = defineStore('auth', {
       return this.user?.role === 'ADMIN'
     },
     getToken(): string | null {
-      // Always try to get the most up-to-date token
-      if (this.user?.token) {
+      // Only return token if store is properly initialized and authenticated
+      if (this.isAuthenticated && this.user?.token) {
         return this.user.token
       }
-
-      // Fallback to localStorage if store is not initialized
-      const storedUser = localStorage.getItem('user')
-      if (storedUser) {
-        try {
-          const userData = JSON.parse(storedUser)
-          return userData.token || null
-        } catch {
-          return null
-        }
-      }
-
       return null
     },
   },
@@ -81,13 +69,8 @@ export const useAuthStore = defineStore('auth', {
             token: data.data.token,
           }
 
-          // Update authentication state
-          this.user = userData
-          this.isAuthenticated = true
-
-          // Store auth state in localStorage
-          localStorage.setItem('user', JSON.stringify(userData))
-          localStorage.setItem('isAuthenticated', 'true')
+          // Use atomic auth state update
+          this.setAuthState(userData)
 
           // Return role for redirect handling
           return data.data.role
@@ -161,25 +144,17 @@ export const useAuthStore = defineStore('auth', {
             throw new AuthError('Invalid token received from external authentication')
           }
 
-          console.log('External auth success - storing new token:', userData.token.substring(0, 20) + '...')
+          console.log(
+            'External auth success - storing new token:',
+            userData.token.substring(0, 20) + '...',
+          )
 
-          // Update authentication state immediately
-          this.user = userData
-          this.isAuthenticated = true
+          // Use atomic auth state update
+          this.setAuthState(userData)
 
-          // Store auth state in localStorage with timestamp
-          const authData = {
-            ...userData,
-            authenticatedAt: new Date().toISOString(),
-            source: 'external',
-          }
-          localStorage.setItem('user', JSON.stringify(authData))
-          localStorage.setItem('isAuthenticated', 'true')
-
-          // Verify token is stored correctly
-          const verifyToken = this.getToken
-          if (!verifyToken || verifyToken !== userData.token) {
-            console.error('Token verification failed after storage')
+          // Verify token is properly accessible
+          if (!this.verifyTokenAccess()) {
+            console.error('Token verification failed after atomic storage')
             throw new AuthError('Token storage verification failed')
           }
 
@@ -311,8 +286,61 @@ export const useAuthStore = defineStore('auth', {
       if (storedUser && storedIsAuthenticated === 'true') {
         this.user = JSON.parse(storedUser)
         this.isAuthenticated = true
-        console.log('Auth initialized from localStorage with token:', this.user?.token?.substring(0, 20) + '...')
+        console.log(
+          'Auth initialized from localStorage with token:',
+          this.user?.token?.substring(0, 20) + '...',
+        )
       }
+    },
+
+    // Atomic method to update auth state and localStorage together
+    setAuthState(userData: AuthModel) {
+      // Update store state first
+      this.user = userData
+      this.isAuthenticated = true
+
+      // Then update localStorage
+      const authData = {
+        ...userData,
+        authenticatedAt: new Date().toISOString(),
+      }
+      localStorage.setItem('user', JSON.stringify(authData))
+      localStorage.setItem('isAuthenticated', 'true')
+    },
+
+    // Method to verify token is properly stored and accessible
+    verifyTokenAccess(): boolean {
+      const storeToken = this.user?.token
+      const isAuth = this.isAuthenticated
+
+      if (!isAuth || !storeToken) {
+        return false
+      }
+
+      // Verify token length is reasonable
+      if (storeToken.length < 10) {
+        console.error('Token appears to be invalid (too short)')
+        return false
+      }
+
+      return true
+    },
+
+    // Method to wait for token to be available
+    async waitForToken(maxWaitMs: number = 3000): Promise<string | null> {
+      const startTime = Date.now()
+
+      while (Date.now() - startTime < maxWaitMs) {
+        if (this.verifyTokenAccess()) {
+          return this.getToken
+        }
+
+        // Wait 50ms before checking again
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+
+      console.error('Token wait timeout - token not available after', maxWaitMs, 'ms')
+      return null
     },
 
     // Debug method to check token status
@@ -321,6 +349,7 @@ export const useAuthStore = defineStore('auth', {
       console.log('Is authenticated:', this.isAuthenticated)
       console.log('User object:', this.user)
       console.log('Token from getter:', this.getToken?.substring(0, 20) + '...')
+      console.log('Token verification:', this.verifyTokenAccess())
       console.log('LocalStorage user:', localStorage.getItem('user'))
       console.log('LocalStorage isAuthenticated:', localStorage.getItem('isAuthenticated'))
       console.log('========================')

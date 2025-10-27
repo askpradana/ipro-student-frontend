@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useExternalAuth } from '@/composables/useExternalAuth'
+import { useAuthFlow } from '@/composables/useAuthFlow'
 import {
   handleAuthRedirect,
   handleRoleAccess,
@@ -61,10 +61,10 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/LoginView.vue'),
     beforeEnter: (to, from, next) => {
       const authStore = useAuthStore()
-      const { state: externalAuthState } = useExternalAuth()
+      const { state: authFlowState } = useAuthFlow()
 
       // Allow access if external auth is in progress
-      if (externalAuthState.value.isProcessing) {
+      if (authFlowState.isProcessing) {
         next()
         return
       }
@@ -158,7 +158,7 @@ const router = createRouter({
 // Global navigation guard
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  const { processExternalJWT, cleanJWTFromURL } = useExternalAuth()
+  const { processExternalJWT, cleanJWTFromURL } = useAuthFlow()
   const isAuthenticated = authStore.isAuthenticated
   const userRole = authStore.user?.role as string
 
@@ -166,7 +166,7 @@ router.beforeEach(async (to, from, next) => {
   const jwtToken = to.query.jwt as string
   if (jwtToken && !isAuthenticated) {
     try {
-      console.log('Processing external JWT token')
+      console.log('Processing external JWT token with enhanced auth flow')
 
       const result = await processExternalJWT(jwtToken)
 

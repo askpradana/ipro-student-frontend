@@ -15,9 +15,11 @@ export const useGetUserProfileApi = () => {
       quiz_tiga: data.quiz_tiga !== undefined ? data.quiz_tiga : completedQuizzes.includes('QUIZ3'),
       quiz_lima: data.quiz_lima !== undefined ? data.quiz_lima : completedQuizzes.includes('QUIZ5'),
       quiz_enam: data.quiz_enam !== undefined ? data.quiz_enam : completedQuizzes.includes('QUIZ6'),
-      quiz_tujuh: data.quiz_tujuh !== undefined ? data.quiz_tujuh : completedQuizzes.includes('QUIZ7'),
+      quiz_tujuh:
+        data.quiz_tujuh !== undefined ? data.quiz_tujuh : completedQuizzes.includes('QUIZ7'),
       quiz_ppi: data.quiz_ppi !== undefined ? data.quiz_ppi : completedQuizzes.includes('PPI'),
-      quiz_riasec: data.quiz_riasec !== undefined ? data.quiz_riasec : completedQuizzes.includes('RIASEC'),
+      quiz_riasec:
+        data.quiz_riasec !== undefined ? data.quiz_riasec : completedQuizzes.includes('RIASEC'),
     }
   }
 
@@ -28,7 +30,21 @@ export const useGetUserProfileApi = () => {
     try {
       const authStore = useAuthStore()
 
-      // Use the getter instead of direct property access
+      // First verify token access is ready
+      if (!authStore.verifyTokenAccess()) {
+        console.log('Token not immediately available, waiting...')
+
+        // Wait for token to be available
+        const token = await authStore.waitForToken(5000)
+
+        if (!token) {
+          throw new Error('No user token found after waiting - user must be authenticated')
+        }
+
+        console.log('Token became available after waiting')
+      }
+
+      // Get token using the safe getter
       const token = authStore.getToken
 
       if (!token) {
